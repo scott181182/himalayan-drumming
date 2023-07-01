@@ -1,0 +1,21 @@
+version: '3.7'
+services:
+  workspace:
+    container_name: ${APP_NAME}-workspace
+    build: 
+      dockerfile: ./.devcontainer/Dockerfile
+      context: ..
+    env_file:
+      - ./.env
+    volumes:
+      - ..:/workspace:rw
+      - ../nginx/default.conf:/etc/nginx/sites-enabled/default:ro
+      - ../blob:/blob:ro
+      - ${HOME}/.ssh:/home/node/.ssh:ro
+    ports:
+      - 8080:80
+      - 3001:3001
+    tty: true
+    command: bash
+
+    

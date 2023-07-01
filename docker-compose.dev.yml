@@ -1,0 +1,13 @@
+version: '3.7'
+services:
+  nginx:
+    image: nginx
+    container_name: ${APP_NAME}-nginx
+    ports:
+      - 8080:80
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./blob:/blob
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    
