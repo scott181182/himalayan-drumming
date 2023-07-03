@@ -1,12 +1,13 @@
 "use client";
 
-import { FileBrowser } from "@/components/FileBrowser";
-import { Map } from "@/components/Map";
-import { RelationBrowser } from "@/components/RelationBrowser";
 import { LeftOutlined, RightOutlined } from "@ant-design/icons";
 import { Button, Drawer, Layout, Typography } from "antd";
 import Image from "next/image";
 import { useState } from "react";
+
+import { FileBrowser } from "@/components/FileBrowser";
+import { Map } from "@/components/Map";
+import { RelationBrowser } from "@/components/RelationBrowser";
 
 
 

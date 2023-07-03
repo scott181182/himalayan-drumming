@@ -1,8 +1,9 @@
 "use client";
 
-import { LayoutProps } from "@/utils/layout";
 import { App, Layout } from "antd";
+
 import { AppNavbar } from "./AppNavbar";
+import { LayoutProps } from "@/utils/layout";
 
 
 
