@@ -1,6 +1,6 @@
 "use client";
 
-import { LatLngExpression } from "leaflet";
+import type { LatLngExpression } from "leaflet";
 import { MapContainer, TileLayer, GeoJSON, type GeoJSONProps } from "react-leaflet";
 
 import uttarakhandGeo from "@/assets/uttarakhand.json";

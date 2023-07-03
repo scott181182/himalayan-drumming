@@ -1,8 +1,6 @@
 "use client";
 
-import { LeftOutlined, RightOutlined } from "@ant-design/icons";
-import { Button, Drawer, Layout, Typography } from "antd";
-import Image from "next/image";
+import { Layout, Typography } from "antd";
 import { useState } from "react";
 
 import { FileBrowser } from "@/components/FileBrowser";

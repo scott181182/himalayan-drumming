@@ -2,7 +2,7 @@ import { Inter } from "next/font/google";
 
 import "./globals.css";
 import { AppLayout } from "@/components/AppLayout";
-import { LayoutProps } from "@/utils/layout";
+import type { LayoutProps } from "@/utils/layout";
 
 
 

@@ -1,8 +1,14 @@
 /** @type import("eslint").Linter.Config */
 const config = {
     extends: [
+        "eslint:recommended",
+        "plugin:@typescript-eslint/recommended",
         "next/core-web-vitals",
         "plugin:import/recommended"
+    ],
+    parser: "@typescript-eslint/parser",
+    plugins: [
+        "@typescript-eslint"
     ],
     rules: {
         "indent": ["error", 4],
@@ -24,6 +30,8 @@ const config = {
                 "newlines-between": "always"
             }
         ],
+
+        "@typescript-eslint/consistent-type-imports": "error"
     },
 };
 
