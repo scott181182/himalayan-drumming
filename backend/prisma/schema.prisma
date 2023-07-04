@@ -30,4 +30,41 @@ model FileEntry {
     parent FileEntry? @relation("ParentChildren", fields: [parentId], references: [id])
 
     children FileEntry[] @relation("ParentChildren")
+
+    metadata FileMetadata?
+    withTags TagOnFile[]
+
+    @@index([parentId])
+}
+
+model FileMetadata {
+    fileId String @id
+    file FileEntry @relation(fields: [fileId], references: [id])
+
+    locationId String?
+    location LatLng? @relation(fields: [locationId], references: [id])
+}
+
+/// Manual Join table to avoid automatic cascades
+model TagOnFile {
+    tagName String
+    fileId String
+
+    tag Tag @relation(fields: [tagName], references: [name], onDelete: Cascade)
+    file FileEntry @relation(fields: [fileId], references: [id], onDelete: NoAction)
+
+    @@id([tagName, fileId])
+}
+model Tag {
+    name String @id
+
+    onFiles TagOnFile[]
+}
+
+model LatLng {
+    id String @id @default(cuid())
+    latitude Float
+    longitude Float
+
+    metadata FileMetadata[]
 }

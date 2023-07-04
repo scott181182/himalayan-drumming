@@ -4,12 +4,45 @@
 
 type FileEntry {
   children: [FileEntry!]
-  id: String!
+  id: ID!
+  metadata: FileMetadata
   name: String!
   parent: FileEntry
-  parentId: String
+  parentId: ID
+  tags: [String!]!
   type: String!
   url: String
+}
+
+type FileMetadata {
+  file: FileEntry!
+  fileId: ID!
+  location: LatLng
+  locationId: ID
+}
+
+input FileMetadataCreateLocationInput {
+  connect: IdWhereUniqueInput
+  create: LatLngCreateInput
+}
+
+input FileMetadataUpdateInput {
+  location: FileMetadataCreateLocationInput
+}
+
+input IdWhereUniqueInput {
+  id: ID!
+}
+
+type LatLng {
+  id: ID!
+  latitude: Float!
+  longitude: Float!
+}
+
+input LatLngCreateInput {
+  latitude: Float!
+  longitude: Float!
 }
 
 type Mutation {
@@ -17,10 +50,12 @@ type Mutation {
   Perform a full scan of OneDrive and other file sources. Creates, updates, and deletes entries as necessary.
   """
   fullscan: FileEntry
+  updateMetadata(data: FileMetadataUpdateInput!, fileId: ID!): FileMetadata!
 }
 
 type Query {
   fileEntries: [FileEntry!]!
   fileEntry(id: String!): FileEntry
   rootFileEntry: FileEntry!
+  tags: [String!]!
 }

@@ -14,6 +14,20 @@ declare global {
 }
 
 export interface NexusGenInputs {
+  FileMetadataCreateLocationInput: { // input type
+    connect?: NexusGenInputs['IdWhereUniqueInput'] | null; // IdWhereUniqueInput
+    create?: NexusGenInputs['LatLngCreateInput'] | null; // LatLngCreateInput
+  }
+  FileMetadataUpdateInput: { // input type
+    location?: NexusGenInputs['FileMetadataCreateLocationInput'] | null; // FileMetadataCreateLocationInput
+  }
+  IdWhereUniqueInput: { // input type
+    id: string; // ID!
+  }
+  LatLngCreateInput: { // input type
+    latitude: number; // Float!
+    longitude: number; // Float!
+  }
 }
 
 export interface NexusGenEnums {
@@ -29,6 +43,8 @@ export interface NexusGenScalars {
 
 export interface NexusGenObjects {
   FileEntry: prisma.FileEntry;
+  FileMetadata: prisma.FileMetadata;
+  LatLng: prisma.LatLng;
   Mutation: {};
   Query: {};
 }
@@ -46,44 +62,80 @@ export type NexusGenAllTypes = NexusGenRootTypes & NexusGenScalars
 export interface NexusGenFieldTypes {
   FileEntry: { // field return type
     children: NexusGenRootTypes['FileEntry'][] | null; // [FileEntry!]
-    id: string; // String!
+    id: string; // ID!
+    metadata: NexusGenRootTypes['FileMetadata'] | null; // FileMetadata
     name: string; // String!
     parent: NexusGenRootTypes['FileEntry'] | null; // FileEntry
-    parentId: string | null; // String
+    parentId: string | null; // ID
+    tags: string[]; // [String!]!
     type: string; // String!
     url: string | null; // String
   }
+  FileMetadata: { // field return type
+    file: NexusGenRootTypes['FileEntry']; // FileEntry!
+    fileId: string; // ID!
+    location: NexusGenRootTypes['LatLng'] | null; // LatLng
+    locationId: string | null; // ID
+  }
+  LatLng: { // field return type
+    id: string; // ID!
+    latitude: number; // Float!
+    longitude: number; // Float!
+  }
   Mutation: { // field return type
     fullscan: NexusGenRootTypes['FileEntry'] | null; // FileEntry
+    updateMetadata: NexusGenRootTypes['FileMetadata']; // FileMetadata!
   }
   Query: { // field return type
     fileEntries: NexusGenRootTypes['FileEntry'][]; // [FileEntry!]!
     fileEntry: NexusGenRootTypes['FileEntry'] | null; // FileEntry
     rootFileEntry: NexusGenRootTypes['FileEntry']; // FileEntry!
+    tags: string[]; // [String!]!
   }
 }
 
 export interface NexusGenFieldTypeNames {
   FileEntry: { // field return type name
     children: 'FileEntry'
-    id: 'String'
+    id: 'ID'
+    metadata: 'FileMetadata'
     name: 'String'
     parent: 'FileEntry'
-    parentId: 'String'
+    parentId: 'ID'
+    tags: 'String'
     type: 'String'
     url: 'String'
   }
+  FileMetadata: { // field return type name
+    file: 'FileEntry'
+    fileId: 'ID'
+    location: 'LatLng'
+    locationId: 'ID'
+  }
+  LatLng: { // field return type name
+    id: 'ID'
+    latitude: 'Float'
+    longitude: 'Float'
+  }
   Mutation: { // field return type name
     fullscan: 'FileEntry'
+    updateMetadata: 'FileMetadata'
   }
   Query: { // field return type name
     fileEntries: 'FileEntry'
     fileEntry: 'FileEntry'
     rootFileEntry: 'FileEntry'
+    tags: 'String'
   }
 }
 
 export interface NexusGenArgTypes {
+  Mutation: {
+    updateMetadata: { // args
+      data: NexusGenInputs['FileMetadataUpdateInput']; // FileMetadataUpdateInput!
+      fileId: string; // ID!
+    }
+  }
   Query: {
     fileEntry: { // args
       id: string; // String!
@@ -99,7 +151,7 @@ export interface NexusGenTypeInterfaces {
 
 export type NexusGenObjectNames = keyof NexusGenObjects;
 
-export type NexusGenInputNames = never;
+export type NexusGenInputNames = keyof NexusGenInputs;
 
 export type NexusGenEnumNames = never;
 

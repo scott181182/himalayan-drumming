@@ -7,13 +7,12 @@ import { executeFullScan } from "@/lib/scan";
 export const FileEntry = objectType({
     name: "FileEntry",
     definition(t) {
-        t.nonNull.string("id");
+        t.nonNull.id("id");
         t.nonNull.string("name");
         t.string("url");
-
         t.nonNull.string("type");
-        t.string("parentId");
 
+        t.id("parentId");
         t.field("parent", {
             type: "FileEntry",
             resolve(src, _args, ctx) {
@@ -24,6 +23,25 @@ export const FileEntry = objectType({
                     null;
             }
         });
+
+        t.field("metadata", {
+            type: "FileMetadata",
+            resolve(src, _args, ctx) {
+                return ctx.prisma.fileMetadata.findUnique({
+                    where: { fileId: src.id }
+                });
+            }
+        });
+        t.nonNull.list.nonNull.string("tags", {
+            resolve(src, _args, ctx) {
+                return ctx.prisma.tagOnFile.findMany({
+                    where: {
+                        fileId: { equals: src.id }
+                    }
+                }).then((tags) => tags.map((t) => t.tagName));
+            }
+        });
+
         t.list.nonNull.field("children", {
             type: "FileEntry",
             resolve(src, _args, ctx) {
@@ -69,6 +87,12 @@ export const FileEntryQuery = extendType({
             type: FileEntry,
             resolve(_, _args, ctx) {
                 return ctx.prisma.fileEntry.findMany();
+            }
+        });
+        t.nonNull.list.nonNull.string("tags", {
+            resolve(_, _args, ctx) {
+                return ctx.prisma.tag.findMany()
+                    .then((tags) => tags.map((t) => t.name));
             }
         });
     },
