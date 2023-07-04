@@ -12,7 +12,15 @@ import type { LayoutProps } from "@/utils/layout";
 
 
 const loginRequest: RedirectRequest = {
-    scopes: ["user.read", "mail.send"] // optional Array<string>
+    scopes: [
+        "User.Read",
+        "profile",
+        "email",
+        "Files.Read",
+        "Files.Read.All",
+        "Files.Read.Selected",
+        "Sites.Read.All"
+    ]
 };
 const pca = new PublicClientApplication(msalConfig);
 

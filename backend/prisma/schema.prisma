@@ -9,3 +9,25 @@ datasource db {
   provider = "sqlite"
   url      = env("DATABASE_URL")
 }
+
+
+
+model FileType {
+    name String @id
+
+    entries FileEntry[]
+}
+
+model FileEntry {
+    id String @id
+    name String
+    url String?
+
+    type String
+    parentId String?
+
+    typeRef FileType @relation(fields: [type], references: [name])
+    parent FileEntry? @relation("ParentChildren", fields: [parentId], references: [id])
+
+    children FileEntry[] @relation("ParentChildren")
+}
