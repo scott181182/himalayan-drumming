@@ -1,32 +1,25 @@
 "use client";
 
-import type { EventMessage, AuthenticationResult, RedirectRequest} from "@azure/msal-browser";
+import { ApolloProvider } from "@apollo/client";
+import type { EventMessage, AuthenticationResult } from "@azure/msal-browser";
 import { InteractionType , PublicClientApplication, EventType } from "@azure/msal-browser";
 import { MsalProvider, MsalAuthenticationTemplate } from "@azure/msal-react";
 import { App, Layout } from "antd";
+import { useEffect, useState } from "react";
 
 import { AppNavbar } from "./AppNavbar";
-import { msalConfig } from "@/lib/auth";
+import { createApolloClient } from "@/lib/apollo";
+import { loginRequest, msalConfig } from "@/lib/auth";
 import type { LayoutProps } from "@/utils/layout";
 
 
 
-const loginRequest: RedirectRequest = {
-    scopes: [
-        "User.Read",
-        "profile",
-        "email",
-        "Files.Read",
-        "Files.Read.All",
-        "Files.Read.Selected",
-        "Sites.Read.All"
-    ]
-};
 const pca = new PublicClientApplication(msalConfig);
 
 
 
 export function AppLayout({ children }: LayoutProps) {
+
     const accounts = pca.getAllAccounts();
     if (accounts.length > 0) {
         pca.setActiveAccount(accounts[0]);
@@ -42,23 +35,34 @@ export function AppLayout({ children }: LayoutProps) {
     });
 
     // TODO: consider using `pca.setNavigationClient()` for Next-based routing from MSAL.
+
+    const [token, setToken] = useState<string | undefined>();
+    useEffect(() => {
+        pca.acquireTokenSilent(loginRequest).then((res) => setToken(res.accessToken));
+    });
+
+    if(!token) { return <></>; }
+    const apolloClient = createApolloClient(token);
+
     return (
         <MsalProvider instance={pca}>
-            <MsalAuthenticationTemplate
-                interactionType={InteractionType.Redirect}
-                authenticationRequest={loginRequest}
-            >
+            <ApolloProvider client={apolloClient}>
                 <App>
-                    <Layout className="h-screen">
-                        <Layout.Header>
-                            <AppNavbar/>
-                        </Layout.Header>
-                        <Layout.Content>
-                            {children}
-                        </Layout.Content>
-                    </Layout>
+                    <MsalAuthenticationTemplate
+                        interactionType={InteractionType.Redirect}
+                        authenticationRequest={loginRequest}
+                    >
+                        <Layout className="h-screen">
+                            <Layout.Header>
+                                <AppNavbar/>
+                            </Layout.Header>
+                            <Layout.Content>
+                                {children}
+                            </Layout.Content>
+                        </Layout>
+                    </MsalAuthenticationTemplate>
                 </App>
-            </MsalAuthenticationTemplate>
+            </ApolloProvider>
         </MsalProvider>
     );
 }

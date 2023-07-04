@@ -1,3 +1,4 @@
+import type { Context } from "@/graphql/context";
 
 
 
@@ -6,6 +7,6 @@ export const APP_FOLDER_ID = "01COUOXFJUKYDPF6HWKBELMEHVODWE6DSA";
 
 
 
-export async function executeFullScan() {
+export async function executeFullScan(ctx: Context) {
     console.log("Full Scan WIP");
 }

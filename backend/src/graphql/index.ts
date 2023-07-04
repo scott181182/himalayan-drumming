@@ -24,4 +24,5 @@ export const schema = makeSchema({
         module: path.join(__dirname, "context.ts"),
         export: "Context",
     },
+    shouldGenerateArtifacts: process.env.NEXUS_GEN === "1"
 });

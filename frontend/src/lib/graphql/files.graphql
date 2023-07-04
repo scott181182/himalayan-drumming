@@ -1,0 +1,16 @@
+
+fragment FileEntryBasic on FileEntry {
+    id
+    name
+    type
+}
+
+query GetRootFileEntry {
+    rootFileEntry {
+        ...FileEntryBasic
+
+        children {
+            ...FileEntryBasic
+        }
+    }
+}
