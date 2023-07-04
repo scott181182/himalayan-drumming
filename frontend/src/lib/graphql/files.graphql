@@ -1,3 +1,9 @@
+fragment MetadataBasic on FileMetadata {
+    location {
+        latitude
+        longitude
+    }
+}
 
 fragment FileEntryBasic on FileEntry {
     id
@@ -6,19 +12,21 @@ fragment FileEntryBasic on FileEntry {
 
     type
     parentId
+
+    metadata {
+        ...MetadataBasic
+    }
+    tags
 }
 fragment FileEntryWithChildren on FileEntry {
-    id
-    name
-    url
-
-    type
-    parentId
+    ...FileEntryBasic
 
     children {
         ...FileEntryBasic
     }
 }
+
+
 
 query GetRootFileEntry {
     rootFileEntry {
@@ -37,6 +45,13 @@ query GetAllFileEntries {
     }
 }
 
+
+
+mutation AssignFileMetadata($fileId: ID!, $data: FileMetadataUpdateInput!) {
+    updateMetadata(fileId: $fileId, data: $data) {
+        ...MetadataBasic
+    }
+}
 mutation StartFullScan {
     fullscan {
         ...FileEntryWithChildren

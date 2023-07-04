@@ -58,12 +58,12 @@ export class ImmutableTree<T extends IdObject> {
         this.parentMap = parentMap ?? {  };
     }
 
-    public hasNode(id: string) {
-        return id in this.nodeMap;
-    }
-    public getNode(id: string): T {
-        return this.nodeMap[id];
-    }
+
+
+    public getNodes(): T[] { return Object.values(this.nodeMap); }
+
+    public hasNode(id: string): boolean { return id in this.nodeMap; }
+    public getNode(id: string): T { return this.nodeMap[id]; }
 
 
 
