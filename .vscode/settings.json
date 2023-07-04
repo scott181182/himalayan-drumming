@@ -3,7 +3,7 @@
         "source.fixAll.eslint": true
     },
     "eslint.workingDirectories": [
-        "backend",
-        "frontend"
+        "./backend",
+        "./frontend"
     ]
 }

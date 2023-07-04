@@ -1,7 +1,9 @@
 "use client";
 
-import { LatLngExpression } from "leaflet";
-import { MapContainer, TileLayer } from "react-leaflet";
+import type { LatLngExpression } from "leaflet";
+import { MapContainer, TileLayer, GeoJSON, type GeoJSONProps } from "react-leaflet";
+
+import uttarakhandGeo from "@/assets/uttarakhand.json";
 
 
 
@@ -36,6 +38,9 @@ export function Map() {
             <TileLayer
                 attribution={FreeTileLayers.StamenTerrain.attribution}
                 url={FreeTileLayers.StamenTerrain.url}
+            />
+            <GeoJSON
+                data={uttarakhandGeo as GeoJSONProps["data"]}
             />
         </MapContainer>
     );

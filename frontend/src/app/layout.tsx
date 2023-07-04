@@ -1,8 +1,10 @@
-import { AppLayout } from "@/components/AppLayout";
-import "./globals.css";
 import { Inter } from "next/font/google";
 
-import { LayoutProps } from "@/utils/layout";
+import "./globals.css";
+import { AppLayout } from "@/components/AppLayout";
+import type { LayoutProps } from "@/utils/layout";
+
+
 
 const inter = Inter({ subsets: ["latin"] });
 

@@ -1,12 +1,17 @@
 "use client";
 
+import { useQuery } from "@apollo/client";
+import { Layout, Typography } from "antd";
+import { useCallback, useState } from "react";
+
+import { AsyncData } from "@/components/AsyncData";
 import { FileBrowser } from "@/components/FileBrowser";
 import { Map } from "@/components/Map";
 import { RelationBrowser } from "@/components/RelationBrowser";
-import { LeftOutlined, RightOutlined } from "@ant-design/icons";
-import { Button, Drawer, Layout, Typography } from "antd";
-import Image from "next/image";
-import { useState } from "react";
+import type { FileEntryBasicFragment} from "@/generated/graphql";
+import { GetAllFileEntriesDocument } from "@/generated/graphql";
+import type { ImmutableTree} from "@/utils/tree";
+import { fileEntries2tree } from "@/utils/tree";
 
 
 
@@ -14,12 +19,29 @@ export default function HomePage() {
     const [fileBrowserCollapsed, setFileBrowserCollapsed] = useState(true);
     const [relationBrowserCollapsed, setRelationBrowserCollapsed] = useState(true);
 
+    const [fileTree, setFileTree] = useState<ImmutableTree<FileEntryBasicFragment> | undefined>();
+    const [selectedFile, setSelectedFile] = useState<FileEntryBasicFragment | undefined>();
+
+    const onSelect = useCallback((id: string | undefined) => {
+        const file = (id && fileTree?.hasNode(id)) ? fileTree.getNode(id) : undefined;
+        setSelectedFile(file);
+    }, [fileTree]);
+
+    const { loading, error } = useQuery(GetAllFileEntriesDocument, {
+        onCompleted(data) {
+            setFileTree(fileEntries2tree(data.fileEntries));
+        },
+    });
+
+
+
     return <Layout hasSider className="h-full">
         <Layout.Sider
             collapsible
             collapsed={fileBrowserCollapsed}
             onCollapse={setFileBrowserCollapsed}
             theme="light"
+            width="25%"
         >
             {fileBrowserCollapsed ?
                 <Typography.Title
@@ -28,7 +50,17 @@ export default function HomePage() {
                 >
                     File Browser
                 </Typography.Title> :
-                <FileBrowser/>
+                <AsyncData
+                    data={fileTree}
+                    loading={loading}
+                    error={error}
+                >
+                    {(tree) => <FileBrowser
+                        fileTree={tree}
+                        selectedFile={selectedFile}
+                        onSelect={onSelect}
+                    />}
+                </AsyncData>
             }
         </Layout.Sider>
         <Layout.Content className="relative">

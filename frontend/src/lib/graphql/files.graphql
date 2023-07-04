@@ -1,0 +1,59 @@
+fragment MetadataBasic on FileMetadata {
+    location {
+        latitude
+        longitude
+    }
+}
+
+fragment FileEntryBasic on FileEntry {
+    id
+    name
+    url
+
+    type
+    parentId
+
+    metadata {
+        ...MetadataBasic
+    }
+    tags
+}
+fragment FileEntryWithChildren on FileEntry {
+    ...FileEntryBasic
+
+    children {
+        ...FileEntryBasic
+    }
+}
+
+
+
+query GetRootFileEntry {
+    rootFileEntry {
+        ...FileEntryWithChildren
+    }
+}
+query GetFileEntry($id: String!) {
+    fileEntry(id: $id) {
+        ...FileEntryWithChildren
+    }
+}
+
+query GetAllFileEntries {
+    fileEntries {
+        ...FileEntryBasic
+    }
+}
+
+
+
+mutation AssignFileMetadata($fileId: ID!, $data: FileMetadataUpdateInput!) {
+    updateMetadata(fileId: $fileId, data: $data) {
+        ...MetadataBasic
+    }
+}
+mutation StartFullScan {
+    fullscan {
+        ...FileEntryWithChildren
+    }
+}
