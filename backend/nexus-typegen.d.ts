@@ -51,11 +51,13 @@ export interface NexusGenFieldTypes {
     parent: NexusGenRootTypes['FileEntry'] | null; // FileEntry
     parentId: string | null; // String
     type: string; // String!
+    url: string | null; // String
   }
   Mutation: { // field return type
     fullscan: NexusGenRootTypes['FileEntry'] | null; // FileEntry
   }
   Query: { // field return type
+    fileEntries: NexusGenRootTypes['FileEntry'][]; // [FileEntry!]!
     fileEntry: NexusGenRootTypes['FileEntry'] | null; // FileEntry
     rootFileEntry: NexusGenRootTypes['FileEntry']; // FileEntry!
   }
@@ -69,11 +71,13 @@ export interface NexusGenFieldTypeNames {
     parent: 'FileEntry'
     parentId: 'String'
     type: 'String'
+    url: 'String'
   }
   Mutation: { // field return type name
     fullscan: 'FileEntry'
   }
   Query: { // field return type name
+    fileEntries: 'FileEntry'
     fileEntry: 'FileEntry'
     rootFileEntry: 'FileEntry'
   }

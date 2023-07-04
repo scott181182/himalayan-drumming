@@ -2,15 +2,43 @@
 fragment FileEntryBasic on FileEntry {
     id
     name
+    url
+
     type
+    parentId
+}
+fragment FileEntryWithChildren on FileEntry {
+    id
+    name
+    url
+
+    type
+    parentId
+
+    children {
+        ...FileEntryBasic
+    }
 }
 
 query GetRootFileEntry {
     rootFileEntry {
-        ...FileEntryBasic
+        ...FileEntryWithChildren
+    }
+}
+query GetFileEntry($id: String!) {
+    fileEntry(id: $id) {
+        ...FileEntryWithChildren
+    }
+}
 
-        children {
-            ...FileEntryBasic
-        }
+query GetAllFileEntries {
+    fileEntries {
+        ...FileEntryBasic
+    }
+}
+
+mutation StartFullScan {
+    fullscan {
+        ...FileEntryWithChildren
     }
 }

@@ -9,6 +9,7 @@ type FileEntry {
   parent: FileEntry
   parentId: String
   type: String!
+  url: String
 }
 
 type Mutation {
@@ -19,6 +20,7 @@ type Mutation {
 }
 
 type Query {
+  fileEntries: [FileEntry!]!
   fileEntry(id: String!): FileEntry
   rootFileEntry: FileEntry!
 }

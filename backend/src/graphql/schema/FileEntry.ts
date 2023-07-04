@@ -1,7 +1,6 @@
 import { extendType, nonNull, objectType, stringArg } from "nexus";
 
-import { APP_FOLDER_ID, executeFullScan } from "@/lib/scan";
-
+import { executeFullScan } from "@/lib/scan";
 
 
 
@@ -10,6 +9,7 @@ export const FileEntry = objectType({
     definition(t) {
         t.nonNull.string("id");
         t.nonNull.string("name");
+        t.string("url");
 
         t.nonNull.string("type");
         t.string("parentId");
@@ -64,6 +64,13 @@ export const FileEntryQuery = extendType({
                 });
             }
         });
+
+        t.nonNull.list.nonNull.field("fileEntries", {
+            type: FileEntry,
+            resolve(_, _args, ctx) {
+                return ctx.prisma.fileEntry.findMany();
+            }
+        });
     },
 });
 
@@ -74,11 +81,7 @@ export const FileEntryMutation = extendType({
             type: "FileEntry",
             description: "Perform a full scan of OneDrive and other file sources. Creates, updates, and deletes entries as necessary.",
             resolve(_, _args, ctx) {
-                return executeFullScan(ctx)
-                    .then(() => ctx.prisma.fileEntry.findUniqueOrThrow({
-                        where: { id: APP_FOLDER_ID }
-                    }));
-
+                return executeFullScan(ctx);
             }
         });
     }

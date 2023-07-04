@@ -19,6 +19,7 @@ export default function HomePage() {
             collapsed={fileBrowserCollapsed}
             onCollapse={setFileBrowserCollapsed}
             theme="light"
+            width="25%"
         >
             {fileBrowserCollapsed ?
                 <Typography.Title
