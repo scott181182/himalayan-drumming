@@ -1,6 +1,6 @@
 import type { TreeDataNode } from "antd";
 
-import type { FileEntryBasicFragment} from "@/generated/graphql";
+import type { FileEntryBasicFragment, LocationCompleteFragment} from "@/generated/graphql";
 
 
 
@@ -15,42 +15,12 @@ export interface AntdTreeConfig<T extends IdObject> {
 
 
 
-export function fileEntries2tree(entries: FileEntryBasicFragment[]): ImmutableTree<FileEntryBasicFragment> {
-    let rootIndex = -1;
-    const nodeMap: Record<string, FileEntryBasicFragment> = {};
-    const parentMap: Record<string, string[]> = {};
-
-    for(let i = 0; i < entries.length; i++) {
-        const entry = entries[i];
-
-        nodeMap[entry.id] = entry;
-        if(!entry.parentId) {
-            if(rootIndex >= 0) {
-                console.warn(`Found more than one FileEntry without a parent: ${entry.id}`);
-                continue;
-            }
-            rootIndex = i;
-        } else {
-            if(!(entry.parentId in parentMap)) {
-                parentMap[entry.parentId] = [];
-            }
-            parentMap[entry.parentId].push(entry.id);
-        }
-    }
-    if(rootIndex < 0) {
-        throw new Error("Could not find root file entry");
-    }
-    const root = entries[rootIndex];
-
-    return new ImmutableTree(root, nodeMap, parentMap);
-}
-
 export class ImmutableTree<T extends IdObject> {
-    private readonly nodeMap: Record<string, T>;
-    private readonly parentMap: Record<string, string[]>;
+    protected readonly nodeMap: Record<string, T>;
+    protected readonly parentMap: Record<string, string[]>;
 
     public constructor(
-        private readonly root: T,
+        protected readonly root: T,
         nodeMap?: Record<string, T>,
         parentMap?: Record<string, string[]>
     ) {
@@ -96,4 +66,65 @@ export class ImmutableTree<T extends IdObject> {
     public toAntdTree(options: AntdTreeConfig<T>): TreeDataNode {
         return this.toAntdTreeNode(this.root, options);
     }
+}
+
+export class FileTree extends ImmutableTree<FileEntryBasicFragment> {
+    protected constructor(
+        root: FileEntryBasicFragment,
+        nodeMap: Record<string, FileEntryBasicFragment>,
+        parentMap: Record<string, string[]>,
+        protected readonly locations: LocationCompleteFragment[],
+        /** Map from locationId to FileEntry */
+        protected readonly locationMap: Record<string, FileEntryBasicFragment[]>,
+    ) {
+        super(root, nodeMap, parentMap);
+    }
+
+
+    public static fromEntries(entries: FileEntryBasicFragment[]): FileTree {
+        let rootIndex = -1;
+        const nodeMap: Record<string, FileEntryBasicFragment> = {};
+        const parentMap: Record<string, string[]> = {};
+        const locations: LocationCompleteFragment[] = [];
+        const locationMap: Record<string, FileEntryBasicFragment[]> = {};
+
+        for(let i = 0; i < entries.length; i++) {
+            const entry = entries[i];
+
+            nodeMap[entry.id] = entry;
+            if(!entry.parentId) {
+                if(rootIndex >= 0) {
+                    console.warn(`Found more than one FileEntry without a parent: ${entry.id}`);
+                    continue;
+                }
+                rootIndex = i;
+            } else {
+                if(!(entry.parentId in parentMap)) {
+                    parentMap[entry.parentId] = [];
+                }
+                parentMap[entry.parentId].push(entry.id);
+            }
+
+            const loc = entry.metadata?.location;
+            if(!loc) { continue; }
+
+            if(!(loc.id in locationMap)) {
+                locations.push(loc);
+                locationMap[loc.id] = [];
+            }
+
+            locationMap[loc.id].push(entry);
+        }
+        if(rootIndex < 0) {
+            throw new Error("Could not find root file entry");
+        }
+        const root = entries[rootIndex];
+
+        return new FileTree(root, nodeMap, parentMap, locations, locationMap);
+    }
+
+
+
+    public getLocations() { return this.locations; }
+    public getFilesAtLocation(locId: string) { return this.locationMap[locId]; }
 }

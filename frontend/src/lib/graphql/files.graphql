@@ -1,7 +1,12 @@
+fragment LocationComplete on LatLng {
+    id
+    latitude
+    longitude
+}
+
 fragment MetadataBasic on FileMetadata {
     location {
-        latitude
-        longitude
+        ...LocationComplete
     }
 }
 

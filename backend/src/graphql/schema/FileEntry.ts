@@ -1,4 +1,4 @@
-import { extendType, nonNull, objectType, stringArg } from "nexus";
+import { extendType, idArg, nonNull, objectType, stringArg } from "nexus";
 
 import { executeFullScan } from "@/lib/scan";
 
@@ -89,6 +89,7 @@ export const FileEntryQuery = extendType({
                 return ctx.prisma.fileEntry.findMany();
             }
         });
+
         t.nonNull.list.nonNull.string("tags", {
             resolve(_, _args, ctx) {
                 return ctx.prisma.tag.findMany()
@@ -106,6 +107,57 @@ export const FileEntryMutation = extendType({
             description: "Perform a full scan of OneDrive and other file sources. Creates, updates, and deletes entries as necessary.",
             resolve(_, _args, ctx) {
                 return executeFullScan(ctx);
+            }
+        });
+
+
+
+        t.nonNull.field("tagFile", {
+            type: FileEntry,
+            args: {
+                fileId: nonNull(idArg()),
+                tag: nonNull(stringArg())
+            },
+            async resolve(_, args, ctx) {
+                const onFiles = {
+                    create: {
+                        fileId: args.fileId
+                    }
+                };
+                return ctx.prisma.tag.upsert({
+                    where: { name: args.tag },
+                    create: {
+                        name: args.tag,
+                        onFiles
+                    },
+                    update: { onFiles },
+                    include: {
+                        onFiles: {
+                            where: { fileId: { equals: args.fileId } },
+                            include: { file: true }
+                        }
+                    }
+                }).then((res) => res.onFiles[0].file);
+            }
+        });
+        t.nonNull.field("untagFile", {
+            type: FileEntry,
+            args: {
+                fileId: nonNull(idArg()),
+                tag: nonNull(stringArg())
+            },
+            resolve(_, args, ctx) {
+                return ctx.prisma.tagOnFile.delete({
+                    where: {
+                        tagName_fileId: {
+                            fileId: args.fileId,
+                            tagName: args.tag
+                        }
+                    },
+                    include: {
+                        file: true
+                    }
+                }).then((res) => res.file);
             }
         });
     }

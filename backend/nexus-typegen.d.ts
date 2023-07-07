@@ -84,6 +84,8 @@ export interface NexusGenFieldTypes {
   }
   Mutation: { // field return type
     fullscan: NexusGenRootTypes['FileEntry'] | null; // FileEntry
+    tagFile: NexusGenRootTypes['FileEntry']; // FileEntry!
+    untagFile: NexusGenRootTypes['FileEntry']; // FileEntry!
     updateMetadata: NexusGenRootTypes['FileMetadata']; // FileMetadata!
   }
   Query: { // field return type
@@ -119,6 +121,8 @@ export interface NexusGenFieldTypeNames {
   }
   Mutation: { // field return type name
     fullscan: 'FileEntry'
+    tagFile: 'FileEntry'
+    untagFile: 'FileEntry'
     updateMetadata: 'FileMetadata'
   }
   Query: { // field return type name
@@ -131,6 +135,14 @@ export interface NexusGenFieldTypeNames {
 
 export interface NexusGenArgTypes {
   Mutation: {
+    tagFile: { // args
+      fileId: string; // ID!
+      tag: string; // String!
+    }
+    untagFile: { // args
+      fileId: string; // ID!
+      tag: string; // String!
+    }
     updateMetadata: { // args
       data: NexusGenInputs['FileMetadataUpdateInput']; // FileMetadataUpdateInput!
       fileId: string; // ID!
