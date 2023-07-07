@@ -5,6 +5,7 @@
     "author": "Scott Fasone",
     "license": "MIT",
     "scripts": {
+        "lint": "eslint",
         "generate": "yarn generate:prisma && yarn generate:nexus",
         "generate:prisma": "prisma generate",
         "generate:nexus": "NEXUS_GEN=1 ts-node --transpile-only ./src/graphql/index.ts",

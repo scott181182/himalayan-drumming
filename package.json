@@ -1,0 +1,23 @@
+{
+    "name": "himalayan-drumming-research",
+    "version": "1.0.0",
+    "main": "backend/dist/index.js",
+    "repository": "git@github.com:scott181182/himalayan-drumming.git",
+    "author": "Scott Fasone <fasonesg@mail.uc.edu>",
+    "license": "MIT",
+    "private": true,
+    "scripts": {
+        "install": "yarn install:server && yarn install:client",
+        "install:client": "cd frontend && yarn install",
+        "install:server": "cd backend && yarn install",
+        "lint": "yarn lint:server && yarn lint:client",
+        "lint:client": "cd frontend && yarn lint",
+        "lint:server": "cd backend && yarn lint",
+        "generate": "yarn generate:server && yarn generate:client",
+        "generate:client": "cd frontend && yarn generate",
+        "generate:server": "cd backend && yarn generate",
+        "build": "yarn build:server && yarn build:client",
+        "build:client": "cd frontend && yarn compile",
+        "build:server": "cd backend && yarn build"
+    }
+}

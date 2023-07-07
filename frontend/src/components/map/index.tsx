@@ -1,9 +1,14 @@
 "use client";
 
-import type { LatLngExpression } from "leaflet";
-import { MapContainer, TileLayer, GeoJSON, type GeoJSONProps } from "react-leaflet";
+import type { LatLngExpression, LeafletEventHandlerFnMap } from "leaflet";
+import { useCallback, useMemo } from "react";
+import { MapContainer, TileLayer, GeoJSON, type GeoJSONProps, Marker } from "react-leaflet";
 
+import { ClickMarker } from "./ClickMarker";
+import { useDashboardDispatch, useDashboardState } from "@/app/context";
 import uttarakhandGeo from "@/assets/uttarakhand.json";
+import type { LocationCompleteFragment } from "@/generated/graphql";
+import { isDefined } from "@/utils/array";
 
 
 
@@ -26,11 +31,40 @@ const FreeTileLayers = {
 
 
 
-export interface MapProps {
-    height: number;
-}
-
 export function Map() {
+    const { fileTree } = useDashboardState();
+    const dispatch = useDashboardDispatch();
+
+    const locations = useMemo(() => (
+        fileTree.getNodes()
+            .map((node) => node.metadata?.location)
+            .filter(isDefined)
+            // Deduplicate on Location ID
+            .filter((loc, idx, arr) => arr.findIndex((l) => l.id === loc.id) === idx)
+    ),[fileTree]);
+
+    const makeMarkerHandler = useCallback((loc: LocationCompleteFragment) => ({
+        click: (ev) => {
+            ev.originalEvent.stopPropagation();
+            dispatch({
+                type: "selectLocation",
+                payload: loc
+            });
+
+        }
+    }) as LeafletEventHandlerFnMap, [dispatch]);
+
+    const markers = useMemo(() => (
+        locations?.map((l) => (
+            <Marker
+                key={l.id}
+                position={[l.latitude, l.longitude]}
+                eventHandlers={makeMarkerHandler(l)}
+            />
+        ) ?? [])
+    ), [locations, makeMarkerHandler]);
+
+
 
 
     return (
@@ -42,6 +76,8 @@ export function Map() {
             <GeoJSON
                 data={uttarakhandGeo as GeoJSONProps["data"]}
             />
+            {markers}
+            <ClickMarker/>
         </MapContainer>
     );
 }

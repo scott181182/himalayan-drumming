@@ -27,7 +27,7 @@ model FileEntry {
     parentId String?
 
     typeRef FileType @relation(fields: [type], references: [name])
-    parent FileEntry? @relation("ParentChildren", fields: [parentId], references: [id])
+    parent FileEntry? @relation("ParentChildren", fields: [parentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
     children FileEntry[] @relation("ParentChildren")
 
@@ -39,10 +39,10 @@ model FileEntry {
 
 model FileMetadata {
     fileId String @id
-    file FileEntry @relation(fields: [fileId], references: [id])
+    file FileEntry @relation(fields: [fileId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
     locationId String?
-    location LatLng? @relation(fields: [locationId], references: [id])
+    location LatLng? @relation(fields: [locationId], references: [id], onDelete: SetNull, onUpdate: Cascade)
 }
 
 /// Manual Join table to avoid automatic cascades
@@ -50,8 +50,8 @@ model TagOnFile {
     tagName String
     fileId String
 
-    tag Tag @relation(fields: [tagName], references: [name], onDelete: Cascade)
-    file FileEntry @relation(fields: [fileId], references: [id], onDelete: NoAction)
+    tag Tag @relation(fields: [tagName], references: [name], onDelete: Cascade, onUpdate: Cascade)
+    file FileEntry @relation(fields: [fileId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
     @@id([tagName, fileId])
 }

@@ -50,6 +50,8 @@ type Mutation {
   Perform a full scan of OneDrive and other file sources. Creates, updates, and deletes entries as necessary.
   """
   fullscan: FileEntry
+  tagFile(fileId: ID!, tag: String!): FileEntry!
+  untagFile(fileId: ID!, tag: String!): FileEntry!
   updateMetadata(data: FileMetadataUpdateInput!, fileId: ID!): FileMetadata!
 }
 
