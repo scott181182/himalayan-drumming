@@ -6,6 +6,7 @@
         "generate": "graphql-codegen",
         "dev": "next dev",
         "build": "next build",
+        "compile": "tsc -p . --pretty",
         "start": "next start",
         "lint": "next lint"
     },
