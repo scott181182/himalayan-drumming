@@ -1,10 +1,10 @@
 import { useApolloClient } from "@apollo/client";
 import type { TreeDataNode } from "antd";
 import { Button, Descriptions, Tag, Tree } from "antd";
-import { useCallback, useContext, useMemo } from "react";
+import { useCallback, useMemo } from "react";
 
 import { MultiCase } from "./MultiCase";
-import {  DashboardDispatchContext, useDashboardState } from "@/app/context";
+import { useDashboardDispatch, useDashboardState } from "@/app/context";
 import { AssignFileMetadataDocument, GetAllFileEntriesDocument, StartFullScanDocument } from "@/generated/graphql";
 import { usePromiseMessage } from "@/utils/antd";
 import { isDefined } from "@/utils/array";
@@ -16,7 +16,7 @@ export function FileBrowser() {
     const promiseMsg = usePromiseMessage();
 
     const { fileTree, selectedFiles, selectedLocation } = useDashboardState();
-    const dispath = useContext(DashboardDispatchContext);
+    const { setSelectedFiles } = useDashboardDispatch();
 
     const startFullScan = useCallback(() => {
         apolloClient.mutate({
@@ -34,8 +34,8 @@ export function FileBrowser() {
             undefined
         ).filter(isDefined);
 
-        dispath?.({ type: "setSelectedFiles", payload: files });
-    }, [dispath, fileTree]);
+        setSelectedFiles(files);
+    }, [setSelectedFiles, fileTree]);
 
     const assignLocation = useCallback(() => {
         const selectedFile = selectedFiles[0];

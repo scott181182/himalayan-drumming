@@ -1,6 +1,6 @@
 import { useQuery } from "@apollo/client";
-import type { Dispatch, Reducer} from "react";
-import { createContext, useContext, useReducer } from "react";
+import type { Reducer} from "react";
+import { createContext, useContext, useMemo, useReducer } from "react";
 
 import { AsyncData } from "@/components/AsyncData";
 import { GetAllFileEntriesDocument, type FileEntryBasicFragment, type LocationCompleteFragment } from "@/generated/graphql";
@@ -26,6 +26,15 @@ export type DashboardDispatchAction = {
     type: "selectLocation",
     payload: LocationCompleteFragment,
 }
+
+export type DashboardDispatchFunctions = {
+    setSelectedFiles: (files: FileEntryBasicFragment[]) => void;
+    setVirtualLocation: (location: Pick<LocationCompleteFragment, "latitude" | "longitude">) => void;
+    setFileTree: (fileTree: FileTree) => void;
+    selectLocation: (location: LocationCompleteFragment) => void;
+}
+
+
 
 export const dashboardReducer: Reducer<DashboardContextValue, DashboardDispatchAction> = (state, action) => {
     switch(action.type) {
@@ -59,7 +68,7 @@ export const dashboardReducer: Reducer<DashboardContextValue, DashboardDispatchA
 
 
 export const DashboardContext = createContext<DashboardContextValue | null>(null);
-export const DashboardDispatchContext = createContext<Dispatch<DashboardDispatchAction> | null>(null);
+export const DashboardDispatchContext = createContext<DashboardDispatchFunctions | null>(null);
 
 export function useDashboardState() {
     const state = useContext(DashboardContext);
@@ -94,9 +103,20 @@ export function DashboardProvider({
         },
     });
 
+    const functions: DashboardDispatchFunctions = useMemo(() => ({
+        setSelectedFiles: (files: FileEntryBasicFragment[]) =>
+            dispatch({ type: "setSelectedFiles", payload: files }),
+        setVirtualLocation: (location: Pick<LocationCompleteFragment, "latitude" | "longitude">) =>
+            dispatch({ type: "setVirtualLocation", payload: location }),
+        setFileTree: (fileTree: FileTree) =>
+            dispatch({ type: "setFileTree", payload: fileTree }),
+        selectLocation: (location: LocationCompleteFragment) =>
+            dispatch({ type: "selectLocation", payload: location })
+    }), [dispatch]);
+
     return (
         <DashboardContext.Provider value={state}>
-            <DashboardDispatchContext.Provider value={dispatch}>
+            <DashboardDispatchContext.Provider value={functions}>
                 <AsyncData
                     data={state.fileTree}
                     loading={loading}
