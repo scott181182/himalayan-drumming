@@ -26,7 +26,7 @@ export function AppLayout({ children }: LayoutProps) {
 
     useEffect(() => {
         if(token) { return; }
-        auth.acquireToken(InteractionType.Silent, loginRequest).then((res) => setToken(res?.idToken));
+        auth.acquireToken(InteractionType.Silent, loginRequest).then((res) => setToken(res?.accessToken));
     }, [auth, token]);
 
     if(!token) { return <></>; }
