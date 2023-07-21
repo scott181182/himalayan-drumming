@@ -15,6 +15,19 @@ export interface MergeTreeOptions<T, U> {
 
 
 
+export function diffObject<T, U, TK extends keyof T, UK extends keyof U>(oldObj: T, newObj: U, keys: [TK, UK][]): { [Key in TK]?: T[Key] } | undefined {
+    const diffObj: { [Key in TK]?: T[Key] } = {};
+
+    for(const [tkey, ukey] of keys) {
+        if(!oldObj[tkey] && !newObj[ukey]) { continue; }
+        if(oldObj[tkey] as unknown !== newObj[ukey]) { diffObj[tkey] = newObj[ukey] as unknown as T[typeof tkey]; }
+    }
+
+    if(Object.keys(diffObj).length > 0) {
+        return diffObj;
+    }
+}
+
 export async function mergeTrees<T, U>(newTree: TreeNode<T>, oldTree: TreeNode<U>, options: MergeTreeOptions<T, U>) {
     if(newTree.children.length === 0) { return; }
 

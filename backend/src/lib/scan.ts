@@ -3,7 +3,7 @@ import type { FileEntry, Prisma, PrismaClient } from "@prisma/client";
 import type { OneDriveItem } from "./onedrive";
 import { getOneDriveTree } from "./onedrive";
 import type { TreeNode} from "./tree";
-import { mergeTrees } from "./tree";
+import { diffObject, mergeTrees } from "./tree";
 import type { Context } from "@/graphql/context";
 
 
@@ -93,13 +93,21 @@ async function updatePrismaFileTree(pRoot: PrismaTreeNode, odRoot: TreeNode<OneD
         {
             onNew: (odNode) => createPrismaFileTree(odNode, prisma),
             async onExisting(odNode, pNode) {
-                const diffObj: Prisma.FileEntryUncheckedUpdateInput = {};
-                if(pNode.value.name !== odNode.value.name) { diffObj.name = odNode.value.name; }
-                if(pNode.value.url !== odNode.value.itemUrl) { diffObj.url = odNode.value.itemUrl; }
+                const odValue = {
+                    ...odNode.value,
+                    downloadUrl: `${odNode.value.itemUrl}/content`
+                };
+                const diffObj = diffObject(pNode.value, odValue, [
+                    ["name", "name"],
+                    ["url", "itemUrl"],
+                    ["contentUrl", "downloadUrl"],
+                    ["webUrl", "webUrl"],
+                    ["webDavUrl", "webDavUrl"]
+                ]);
                 // TODO: support type changes with file cleanup.
                 // if(pChild.type !== odNode.value.type) { diffObj.type = odNode.value.type; }
 
-                if(Object.keys(diffObj).length > 0) {
+                if(diffObj) {
                     return prisma.fileEntry.update({
                         where: { id: odNode.value.id },
                         data: diffObj
