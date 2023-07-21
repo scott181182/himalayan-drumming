@@ -62,6 +62,7 @@ export type NexusGenAllTypes = NexusGenRootTypes & NexusGenScalars
 export interface NexusGenFieldTypes {
   FileEntry: { // field return type
     children: NexusGenRootTypes['FileEntry'][] | null; // [FileEntry!]
+    contentUrl: string | null; // String
     id: string; // ID!
     metadata: NexusGenRootTypes['FileMetadata'] | null; // FileMetadata
     name: string; // String!
@@ -70,6 +71,8 @@ export interface NexusGenFieldTypes {
     tags: string[]; // [String!]!
     type: string; // String!
     url: string | null; // String
+    webDavUrl: string | null; // String
+    webUrl: string | null; // String
   }
   FileMetadata: { // field return type
     file: NexusGenRootTypes['FileEntry']; // FileEntry!
@@ -99,6 +102,7 @@ export interface NexusGenFieldTypes {
 export interface NexusGenFieldTypeNames {
   FileEntry: { // field return type name
     children: 'FileEntry'
+    contentUrl: 'String'
     id: 'ID'
     metadata: 'FileMetadata'
     name: 'String'
@@ -107,6 +111,8 @@ export interface NexusGenFieldTypeNames {
     tags: 'String'
     type: 'String'
     url: 'String'
+    webDavUrl: 'String'
+    webUrl: 'String'
   }
   FileMetadata: { // field return type name
     file: 'FileEntry'

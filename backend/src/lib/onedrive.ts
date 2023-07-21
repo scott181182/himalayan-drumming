@@ -18,7 +18,10 @@ const DriveItemSchema = z.object({
     lastModifiedDateTime: z.string(),
     folder: z.object({
         childCount: z.number()
-    }).optional()
+    }).optional(),
+
+    webDavUrl: z.string().optional(),
+    webUrl: z.string().optional(),
 });
 const GetChildrenSchema = z.object({
     value: DriveItemSchema.array(),
@@ -33,11 +36,8 @@ export interface OneDriveConfig {
     driveId: string;
 }
 
-export interface OneDriveItem {
-    id: string;
-    name: string;
+export interface OneDriveItem extends Omit<z.infer<typeof DriveItemSchema>, "createdDateTime" | "lastModifiedDateTime"> {
     type: "directory" | "file";
-    size: number;
     createdDateTime: Date;
     lastModifiedDateTime: Date;
     itemUrl: string;
@@ -52,14 +52,12 @@ function getOneDriveItemURL(itemId: string, cfg: OneDriveConfig) {
 function driveItem2treeNode(item: z.infer<typeof DriveItemSchema>, cfg: OneDriveConfig): TreeNode<OneDriveItem> {
     return {
         value: {
-            id: item.id,
-            name: item.name,
+            ...item,
             type: item.folder ? "directory" : "file",
 
-            size: item.size,
             createdDateTime: new Date(item.createdDateTime),
             lastModifiedDateTime: new Date(item.lastModifiedDateTime),
-            itemUrl: getOneDriveItemURL(item.id, cfg)
+            itemUrl: getOneDriveItemURL(item.id, cfg),
         },
         id: item.id,
         children: []

@@ -58,6 +58,10 @@ function odTree2prismaCreateInput(odNode: TreeNode<OneDriveItem>): Prisma.FileEn
         type: odNode.value.type,
         url: odNode.value.itemUrl,
 
+        contentUrl: `${odNode.value.itemUrl}/content`,
+        webDavUrl: odNode.value.webDavUrl,
+        webUrl: odNode.value.webUrl,
+
         children: odNode.children ? {
             create: odNode.children.map(odTree2prismaCreateInput)
         } : undefined

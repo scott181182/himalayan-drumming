@@ -23,6 +23,13 @@ model FileEntry {
     name String
     url String?
 
+    /// Download URL
+    contentUrl String?
+    /// WebDAV compatible URL for the item.
+    webDavUrl String?
+    /// URL that displays the resource in the browser.
+    webUrl String?
+
     type String
     parentId String?
 

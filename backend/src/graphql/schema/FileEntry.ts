@@ -12,6 +12,10 @@ export const FileEntry = objectType({
         t.string("url");
         t.nonNull.string("type");
 
+        t.string("contentUrl");
+        t.string("webDavUrl");
+        t.string("webUrl");
+
         t.id("parentId");
         t.field("parent", {
             type: "FileEntry",
