@@ -1,4 +1,5 @@
 import { useQuery } from "@apollo/client";
+import { App } from "antd";
 import type { Reducer} from "react";
 import { createContext, useContext, useMemo, useReducer } from "react";
 
@@ -89,6 +90,8 @@ export interface DashboardProviderProps {
 export function DashboardProvider({
     children
 }: DashboardProviderProps) {
+    const { message } = App.useApp();
+
     const [state, dispatch] = useReducer(dashboardReducer, {
         // Unsafe code, but the `<AsyncData>` component is guaranteeing that this will be defined prior to access.
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -99,7 +102,13 @@ export function DashboardProvider({
 
     const { loading, error } = useQuery(GetAllFileEntriesDocument, {
         onCompleted(data) {
-            dispatch({ type: "setFileTree", payload: FileTree.fromEntries(data.fileEntries) });
+            try {
+                const payload = FileTree.fromEntries(data.fileEntries);
+                dispatch({ type: "setFileTree", payload });
+            } catch(err) {
+                console.error(err);
+                message.error("There was a problem loading data from OneDrive");
+            }
         },
     });
 
