@@ -29,6 +29,8 @@ model FileEntry {
     webDavUrl String?
     /// URL that displays the resource in the browser.
     webUrl String?
+    /// URL to embed in an iFrame.
+    embedUrl String?
 
     type String
     parentId String?

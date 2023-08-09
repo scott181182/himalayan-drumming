@@ -15,6 +15,7 @@ export const FileEntry = objectType({
         t.string("contentUrl");
         t.string("webDavUrl");
         t.string("webUrl");
+        t.string("embedUrl");
 
         t.id("parentId");
         t.field("parent", {

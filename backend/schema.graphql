@@ -5,6 +5,7 @@
 type FileEntry {
   children: [FileEntry!]
   contentUrl: String
+  embedUrl: String
   id: ID!
   metadata: FileMetadata
   name: String!

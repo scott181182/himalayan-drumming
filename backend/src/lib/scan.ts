@@ -1,10 +1,14 @@
 import type { FileEntry, Prisma, PrismaClient } from "@prisma/client";
 
-import type { OneDriveItem } from "./onedrive";
-import { getOneDriveTree } from "./onedrive";
+import type { OneDriveConfig, OneDriveItem } from "./onedrive";
+import { getOneDriveItemEmbedUrl, getOneDriveTree, makeConfig } from "./onedrive";
 import type { TreeNode} from "./tree";
 import { diffObject, mergeTrees } from "./tree";
 import type { Context } from "@/graphql/context";
+
+
+
+interface ScanContext extends Context, OneDriveConfig {  }
 
 
 
@@ -51,7 +55,14 @@ type PrismaTreeNode = TreeNode<FileEntry>;
 
 
 
-function odTree2prismaCreateInput(odNode: TreeNode<OneDriveItem>): Prisma.FileEntryUncheckedCreateWithoutParentInput {
+async function odTree2prismaCreateInput(odNode: TreeNode<OneDriveItem>, ctx: ScanContext): Promise<Prisma.FileEntryUncheckedCreateWithoutParentInput> {
+    const embedUrl = await getOneDriveItemEmbedUrl(odNode.id, ctx);
+
+    const create: Prisma.FileEntryUncheckedCreateWithoutParentInput[] = [];
+    for(const child of odNode.children) {
+        create.push(await odTree2prismaCreateInput(child, ctx));
+    }
+
     return {
         id: odNode.id,
         name: odNode.value.name,
@@ -61,25 +72,24 @@ function odTree2prismaCreateInput(odNode: TreeNode<OneDriveItem>): Prisma.FileEn
         contentUrl: `${odNode.value.itemUrl}/content`,
         webDavUrl: odNode.value.webDavUrl,
         webUrl: odNode.value.webUrl,
+        embedUrl,
 
-        children: odNode.children ? {
-            create: odNode.children.map(odTree2prismaCreateInput)
-        } : undefined
+        children: odNode.children ? { create } : undefined
     };
 }
 
-function createPrismaFileTree(odRoot: TreeNode<OneDriveItem>, prisma: PrismaClient) {
-    return prisma.fileEntry.create({
-        data: odTree2prismaCreateInput(odRoot)
+async function createPrismaFileTree(odRoot: TreeNode<OneDriveItem>, ctx: ScanContext) {
+    return ctx.prisma.fileEntry.create({
+        data: await odTree2prismaCreateInput(odRoot, ctx)
     });
 }
 
 
 
-async function updatePrismaFileTree(pRoot: PrismaTreeNode, odRoot: TreeNode<OneDriveItem>, prisma: PrismaClient) {
+async function updatePrismaFileTree(pRoot: PrismaTreeNode, odRoot: TreeNode<OneDriveItem>, ctx: ScanContext) {
     if(odRoot.id !== pRoot.id) {
         // Make sure the root folder IDs match (root folder is identified by name)
-        await prisma.fileEntry.updateMany({
+        await ctx.prisma.fileEntry.updateMany({
             where: { parentId: null },
             data: {
                 id: odRoot.id
@@ -91,7 +101,7 @@ async function updatePrismaFileTree(pRoot: PrismaTreeNode, odRoot: TreeNode<OneD
         odRoot,
         pRoot,
         {
-            onNew: (odNode) => createPrismaFileTree(odNode, prisma),
+            onNew: (odNode) => createPrismaFileTree(odNode, ctx),
             async onExisting(odNode, pNode) {
                 const odValue = {
                     ...odNode.value,
@@ -104,11 +114,14 @@ async function updatePrismaFileTree(pRoot: PrismaTreeNode, odRoot: TreeNode<OneD
                     ["webUrl", "webUrl"],
                     ["webDavUrl", "webDavUrl"]
                 ]);
+                if(!pNode.value.embedUrl) {
+                    (diffObj as any).embedUrl = await getOneDriveItemEmbedUrl(odValue.id, ctx);
+                }
                 // TODO: support type changes with file cleanup.
                 // if(pChild.type !== odNode.value.type) { diffObj.type = odNode.value.type; }
 
                 if(diffObj) {
-                    return prisma.fileEntry.update({
+                    return ctx.prisma.fileEntry.update({
                         where: { id: odNode.value.id },
                         data: diffObj
                     });
@@ -116,7 +129,7 @@ async function updatePrismaFileTree(pRoot: PrismaTreeNode, odRoot: TreeNode<OneD
             },
             async onOld(pNode) {
                 if(pNode.value.type === "directory" || pNode.value.type === "file") {
-                    return prisma.fileEntry.delete({
+                    return ctx.prisma.fileEntry.delete({
                         where: { id: pNode.id }
                     });
                 }
@@ -131,7 +144,11 @@ async function updatePrismaFileTree(pRoot: PrismaTreeNode, odRoot: TreeNode<OneD
  * @param ctx
  */
 export async function executeFullScan(ctx: Context) {
-    const odTree = await getOneDriveTree(ctx.token);
+    const scanCtx: ScanContext = {
+        ...ctx,
+        ...makeConfig(ctx.token)
+    }
+    const odTree = await getOneDriveTree(scanCtx);
 
     const odFileRoot = odTree.children?.find((e) => e.value.name === "Files");
     if(!odFileRoot) {
@@ -143,9 +160,9 @@ export async function executeFullScan(ctx: Context) {
     // TODO: implement merging the OneDrive tree with the Prisma tree, to avoid unnecessary deletions
     const pTree = await getPrismaFileTree(ctx.prisma);
     if(!pTree) {
-        pFileRoot = await createPrismaFileTree(odFileRoot, ctx.prisma);
+        pFileRoot = await createPrismaFileTree(odFileRoot, scanCtx);
     } else {
-        await updatePrismaFileTree(pTree, odFileRoot, ctx.prisma);
+        await updatePrismaFileTree(pTree, odFileRoot, scanCtx);
         pFileRoot = await ctx.prisma.fileEntry.findUniqueOrThrow({
             where: { id: odFileRoot.id }
         });

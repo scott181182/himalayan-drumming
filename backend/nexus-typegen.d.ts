@@ -63,6 +63,7 @@ export interface NexusGenFieldTypes {
   FileEntry: { // field return type
     children: NexusGenRootTypes['FileEntry'][] | null; // [FileEntry!]
     contentUrl: string | null; // String
+    embedUrl: string | null; // String
     id: string; // ID!
     metadata: NexusGenRootTypes['FileMetadata'] | null; // FileMetadata
     name: string; // String!
@@ -103,6 +104,7 @@ export interface NexusGenFieldTypeNames {
   FileEntry: { // field return type name
     children: 'FileEntry'
     contentUrl: 'String'
+    embedUrl: 'String'
     id: 'ID'
     metadata: 'FileMetadata'
     name: 'String'

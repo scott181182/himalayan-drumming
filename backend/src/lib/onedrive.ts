@@ -1,4 +1,4 @@
-import type { Axios } from "axios";
+import { Axios, AxiosError } from "axios";
 import axios from "axios";
 import { z } from "zod";
 
@@ -27,6 +27,14 @@ const GetChildrenSchema = z.object({
     value: DriveItemSchema.array(),
     "@odata.nextLink": z.string().optional()
 });
+const DriveItemEmbedLinkSchema = z.object({
+    id: z.string(),
+    roles: z.string().array(),
+    link: z.object({
+        type: z.string(),
+        webUrl: z.string()
+    })
+});
 
 
 
@@ -48,6 +56,26 @@ function getOneDriveItemURL(itemId: string, cfg: OneDriveConfig) {
 }
 
 
+
+export function getOneDriveItemEmbedUrl(itemId: string, cfg: OneDriveConfig) {
+    const url = getOneDriveItemURL(itemId, cfg) + "/createLink";
+    return cfg.ax.post(url, {
+        type: "embed",
+        scope: "anonymous"
+    })
+        .catch((err) => {
+            console.error("Error fetching embed url");
+            if(err instanceof AxiosError) {
+                console.error(err.message);
+                console.error(url)
+                console.error(err.response?.data);
+            } else {
+                console.error(err);
+            }
+            throw err;
+        })
+        .then((res) => DriveItemEmbedLinkSchema.parse(res.data).link.webUrl);
+}
 
 function driveItem2treeNode(item: z.infer<typeof DriveItemSchema>, cfg: OneDriveConfig): TreeNode<OneDriveItem> {
     return {
@@ -88,7 +116,7 @@ async function getDriveItem(id: string, cfg: OneDriveConfig): Promise<TreeNode<O
     return node;
 }
 
-export function getOneDriveTree(token: string): Promise<TreeNode<OneDriveItem>> {
+export function makeConfig(token: string): OneDriveConfig {
     const baseURL = "https://graph.microsoft.com/v1.0";
     const ax = axios.create({
         baseURL,
@@ -97,11 +125,12 @@ export function getOneDriveTree(token: string): Promise<TreeNode<OneDriveItem>> 
         }
     });
 
-    const cfg: OneDriveConfig = {
+    return {
         ax,
         baseURL,
         driveId: APP_DRIVE_ID
     };
-
+}
+export function getOneDriveTree(cfg: OneDriveConfig): Promise<TreeNode<OneDriveItem>> {
     return getDriveItem(APP_FOLDER_ID, cfg);
 }
