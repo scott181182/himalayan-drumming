@@ -13,7 +13,7 @@ USER $USERNAME
 RUN sh -c "$(curl -L https://github.com/deluan/zsh-in-docker/releases/download/v1.1.5/zsh-in-docker.sh)" -- \
     -x -t robbyrussell -p git -p yarn \
     -p https://github.com/zsh-users/zsh-autosuggestions -p https://github.com/zsh-users/zsh-completions && \
-    chsh $(which zsh)
+    sudo chsh -s $(which zsh)
 
 # Set `DEVCONTAINER` environment variable to help with orientation
 ENV DEVCONTAINER=true

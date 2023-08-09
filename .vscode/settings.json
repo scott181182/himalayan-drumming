@@ -11,7 +11,8 @@
         "frontend",
         "backend",
         "cicd",
-        "docs"
+        "docs",
+        "docker"
     ],
     "terminal.integrated.profiles.linux": {
         "bash": {
