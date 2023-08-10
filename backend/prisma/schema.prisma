@@ -67,4 +67,39 @@ model LatLng {
     longitude Float
 
     metadata FileMetadata[]
+    villages Village[]
+}
+
+
+
+model Person {
+    id String @id @default(cuid())
+    name String
+
+    parent Person? @relation("ParentChild", fields: [parentId], references: [id])
+    parentId String?
+
+    children Person[] @relation("ParentChild")
+    villages PersonInVillage[]
+}
+model Village {
+    id String @id @default(cuid())
+    name String
+
+    location LatLng @relation(fields: [locationId], references: [id])
+    locationId String
+
+    people PersonInVillage[]
+}
+
+model PersonInVillage {
+    /// The person's relation to the village
+    description String?
+
+    person Person @relation(fields: [personId], references: [id])
+    personId String
+    village Village @relation(fields: [personId], references: [id])
+    villageId String
+
+    @@id([personId, villageId])
 }
