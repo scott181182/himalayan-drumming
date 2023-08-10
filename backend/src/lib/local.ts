@@ -20,6 +20,9 @@ export async function readDirRecursive(dirpath: string, rootpath: string): Promi
     const children: TreeNode<FileItem>[] = [];
 
     for(const dirent of directoryEntries) {
+        // Ignore dot files/directories.
+        if(dirent.name.startsWith(".")) { continue; }
+
         const fullpath = path.join(dirpath, dirent.name);
         const id = path.relative(rootpath, fullpath);
         const value: FileItem = {
