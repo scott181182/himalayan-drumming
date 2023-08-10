@@ -12,10 +12,6 @@ export const FileEntry = objectType({
         t.string("url");
         t.nonNull.string("type");
 
-        t.string("contentUrl");
-        t.string("webDavUrl");
-        t.string("webUrl");
-
         t.id("parentId");
         t.field("parent", {
             type: "FileEntry",
@@ -110,7 +106,7 @@ export const FileEntryMutation = extendType({
             type: "FileEntry",
             description: "Perform a full scan of OneDrive and other file sources. Creates, updates, and deletes entries as necessary.",
             resolve(_, _args, ctx) {
-                return executeFullScan(ctx);
+                return executeFullScan(ctx.prisma);
             }
         });
 

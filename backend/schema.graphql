@@ -4,7 +4,6 @@
 
 type FileEntry {
   children: [FileEntry!]
-  contentUrl: String
   id: ID!
   metadata: FileMetadata
   name: String!
@@ -13,8 +12,6 @@ type FileEntry {
   tags: [String!]!
   type: String!
   url: String
-  webDavUrl: String
-  webUrl: String
 }
 
 type FileMetadata {
