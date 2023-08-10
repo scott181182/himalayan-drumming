@@ -12,6 +12,7 @@
         "generate:nexus:watch": "NEXUS_GEN=1 ts-node-dev --transpile-only --no-notify ./src/graphql/index.ts",
         "db:migrate": "prisma migrate dev",
         "db:seed": "ts-node ./src/scripts/db_seed.ts",
+        "db:scan": "ts-node ./src/scripts/db_scan.ts",
         "build": "tsc -p . --pretty"
     },
     "dependencies": {
