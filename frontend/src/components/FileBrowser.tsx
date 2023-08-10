@@ -1,10 +1,11 @@
 import { useApolloClient } from "@apollo/client";
 import type { TreeDataNode } from "antd";
-import { Button, Descriptions, Tag, Tree } from "antd";
+import { App, Modal , Button, Descriptions, Tag, Tree } from "antd";
 import { useCallback, useMemo } from "react";
 
 import { MultiCase } from "./MultiCase";
 import { useDashboardDispatch, useDashboardState } from "@/app/context";
+import type { FileEntryBasicFragment} from "@/generated/graphql";
 import { AssignFileMetadataDocument, GetAllFileEntriesDocument, StartFullScanDocument } from "@/generated/graphql";
 import { usePromiseMessage } from "@/utils/antd";
 import { isDefined } from "@/utils/array";
@@ -12,6 +13,7 @@ import { isDefined } from "@/utils/array";
 
 
 export function FileBrowser() {
+    const { modal, message } = App.useApp();
     const apolloClient = useApolloClient();
     const promiseMsg = usePromiseMessage();
 
@@ -73,6 +75,27 @@ export function FileBrowser() {
         [fileTree]
     );
 
+    const previewFile = (file: FileEntryBasicFragment) => {
+        if(file.name.endsWith(".mp4")) {
+            modal.info({
+                title: file.name,
+                closable: true,
+                content: <div>
+                    {file.url ?
+                        <video controls>
+
+                            <source src={file.url} type="video/mp4"/>
+                            Your browser does not support this video
+                        </video> :
+                        <i>could not load preview for this file</i>
+                    }
+                </div>
+            });
+        } else {
+            message.warning("Unsupported file for preview");
+        }
+    };
+
 
 
     return <div className="flex flex-col h-full gap-1">
@@ -113,8 +136,19 @@ export function FileBrowser() {
                 >
                     Assign Location
                 </Button>
+                <Button
+                    onClick={() => previewFile(selectedFile)}
+                    className="mx-8"
+                >
+                    Preview File
+                </Button>
             </>}
         />
+        {/* <Modal
+
+        >
+
+        </Modal> */}
     </div>;
 
 }
