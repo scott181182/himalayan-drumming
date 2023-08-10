@@ -1,6 +1,7 @@
 import { useQuery } from "@apollo/client";
-import type { Dispatch, Reducer} from "react";
-import { createContext, useContext, useReducer } from "react";
+import { App } from "antd";
+import type { Reducer} from "react";
+import { createContext, useContext, useMemo, useReducer } from "react";
 
 import { AsyncData } from "@/components/AsyncData";
 import { GetAllFileEntriesDocument, type FileEntryBasicFragment, type LocationCompleteFragment } from "@/generated/graphql";
@@ -26,6 +27,15 @@ export type DashboardDispatchAction = {
     type: "selectLocation",
     payload: LocationCompleteFragment,
 }
+
+export type DashboardDispatchFunctions = {
+    setSelectedFiles: (files: FileEntryBasicFragment[]) => void;
+    setVirtualLocation: (location: Pick<LocationCompleteFragment, "latitude" | "longitude">) => void;
+    setFileTree: (fileTree: FileTree) => void;
+    selectLocation: (location: LocationCompleteFragment) => void;
+}
+
+
 
 export const dashboardReducer: Reducer<DashboardContextValue, DashboardDispatchAction> = (state, action) => {
     switch(action.type) {
@@ -59,7 +69,7 @@ export const dashboardReducer: Reducer<DashboardContextValue, DashboardDispatchA
 
 
 export const DashboardContext = createContext<DashboardContextValue | null>(null);
-export const DashboardDispatchContext = createContext<Dispatch<DashboardDispatchAction> | null>(null);
+export const DashboardDispatchContext = createContext<DashboardDispatchFunctions | null>(null);
 
 export function useDashboardState() {
     const state = useContext(DashboardContext);
@@ -80,6 +90,8 @@ export interface DashboardProviderProps {
 export function DashboardProvider({
     children
 }: DashboardProviderProps) {
+    const { message } = App.useApp();
+
     const [state, dispatch] = useReducer(dashboardReducer, {
         // Unsafe code, but the `<AsyncData>` component is guaranteeing that this will be defined prior to access.
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -90,13 +102,30 @@ export function DashboardProvider({
 
     const { loading, error } = useQuery(GetAllFileEntriesDocument, {
         onCompleted(data) {
-            dispatch({ type: "setFileTree", payload: FileTree.fromEntries(data.fileEntries) });
+            try {
+                const payload = FileTree.fromEntries(data.fileEntries);
+                dispatch({ type: "setFileTree", payload });
+            } catch(err) {
+                console.error(err);
+                message.error("There was a problem loading data from OneDrive");
+            }
         },
     });
 
+    const functions: DashboardDispatchFunctions = useMemo(() => ({
+        setSelectedFiles: (files: FileEntryBasicFragment[]) =>
+            dispatch({ type: "setSelectedFiles", payload: files }),
+        setVirtualLocation: (location: Pick<LocationCompleteFragment, "latitude" | "longitude">) =>
+            dispatch({ type: "setVirtualLocation", payload: location }),
+        setFileTree: (fileTree: FileTree) =>
+            dispatch({ type: "setFileTree", payload: fileTree }),
+        selectLocation: (location: LocationCompleteFragment) =>
+            dispatch({ type: "selectLocation", payload: location })
+    }), [dispatch]);
+
     return (
         <DashboardContext.Provider value={state}>
-            <DashboardDispatchContext.Provider value={dispatch}>
+            <DashboardDispatchContext.Provider value={functions}>
                 <AsyncData
                     data={state.fileTree}
                     loading={loading}

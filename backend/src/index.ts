@@ -16,6 +16,8 @@ const PORT = parseInt(process.env.PORT ?? "3001");
 (async function main() {
     const app = express();
 
+    app.disable("x-powered-by");
+
     const prismaClient = new PrismaClient();
 
     const apolloServer = new ApolloServer<Context>({ schema });

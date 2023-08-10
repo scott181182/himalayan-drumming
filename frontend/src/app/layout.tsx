@@ -2,6 +2,7 @@ import { Inter } from "next/font/google";
 
 import "./globals.css";
 import { AppLayout } from "@/components/AppLayout";
+import { AuthLayout } from "@/components/AuthLayout";
 import type { LayoutProps } from "@/utils/layout";
 
 
@@ -31,9 +32,11 @@ export default function RootLayout({
                 />
             </head>
             <body className={inter.className}>
-                <AppLayout>
-                    {children}
-                </AppLayout>
+                <AuthLayout>
+                    <AppLayout>
+                        {children}
+                    </AppLayout>
+                </AuthLayout>
             </body>
         </html>
     );

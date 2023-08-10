@@ -6,17 +6,14 @@ import { useDashboardDispatch, useDashboardState } from "@/app/context";
 
 export function ClickMarker() {
     const { selectedLocation } = useDashboardState();
-    const dispatch = useDashboardDispatch();
+    const { setVirtualLocation } = useDashboardDispatch();
 
     useMapEvent("click", (ev) => {
         console.log("Click!");
 
-        dispatch({
-            type: "setVirtualLocation",
-            payload: {
-                latitude: ev.latlng.lat,
-                longitude: ev.latlng.lng,
-            }
+        setVirtualLocation({
+            latitude: ev.latlng.lat,
+            longitude: ev.latlng.lng,
         });
     });
 

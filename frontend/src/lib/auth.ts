@@ -21,6 +21,8 @@ export const loginRequest: PopupRequest = {
         "email",
         "Files.Read",
         "Files.Read.All",
+        "Files.ReadWrite",
+        "Files.ReadWrite.All",
         "Files.Read.Selected",
         "Sites.Read.All"
     ]

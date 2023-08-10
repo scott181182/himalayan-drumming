@@ -35,5 +35,5 @@ export function AsyncData<T>({
         />;
     }
 
-    return typeof children === "function" ? children(data) : children;
+    return <>{typeof children === "function" ? children(data) : children}</>;
 }

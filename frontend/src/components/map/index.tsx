@@ -6,7 +6,7 @@ import { MapContainer, TileLayer, GeoJSON, type GeoJSONProps, Marker } from "rea
 
 import { ClickMarker } from "./ClickMarker";
 import { useDashboardDispatch, useDashboardState } from "@/app/context";
-import uttarakhandGeo from "@/assets/uttarakhand.json";
+import uttarakhandGeo from "@/assets/india_states.json";
 import type { LocationCompleteFragment } from "@/generated/graphql";
 import { isDefined } from "@/utils/array";
 
@@ -33,7 +33,7 @@ const FreeTileLayers = {
 
 export function Map() {
     const { fileTree } = useDashboardState();
-    const dispatch = useDashboardDispatch();
+    const { selectLocation } = useDashboardDispatch();
 
     const locations = useMemo(() => (
         fileTree.getNodes()
@@ -46,13 +46,9 @@ export function Map() {
     const makeMarkerHandler = useCallback((loc: LocationCompleteFragment) => ({
         click: (ev) => {
             ev.originalEvent.stopPropagation();
-            dispatch({
-                type: "selectLocation",
-                payload: loc
-            });
-
+            selectLocation(loc);
         }
-    }) as LeafletEventHandlerFnMap, [dispatch]);
+    }) as LeafletEventHandlerFnMap, [selectLocation]);
 
     const markers = useMemo(() => (
         locations?.map((l) => (

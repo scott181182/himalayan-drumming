@@ -1,10 +1,11 @@
 import { useApolloClient } from "@apollo/client";
 import type { TreeDataNode } from "antd";
-import { Button, Descriptions, Tag, Tree } from "antd";
-import { useCallback, useContext, useMemo } from "react";
+import { App, Modal , Button, Descriptions, Tag, Tree } from "antd";
+import { useCallback, useMemo } from "react";
 
 import { MultiCase } from "./MultiCase";
-import {  DashboardDispatchContext, useDashboardState } from "@/app/context";
+import { useDashboardDispatch, useDashboardState } from "@/app/context";
+import type { FileEntryBasicFragment} from "@/generated/graphql";
 import { AssignFileMetadataDocument, GetAllFileEntriesDocument, StartFullScanDocument } from "@/generated/graphql";
 import { usePromiseMessage } from "@/utils/antd";
 import { isDefined } from "@/utils/array";
@@ -12,11 +13,12 @@ import { isDefined } from "@/utils/array";
 
 
 export function FileBrowser() {
+    const { modal, message } = App.useApp();
     const apolloClient = useApolloClient();
     const promiseMsg = usePromiseMessage();
 
     const { fileTree, selectedFiles, selectedLocation } = useDashboardState();
-    const dispath = useContext(DashboardDispatchContext);
+    const { setSelectedFiles } = useDashboardDispatch();
 
     const startFullScan = useCallback(() => {
         apolloClient.mutate({
@@ -34,8 +36,8 @@ export function FileBrowser() {
             undefined
         ).filter(isDefined);
 
-        dispath?.({ type: "setSelectedFiles", payload: files });
-    }, [dispath, fileTree]);
+        setSelectedFiles(files);
+    }, [setSelectedFiles, fileTree]);
 
     const assignLocation = useCallback(() => {
         const selectedFile = selectedFiles[0];
@@ -72,6 +74,27 @@ export function FileBrowser() {
         })?.children ?? [],
         [fileTree]
     );
+
+    const previewFile = (file: FileEntryBasicFragment) => {
+        if(file.name.endsWith(".mp4")) {
+            modal.info({
+                title: file.name,
+                closable: true,
+                content: <div>
+                    {file.url ?
+                        <video controls>
+
+                            <source src={file.url} type="video/mp4"/>
+                            Your browser does not support this video
+                        </video> :
+                        <i>could not load preview for this file</i>
+                    }
+                </div>
+            });
+        } else {
+            message.warning("Unsupported file for preview");
+        }
+    };
 
 
 
@@ -113,8 +136,19 @@ export function FileBrowser() {
                 >
                     Assign Location
                 </Button>
+                <Button
+                    onClick={() => previewFile(selectedFile)}
+                    className="mx-8"
+                >
+                    Preview File
+                </Button>
             </>}
         />
+        {/* <Modal
+
+        >
+
+        </Modal> */}
     </div>;
 
 }
