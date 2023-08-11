@@ -31,11 +31,7 @@ export interface NexusGenInputs {
   PersonCreateInput: { // input type
     name: string; // String!
     parentId?: string | null; // String
-    village?: NexusGenInputs['PersonCreateVillageInput'] | null; // PersonCreateVillageInput
-  }
-  PersonCreateVillageInput: { // input type
-    connect?: NexusGenInputs['IdWhereUniqueInput'] | null; // IdWhereUniqueInput
-    create?: NexusGenInputs['VillageCreateInput'] | null; // VillageCreateInput
+    village?: NexusGenInputs['PersonInVillageCreateInput'] | null; // PersonInVillageCreateInput
   }
   PersonInVillageCreateInput: { // input type
     description?: string | null; // String

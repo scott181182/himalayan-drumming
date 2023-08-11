@@ -69,12 +69,7 @@ type Person {
 input PersonCreateInput {
   name: String!
   parentId: String
-  village: PersonCreateVillageInput
-}
-
-input PersonCreateVillageInput {
-  connect: IdWhereUniqueInput
-  create: VillageCreateInput
+  village: PersonInVillageCreateInput
 }
 
 input PersonInVillageCreateInput {

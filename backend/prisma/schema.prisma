@@ -98,7 +98,7 @@ model PersonInVillage {
 
     person Person @relation(fields: [personId], references: [id])
     personId String
-    village Village @relation(fields: [personId], references: [id])
+    village Village @relation(fields: [villageId], references: [id])
     villageId String
 
     @@id([personId, villageId])

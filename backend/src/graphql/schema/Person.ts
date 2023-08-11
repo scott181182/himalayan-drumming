@@ -1,6 +1,6 @@
 import { extendType, idArg, inputObjectType, nonNull, objectType } from "nexus";
 
-import { makeRelationCreateInput, unnullifyObject } from "./utils";
+import { unnullifyObject } from "./utils";
 
 
 
@@ -65,15 +65,12 @@ export const PersonQuery = extendType({
 
 
 
-export const PersonCreateVillageInput = makeRelationCreateInput("PersonCreateVillageInput", "IdWhereUniqueInput", "VillageCreateInput");
 export const PersonCreateInput = inputObjectType({
     name: "PersonCreateInput",
     definition(t) {
         t.nonNull.string("name");
         t.string("parentId");
-        t.field("village",{
-            type: PersonInVillageCreateInput
-        })
+        t.field("village", {type: PersonInVillageCreateInput})
     },
 });
 
@@ -94,8 +91,15 @@ export const PersonMutation = extendType({
                 data: nonNull(PersonCreateInput)
             },
             resolve(_, args, ctx) {
+                const {village, ... data } = unnullifyObject(args.data);
                 return ctx.prisma.person.create({
-                    data: unnullifyObject(args.data) 
+                    data: { 
+                        ... data,
+                        villages: village ? {
+                            create: village
+                            
+                        } : undefined
+                    } 
                 });
             }
         });
