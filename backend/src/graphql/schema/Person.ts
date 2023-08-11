@@ -29,6 +29,16 @@ export const  Person = objectType({
                 });
             }
         });
+
+        t.nonNull.list.nonNull.field("files", {
+            type: "FileEntry",
+            resolve(src, _args, ctx) {
+                return ctx.prisma.person.findUniqueOrThrow({
+                    where: { id: src.id },
+                    select: { files: true }
+                }).then((res) => res.files);
+            }
+        });
     },
 });
 

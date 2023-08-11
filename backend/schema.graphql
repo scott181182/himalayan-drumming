@@ -9,6 +9,7 @@ type FileEntry {
   name: String!
   parent: FileEntry
   parentId: ID
+  people: [Person!]!
   tags: [String!]!
   type: String!
   url: String
@@ -60,6 +61,7 @@ type Mutation {
 
 type Person {
   children: [Person!]!
+  files: [FileEntry!]!
   id: ID!
   name: String!
   parent: Person

@@ -86,6 +86,7 @@ export interface NexusGenFieldTypes {
     name: string; // String!
     parent: NexusGenRootTypes['FileEntry'] | null; // FileEntry
     parentId: string | null; // ID
+    people: NexusGenRootTypes['Person'][]; // [Person!]!
     tags: string[]; // [String!]!
     type: string; // String!
     url: string | null; // String
@@ -111,6 +112,7 @@ export interface NexusGenFieldTypes {
   }
   Person: { // field return type
     children: NexusGenRootTypes['Person'][]; // [Person!]!
+    files: NexusGenRootTypes['FileEntry'][]; // [FileEntry!]!
     id: string; // ID!
     name: string; // String!
     parent: NexusGenRootTypes['Person'] | null; // Person
@@ -142,6 +144,7 @@ export interface NexusGenFieldTypeNames {
     name: 'String'
     parent: 'FileEntry'
     parentId: 'ID'
+    people: 'Person'
     tags: 'String'
     type: 'String'
     url: 'String'
@@ -167,6 +170,7 @@ export interface NexusGenFieldTypeNames {
   }
   Person: { // field return type name
     children: 'Person'
+    files: 'FileEntry'
     id: 'ID'
     name: 'String'
     parent: 'Person'
