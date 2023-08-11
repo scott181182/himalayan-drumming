@@ -12,13 +12,13 @@ export const  Village = objectType({
         t.nonNull.id("id");
         t.nonNull.string("name");
 
-        t.string("locationId");
-        t.field("location", {
+        t.nonNull.string("locationId");
+        t.nonNull.field("location", {
             type: LatLng,
             resolve(src, _args, ctx) {
-                return src.locationId ? ctx.prisma.latLng.findUniqueOrThrow({
+                return ctx.prisma.latLng.findUniqueOrThrow({
                     where: { id: src.locationId }
-                }) : null;
+                });
             }
         });
     },
@@ -57,7 +57,7 @@ export const VillageCreateInput = inputObjectType({
     name: "VillageCreateInput",
     definition(t) {
         t.nonNull.string("name");
-        t.nonNull.field({name: "location", type: VillageCreateLocationInput})
+        t.nonNull.field({name: "location", type: VillageCreateLocationInput});
     },
 });
 

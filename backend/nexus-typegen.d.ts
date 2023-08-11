@@ -136,8 +136,8 @@ export interface NexusGenFieldTypes {
   }
   Village: { // field return type
     id: string; // ID!
-    location: NexusGenRootTypes['LatLng'] | null; // LatLng
-    locationId: string | null; // String
+    location: NexusGenRootTypes['LatLng']; // LatLng!
+    locationId: string; // String!
     name: string; // String!
   }
 }

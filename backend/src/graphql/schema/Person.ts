@@ -22,7 +22,7 @@ export const  Person = objectType({
         });
 
         t.nonNull.list.nonNull.field("children", {
-            type: 'Person',
+            type: "Person",
             resolve(src, _args, ctx) {
                 return ctx.prisma.person.findMany({
                     where: { parentId: src.id }
@@ -80,7 +80,7 @@ export const PersonCreateInput = inputObjectType({
     definition(t) {
         t.nonNull.string("name");
         t.string("parentId");
-        t.field("village", {type: VillageForPersonInput})
+        t.field("village", {type: VillageForPersonInput});
     },
 });
 
@@ -89,7 +89,7 @@ export const PersonUpdateInput = inputObjectType({
     definition(t) {
         t.string("name");
         t.string("parentId");
-        t.field("village", {type: VillageForPersonInput})
+        t.field("village", {type: VillageForPersonInput});
     },
 });
 
