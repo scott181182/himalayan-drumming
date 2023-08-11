@@ -1,14 +1,17 @@
 import { useApolloClient } from "@apollo/client";
+import { CompassOutlined } from "@ant-design/icons";
 import type { TreeDataNode } from "antd";
-import { App, Modal , Button, Descriptions, Tag, Tree } from "antd";
+import { App, Modal , Button, Descriptions, Tag, Tree, Table, Row, Col } from "antd";
 import { useCallback, useMemo } from "react";
 
-import { MultiCase } from "./MultiCase";
+import { MultiCase } from "../MultiCase";
 import { useDashboardDispatch, useDashboardState } from "@/app/context";
 import type { FileEntryBasicFragment} from "@/generated/graphql";
 import { AssignFileMetadataDocument, GetAllFileEntriesDocument, StartFullScanDocument } from "@/generated/graphql";
 import { usePromiseMessage } from "@/utils/antd";
 import { isDefined } from "@/utils/array";
+import { ColumnsType } from "antd/es/table";
+import { VideoPlayer } from "./VideoPlayer";
 
 
 
@@ -76,38 +79,41 @@ export function FileBrowser() {
     );
 
     const previewFile = (file: FileEntryBasicFragment) => {
-        if(file.name.endsWith(".mp4")) {
+        const ext = file.name.substring(file.name.lastIndexOf(".") + 1);
+
+        if(["mp4", "mov"].includes(ext)) {
             modal.info({
                 title: file.name,
                 closable: true,
-                content: <div>
-                    {file.url ?
-                        <video controls>
-
-                            <source src={file.url} type="video/mp4"/>
-                            Your browser does not support this video
-                        </video> :
-                        <i>could not load preview for this file</i>
-                    }
-                </div>
+                content: <VideoPlayer src={file.url}/>,
+                width: "50%"
             });
         } else {
             message.warning("Unsupported file for preview");
         }
     };
 
-
+    const columns: ColumnsType<TreeDataNode> = [
+        {
+            title: "Name",
+            dataIndex: "title",
+        }
+    ]
 
     return <div className="flex flex-col h-full gap-1">
         <Button onClick={startFullScan} className="m-4">
             Full Scan
         </Button>
         <h3 className="ml-4 text-lg font-bold">Files</h3>
-        <Tree
-            treeData={files}
-            className="flex-1 overflow-y-auto"
-            selectedKeys={selectedFiles.map((f) => f.id)}
-            onSelect={onSelect}
+        <Table
+            dataSource={files}
+            className="flex-1 overflow-y-auto striped"
+            rowClassName={(row) => selectedFiles.some((sf) => sf.id === row.key) ? "selected cursor-pointer" : " cursor-pointer"}
+            onRow={(row) => ({
+                onClick: () => onSelect([ row.key ])
+            })}
+            columns={columns}
+            size="small"
         />
         <MultiCase
             value={selectedFiles}
@@ -115,7 +121,7 @@ export function FileBrowser() {
             single={(selectedFile) => <>
                 <Descriptions
                     title={selectedFile.name}
-                    className="p-4 border-t-2 border-t-black"
+                    className="p-4 border-t-2 border-t-black wrap-title"
                     bordered
                     size="small"
                 >
@@ -124,24 +130,33 @@ export function FileBrowser() {
                     </Descriptions.Item>
                     <Descriptions.Item label="Location">
                         {selectedFile.metadata?.location ?
-                            `${selectedFile.metadata.location.latitude}, ${selectedFile.metadata.location.longitude}` :
+                            <Button
+                                icon={<CompassOutlined/>}
+                                onClick={() => message.info(`(${selectedFile.metadata?.location?.latitude}, ${selectedFile.metadata?.location?.longitude})`)}
+                            /> :
                             <em>None</em>
                         }
                     </Descriptions.Item>
                 </Descriptions>
-                <Button
-                    disabled={!selectedLocation}
-                    onClick={assignLocation}
-                    className="mx-8"
-                >
-                    Assign Location
-                </Button>
-                <Button
-                    onClick={() => previewFile(selectedFile)}
-                    className="mx-8"
-                >
-                    Preview File
-                </Button>
+                <Row>
+                    <Col>
+                        <Button
+                            disabled={!selectedLocation}
+                            onClick={assignLocation}
+                            className="mx-8"
+                        >
+                            Assign Location
+                        </Button>
+                    </Col>
+                    <Col>
+                        <Button
+                            onClick={() => previewFile(selectedFile)}
+                            className="mx-8"
+                        >
+                            Preview File
+                        </Button>
+                    </Col>
+                </Row>
             </>}
         />
         {/* <Modal

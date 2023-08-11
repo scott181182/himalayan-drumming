@@ -1,0 +1,24 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+
+.ant-table-wrapper.striped {
+    .ant-table-row:hover td {
+        background-color: #cbe1ff !important;
+    }
+    .ant-table-row.selected td {
+        background-color: #a7cbfa !important;
+    }
+    .ant-table-row:nth-child(2n) {
+        background-color: #e0e0e0;
+    }
+}
+
+.ant-descriptions.wrap-title {
+    .ant-descriptions-title {
+        text-overflow: unset;
+        white-space: break-spaces;
+    }
+}
