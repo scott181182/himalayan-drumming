@@ -95,7 +95,7 @@ export function FileBrowser() {
 
     const columns: ColumnsType<TreeDataNode> = [
         {
-            title: "Name",
+            title: <h3 className="ml-4 text-lg font-bold">Files</h3>,
             dataIndex: "title",
         }
     ]
@@ -104,10 +104,9 @@ export function FileBrowser() {
         <Button onClick={startFullScan} className="m-4">
             Full Scan
         </Button>
-        <h3 className="ml-4 text-lg font-bold">Files</h3>
         <Table
             dataSource={files}
-            className="flex-1 overflow-y-auto striped"
+            className="flex-1 overflow-y-auto striped px-4"
             rowClassName={(row) => selectedFiles.some((sf) => sf.id === row.key) ? "selected cursor-pointer" : " cursor-pointer"}
             onRow={(row) => ({
                 onClick: () => onSelect([ row.key ])
