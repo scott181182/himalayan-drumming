@@ -11,6 +11,7 @@ import { AssignFileMetadataDocument, GetAllFileEntriesDocument, StartFullScanDoc
 import { usePromiseMessage } from "@/utils/antd";
 import { isDefined } from "@/utils/array";
 import { ColumnsType } from "antd/es/table";
+import { VideoPlayer } from "./VideoPlayer";
 
 
 
@@ -84,15 +85,7 @@ export function FileBrowser() {
             modal.info({
                 title: file.name,
                 closable: true,
-                content: <div>
-                    {file.url ?
-                        <video controls>
-                            <source src={file.url} type="video/mp4"/>
-                            Your browser does not support this video
-                        </video> :
-                        <i>could not load preview for this file</i>
-                    }
-                </div>,
+                content: <VideoPlayer src={file.url}/>,
                 width: "50%"
             });
         } else {
