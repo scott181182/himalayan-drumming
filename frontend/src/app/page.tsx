@@ -42,6 +42,7 @@ export default function HomePage() {
                     collapsed={relationBrowserCollapsed}
                     onCollapse={setRelationBrowserCollapsed}
                     theme="light"
+                    width="20%"
                     reverseArrow
                 >
                     {relationBrowserCollapsed ?
@@ -49,7 +50,7 @@ export default function HomePage() {
                             level={2}
                             className="rotate-90 whitespace-nowrap mt-10"
                         >
-                    Relation Browser
+                            Relation Browser
                         </Typography.Title> :
                         <RelationBrowser/>
                     }

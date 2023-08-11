@@ -1,0 +1,22 @@
+fragment SimpleVillage on Village {
+    id
+    name
+
+    location {
+        id
+        latitude
+        longitude
+    }
+}
+
+query GetAllVillages {
+    villages {
+        ...SimpleVillage
+    }
+}
+
+mutation CreateVillage($data: VillageCreateInput!) {
+    createVillage(data: $data) {
+        ...SimpleVillage
+    }
+}
