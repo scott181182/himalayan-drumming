@@ -1,17 +1,17 @@
-import { useApolloClient } from "@apollo/client";
 import { CompassOutlined } from "@ant-design/icons";
+import { useApolloClient } from "@apollo/client";
 import type { TreeDataNode } from "antd";
-import { App, Modal , Button, Descriptions, Tag, Tree, Table, Row, Col } from "antd";
+import { App, Button, Descriptions, Tag, Table, Row, Col } from "antd";
+import type { ColumnsType } from "antd/es/table";
 import { useCallback, useMemo } from "react";
 
+import { VideoPlayer } from "./VideoPlayer";
 import { MultiCase } from "../MultiCase";
 import { useDashboardDispatch, useDashboardState } from "@/app/context";
 import type { FileEntryBasicFragment} from "@/generated/graphql";
 import { AssignFileMetadataDocument, GetAllFileEntriesDocument, StartFullScanDocument } from "@/generated/graphql";
 import { usePromiseMessage } from "@/utils/antd";
 import { isDefined } from "@/utils/array";
-import { ColumnsType } from "antd/es/table";
-import { VideoPlayer } from "./VideoPlayer";
 
 
 
@@ -98,7 +98,7 @@ export function FileBrowser() {
             title: <h3 className="ml-4 text-lg font-bold">Files</h3>,
             dataIndex: "title",
         }
-    ]
+    ];
 
     return <div className="flex flex-col h-full gap-1">
         <Button onClick={startFullScan} className="m-4">

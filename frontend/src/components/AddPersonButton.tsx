@@ -1,7 +1,8 @@
-import { CreatePersonDocument, GetAllPeopleDocument } from "@/generated/graphql";
 import { useMutation } from "@apollo/client";
 import { App, Button, Form, Input, Modal } from "antd";
 import { useCallback, useState } from "react";
+
+import { CreatePersonDocument, GetAllPeopleDocument } from "@/generated/graphql";
 
 
 
@@ -28,11 +29,11 @@ export function AddPersonButton() {
         })
             .then(() => { message.success(`Created ${data.name}!`); })
             .catch((err) => {
-                message.error(`Failed to create person, please try again`);
+                message.error("Failed to create person, please try again");
                 console.error(err);
             })
             .then(() => setOpen(false));
-    }, []);
+    }, [createPersonMutation, form, message]);
 
     return <>
         <Button onClick={openModal}>
@@ -50,5 +51,5 @@ export function AddPersonButton() {
                 </Form.Item>
             </Form>
         </Modal>
-    </>
+    </>;
 }
