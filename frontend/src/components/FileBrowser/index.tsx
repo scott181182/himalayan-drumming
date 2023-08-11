@@ -1,6 +1,7 @@
 import { useApolloClient } from "@apollo/client";
+import { CompassOutlined } from "@ant-design/icons";
 import type { TreeDataNode } from "antd";
-import { App, Modal , Button, Descriptions, Tag, Tree, Table } from "antd";
+import { App, Modal , Button, Descriptions, Tag, Tree, Table, Row, Col } from "antd";
 import { useCallback, useMemo } from "react";
 
 import { MultiCase } from "../MultiCase";
@@ -132,7 +133,7 @@ export function FileBrowser() {
             single={(selectedFile) => <>
                 <Descriptions
                     title={selectedFile.name}
-                    className="p-4 border-t-2 border-t-black"
+                    className="p-4 border-t-2 border-t-black wrap-title"
                     bordered
                     size="small"
                 >
@@ -141,24 +142,33 @@ export function FileBrowser() {
                     </Descriptions.Item>
                     <Descriptions.Item label="Location">
                         {selectedFile.metadata?.location ?
-                            `${selectedFile.metadata.location.latitude}, ${selectedFile.metadata.location.longitude}` :
+                            <Button
+                                icon={<CompassOutlined/>}
+                                onClick={() => message.info(`(${selectedFile.metadata?.location?.latitude}, ${selectedFile.metadata?.location?.longitude})`)}
+                            /> :
                             <em>None</em>
                         }
                     </Descriptions.Item>
                 </Descriptions>
-                <Button
-                    disabled={!selectedLocation}
-                    onClick={assignLocation}
-                    className="mx-8"
-                >
-                    Assign Location
-                </Button>
-                <Button
-                    onClick={() => previewFile(selectedFile)}
-                    className="mx-8"
-                >
-                    Preview File
-                </Button>
+                <Row>
+                    <Col>
+                        <Button
+                            disabled={!selectedLocation}
+                            onClick={assignLocation}
+                            className="mx-8"
+                        >
+                            Assign Location
+                        </Button>
+                    </Col>
+                    <Col>
+                        <Button
+                            onClick={() => previewFile(selectedFile)}
+                            className="mx-8"
+                        >
+                            Preview File
+                        </Button>
+                    </Col>
+                </Row>
             </>}
         />
         {/* <Modal
