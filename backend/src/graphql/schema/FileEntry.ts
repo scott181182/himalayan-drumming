@@ -41,6 +41,15 @@ export const FileEntry = objectType({
                 }).then((tags) => tags.map((t) => t.tagName));
             }
         });
+        t.nonNull.list.nonNull.field("people", {
+            type: "Person",
+            resolve(src, _args, ctx) {
+                return ctx.prisma.fileEntry.findUniqueOrThrow({
+                    where: { id: src.id },
+                    select: { people: true }
+                }).then((res) => res.people);
+            }
+        });
 
         t.list.nonNull.field("children", {
             type: "FileEntry",

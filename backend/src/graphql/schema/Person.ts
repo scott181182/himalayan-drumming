@@ -11,6 +11,7 @@ export const  Person = objectType({
         t.nonNull.id("id");
         t.nonNull.string("name");
 
+        t.string("parentId");
         t.field("parent", {
             type: "Person",
             resolve(src, _args, ctx) {
@@ -19,8 +20,6 @@ export const  Person = objectType({
                 }) : null;
             }
         });
-        t.string("parentId");
-
 
         t.nonNull.list.nonNull.field("children", {
             type: 'Person',
@@ -31,7 +30,15 @@ export const  Person = objectType({
             }
         });
 
-        
+        t.nonNull.list.nonNull.field("files", {
+            type: "FileEntry",
+            resolve(src, _args, ctx) {
+                return ctx.prisma.person.findUniqueOrThrow({
+                    where: { id: src.id },
+                    select: { files: true }
+                }).then((res) => res.files);
+            }
+        });
     },
 });
 
@@ -45,9 +52,7 @@ export const PersonQuery = extendType({
             },
             resolve(_, args, ctx) {
                 return ctx.prisma.person.findUnique({
-                    where: {
-                        id: args.id
-                    }
+                    where: { id: args.id }
                 });
             }
         });
@@ -58,27 +63,33 @@ export const PersonQuery = extendType({
                 return ctx.prisma.person.findMany();
             }
         });
-
-     
     },
 });
 
 
 
+export const VillageForPersonInput = inputObjectType({
+    name: "PersonInVillageCreateInput",
+    definition(t) {
+        t.nonNull.id("villageId");
+        t.string("description");
+    },
+});
 export const PersonCreateInput = inputObjectType({
     name: "PersonCreateInput",
     definition(t) {
         t.nonNull.string("name");
         t.string("parentId");
-        t.field("village", {type: PersonInVillageCreateInput})
+        t.field("village", {type: VillageForPersonInput})
     },
 });
 
-export const PersonInVillageCreateInput = inputObjectType({
-    name: "PersonInVillageCreateInput",
+export const PersonUpdateInput = inputObjectType({
+    name: "PersonUpdateInput",
     definition(t) {
-        t.nonNull.id("villageId");
-        t.string("description");
+        t.string("name");
+        t.string("parentId");
+        t.field("village", {type: VillageForPersonInput})
     },
 });
 
@@ -93,13 +104,31 @@ export const PersonMutation = extendType({
             resolve(_, args, ctx) {
                 const {village, ... data } = unnullifyObject(args.data);
                 return ctx.prisma.person.create({
-                    data: { 
-                        ... data,
+                    data: {
+                        ...data,
                         villages: village ? {
                             create: village
-                            
                         } : undefined
-                    } 
+                    }
+                });
+            }
+        });
+        t.nonNull.field("updatePerson", {
+            type: Person,
+            args: {
+                id: nonNull(idArg()),
+                data: nonNull(PersonUpdateInput)
+            },
+            resolve(_, args, ctx) {
+                const {village, ... data } = unnullifyObject(args.data);
+                return ctx.prisma.person.update({
+                    where: { id: args.id },
+                    data: {
+                        ...data,
+                        villages: village ? {
+                            create: village
+                        } : undefined
+                    }
                 });
             }
         });

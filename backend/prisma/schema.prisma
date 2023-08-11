@@ -33,6 +33,7 @@ model FileEntry {
 
     metadata FileMetadata?
     withTags TagOnFile[]
+    people Person[]
 
     @@index([parentId])
 }
@@ -81,6 +82,7 @@ model Person {
 
     children Person[] @relation("ParentChild")
     villages PersonInVillage[]
+    files FileEntry[]
 }
 model Village {
     id String @id @default(cuid())

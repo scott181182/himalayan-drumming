@@ -6,13 +6,13 @@ import { makeRelationCreateInput, unnullifyObject } from "./utils";
 
 
 
-
 export const  Village = objectType({
     name: "Village",
     definition(t) {
         t.nonNull.id("id");
         t.nonNull.string("name");
 
+        t.string("locationId");
         t.field("location", {
             type: LatLng,
             resolve(src, _args, ctx) {
@@ -21,12 +21,6 @@ export const  Village = objectType({
                 }) : null;
             }
         });
-        t.string("locationId");
-
-
-        
-
-        
     },
 });
 
@@ -40,9 +34,7 @@ export const VillageQuery = extendType({
             },
             resolve(_, args, ctx) {
                 return ctx.prisma.village.findUnique({
-                    where: {
-                        id: args.id
-                    }
+                    where: { id: args.id }
                 });
             }
         });
@@ -54,7 +46,7 @@ export const VillageQuery = extendType({
             }
         });
 
-     
+
     },
 });
 
@@ -79,7 +71,7 @@ export const VillageMutation = extendType({
             },
             resolve(_, args, ctx) {
                 return ctx.prisma.village.create({
-                    data: unnullifyObject(args.data) 
+                    data: unnullifyObject(args.data)
                 });
             }
         });
