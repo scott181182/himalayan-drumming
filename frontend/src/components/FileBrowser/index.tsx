@@ -1,14 +1,15 @@
 import { useApolloClient } from "@apollo/client";
 import type { TreeDataNode } from "antd";
-import { App, Modal , Button, Descriptions, Tag, Tree } from "antd";
+import { App, Modal , Button, Descriptions, Tag, Tree, Table } from "antd";
 import { useCallback, useMemo } from "react";
 
-import { MultiCase } from "./MultiCase";
+import { MultiCase } from "../MultiCase";
 import { useDashboardDispatch, useDashboardState } from "@/app/context";
 import type { FileEntryBasicFragment} from "@/generated/graphql";
 import { AssignFileMetadataDocument, GetAllFileEntriesDocument, StartFullScanDocument } from "@/generated/graphql";
 import { usePromiseMessage } from "@/utils/antd";
 import { isDefined } from "@/utils/array";
+import { ColumnsType } from "antd/es/table";
 
 
 
@@ -76,14 +77,15 @@ export function FileBrowser() {
     );
 
     const previewFile = (file: FileEntryBasicFragment) => {
-        if(file.name.endsWith(".mp4")) {
+        const ext = file.name.substring(file.name.lastIndexOf(".") + 1);
+
+        if(["mp4", "mov"].includes(ext)) {
             modal.info({
                 title: file.name,
                 closable: true,
                 content: <div>
                     {file.url ?
                         <video controls>
-
                             <source src={file.url} type="video/mp4"/>
                             Your browser does not support this video
                         </video> :
@@ -96,18 +98,33 @@ export function FileBrowser() {
         }
     };
 
-
+    const columns: ColumnsType<TreeDataNode> = [
+        {
+            title: "Name",
+            dataIndex: "title",
+        }
+    ]
 
     return <div className="flex flex-col h-full gap-1">
         <Button onClick={startFullScan} className="m-4">
             Full Scan
         </Button>
         <h3 className="ml-4 text-lg font-bold">Files</h3>
-        <Tree
+        {/* <Tree
             treeData={files}
             className="flex-1 overflow-y-auto"
             selectedKeys={selectedFiles.map((f) => f.id)}
             onSelect={onSelect}
+        /> */}
+        <Table
+            dataSource={files}
+            className="flex-1 overflow-y-auto striped"
+            rowClassName={(row) => selectedFiles.some((sf) => sf.id === row.key) ? "selected cursor-pointer" : " cursor-pointer"}
+            onRow={(row) => ({
+                onClick: () => onSelect([ row.key ])
+            })}
+            columns={columns}
+            size="small"
         />
         <MultiCase
             value={selectedFiles}

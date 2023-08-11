@@ -1,6 +1,6 @@
 import { Inter } from "next/font/google";
 
-import "./globals.css";
+import "./globals.scss";
 import { AppLayout } from "@/components/AppLayout";
 import { AuthLayout } from "@/components/AuthLayout";
 import type { LayoutProps } from "@/utils/layout";
