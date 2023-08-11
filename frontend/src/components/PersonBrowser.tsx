@@ -1,6 +1,7 @@
 import { useQuery } from "@apollo/client";
 import { Space, Table } from "antd";
 import { ColumnsType } from "antd/es/table";
+import { useMemo } from "react";
 
 import { AsyncData } from "./AsyncData";
 import { GetAllPeopleDocument, PersonAndParentFragment } from "@/generated/graphql";
@@ -17,12 +18,14 @@ export function PersonBrowser() {
             title: "Name",
             dataIndex: "name"
         }
-    ]
+    ];
+
+    const dataSource = useMemo(() => peopleData?.people.map((p) => ({ ...p, key: p.id })), [ peopleData ]);
 
     return <Space direction="vertical" className="w-full">
         {/* TODO: add search bar */}
         <AsyncData
-            data={peopleData?.people}
+            data={dataSource}
             loading={loading}
             error={error}
         >
