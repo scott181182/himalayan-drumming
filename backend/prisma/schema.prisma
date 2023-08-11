@@ -43,6 +43,8 @@ model FileMetadata {
 
     locationId String?
     location LatLng? @relation(fields: [locationId], references: [id], onDelete: SetNull, onUpdate: Cascade)
+
+    people Person[]
 }
 
 /// Manual Join table to avoid automatic cascades
@@ -81,6 +83,7 @@ model Person {
 
     children Person[] @relation("ParentChild")
     villages PersonInVillage[]
+    files FileMetadata[]
 }
 model Village {
     id String @id @default(cuid())
