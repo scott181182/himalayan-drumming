@@ -92,7 +92,8 @@ export function FileBrowser() {
                         </video> :
                         <i>could not load preview for this file</i>
                     }
-                </div>
+                </div>,
+                width: "50%"
             });
         } else {
             message.warning("Unsupported file for preview");
@@ -111,12 +112,6 @@ export function FileBrowser() {
             Full Scan
         </Button>
         <h3 className="ml-4 text-lg font-bold">Files</h3>
-        {/* <Tree
-            treeData={files}
-            className="flex-1 overflow-y-auto"
-            selectedKeys={selectedFiles.map((f) => f.id)}
-            onSelect={onSelect}
-        /> */}
         <Table
             dataSource={files}
             className="flex-1 overflow-y-auto striped"
