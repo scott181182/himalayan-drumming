@@ -17,7 +17,19 @@ export function makeRelationCreateInput(name: string, whereInput: NexusGenInputN
         },
     });
 }
-
+export function makeRelationManyCreateInput(name: string, whereInput: NexusGenInputNames, createInput: NexusGenInputNames) {
+    return inputObjectType({
+        name: name,
+        definition(t) {
+            t.list.nonNull.field("create", {
+                type: createInput
+            });
+            t.list.nonNull.field("connect", {
+                type: whereInput
+            });
+        },
+    });
+}
 export type Unnullified<T> =
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     T extends Record<any, any> ? { [K in keyof T]: Unnullified<T[K]> } :
