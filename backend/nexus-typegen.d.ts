@@ -37,6 +37,11 @@ export interface NexusGenInputs {
     description?: string | null; // String
     villageId: string; // ID!
   }
+  PersonUpdateInput: { // input type
+    name?: string | null; // String
+    parentId?: string | null; // String
+    village?: NexusGenInputs['PersonInVillageCreateInput'] | null; // PersonInVillageCreateInput
+  }
   VillageCreateInput: { // input type
     location: NexusGenInputs['VillageCreateLocationInput']; // VillageCreateLocationInput!
     name: string; // String!
@@ -109,6 +114,7 @@ export interface NexusGenFieldTypes {
     tagFile: NexusGenRootTypes['FileEntry']; // FileEntry!
     untagFile: NexusGenRootTypes['FileEntry']; // FileEntry!
     updateMetadata: NexusGenRootTypes['FileMetadata']; // FileMetadata!
+    updatePerson: NexusGenRootTypes['Person']; // Person!
   }
   Person: { // field return type
     children: NexusGenRootTypes['Person'][]; // [Person!]!
@@ -167,6 +173,7 @@ export interface NexusGenFieldTypeNames {
     tagFile: 'FileEntry'
     untagFile: 'FileEntry'
     updateMetadata: 'FileMetadata'
+    updatePerson: 'Person'
   }
   Person: { // field return type name
     children: 'Person'
@@ -213,6 +220,10 @@ export interface NexusGenArgTypes {
     updateMetadata: { // args
       data: NexusGenInputs['FileMetadataUpdateInput']; // FileMetadataUpdateInput!
       fileId: string; // ID!
+    }
+    updatePerson: { // args
+      data: NexusGenInputs['PersonUpdateInput']; // PersonUpdateInput!
+      id: string; // ID!
     }
   }
   Query: {

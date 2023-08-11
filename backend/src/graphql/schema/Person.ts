@@ -52,9 +52,7 @@ export const PersonQuery = extendType({
             },
             resolve(_, args, ctx) {
                 return ctx.prisma.person.findUnique({
-                    where: {
-                        id: args.id
-                    }
+                    where: { id: args.id }
                 });
             }
         });
@@ -70,20 +68,28 @@ export const PersonQuery = extendType({
 
 
 
+export const VillageForPersonInput = inputObjectType({
+    name: "PersonInVillageCreateInput",
+    definition(t) {
+        t.nonNull.id("villageId");
+        t.string("description");
+    },
+});
 export const PersonCreateInput = inputObjectType({
     name: "PersonCreateInput",
     definition(t) {
         t.nonNull.string("name");
         t.string("parentId");
-        t.field("village", {type: PersonInVillageCreateInput})
+        t.field("village", {type: VillageForPersonInput})
     },
 });
 
-export const PersonInVillageCreateInput = inputObjectType({
-    name: "PersonInVillageCreateInput",
+export const PersonUpdateInput = inputObjectType({
+    name: "PersonUpdateInput",
     definition(t) {
-        t.nonNull.id("villageId");
-        t.string("description");
+        t.string("name");
+        t.string("parentId");
+        t.field("village", {type: VillageForPersonInput})
     },
 });
 
@@ -99,10 +105,28 @@ export const PersonMutation = extendType({
                 const {village, ... data } = unnullifyObject(args.data);
                 return ctx.prisma.person.create({
                     data: {
-                        ... data,
+                        ...data,
                         villages: village ? {
                             create: village
-
+                        } : undefined
+                    }
+                });
+            }
+        });
+        t.nonNull.field("updatePerson", {
+            type: Person,
+            args: {
+                id: nonNull(idArg()),
+                data: nonNull(PersonUpdateInput)
+            },
+            resolve(_, args, ctx) {
+                const {village, ... data } = unnullifyObject(args.data);
+                return ctx.prisma.person.update({
+                    where: { id: args.id },
+                    data: {
+                        ...data,
+                        villages: village ? {
+                            create: village
                         } : undefined
                     }
                 });

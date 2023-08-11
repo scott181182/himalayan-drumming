@@ -57,6 +57,7 @@ type Mutation {
   tagFile(fileId: ID!, tag: String!): FileEntry!
   untagFile(fileId: ID!, tag: String!): FileEntry!
   updateMetadata(data: FileMetadataUpdateInput!, fileId: ID!): FileMetadata!
+  updatePerson(data: PersonUpdateInput!, id: ID!): Person!
 }
 
 type Person {
@@ -77,6 +78,12 @@ input PersonCreateInput {
 input PersonInVillageCreateInput {
   description: String
   villageId: ID!
+}
+
+input PersonUpdateInput {
+  name: String
+  parentId: String
+  village: PersonInVillageCreateInput
 }
 
 type Query {
