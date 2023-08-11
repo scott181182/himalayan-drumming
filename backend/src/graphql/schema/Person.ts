@@ -11,6 +11,7 @@ export const  Person = objectType({
         t.nonNull.id("id");
         t.nonNull.string("name");
 
+        t.string("parentId");
         t.field("parent", {
             type: "Person",
             resolve(src, _args, ctx) {
@@ -19,8 +20,6 @@ export const  Person = objectType({
                 }) : null;
             }
         });
-        t.string("parentId");
-
 
         t.nonNull.list.nonNull.field("children", {
             type: 'Person',
@@ -30,8 +29,6 @@ export const  Person = objectType({
                 });
             }
         });
-
-        
     },
 });
 
@@ -58,8 +55,6 @@ export const PersonQuery = extendType({
                 return ctx.prisma.person.findMany();
             }
         });
-
-     
     },
 });
 
@@ -93,13 +88,13 @@ export const PersonMutation = extendType({
             resolve(_, args, ctx) {
                 const {village, ... data } = unnullifyObject(args.data);
                 return ctx.prisma.person.create({
-                    data: { 
+                    data: {
                         ... data,
                         villages: village ? {
                             create: village
-                            
+
                         } : undefined
-                    } 
+                    }
                 });
             }
         });
