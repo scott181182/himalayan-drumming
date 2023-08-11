@@ -46,6 +46,9 @@ input LatLngCreateInput {
 }
 
 type Mutation {
+  createPerson(data: PersonCreateInput!): Person!
+  createVillage(data: VillageCreateInput!): Village!
+
   """
   Perform a full scan of OneDrive and other file sources. Creates, updates, and deletes entries as necessary.
   """
@@ -55,9 +58,54 @@ type Mutation {
   updateMetadata(data: FileMetadataUpdateInput!, fileId: ID!): FileMetadata!
 }
 
+type Person {
+  children: [Person!]!
+  id: ID!
+  name: String!
+  parent: Person
+  parentId: String
+}
+
+input PersonCreateInput {
+  name: String!
+  parentId: String
+  village: PersonCreateVillageInput
+}
+
+input PersonCreateVillageInput {
+  connect: IdWhereUniqueInput
+  create: VillageCreateInput
+}
+
+input PersonInVillageCreateInput {
+  description: String
+  villageId: ID!
+}
+
 type Query {
   fileEntries: [FileEntry!]!
   fileEntry(id: String!): FileEntry
+  people: [Person!]!
+  person(id: ID!): Person
   rootFileEntry: FileEntry!
   tags: [String!]!
+  village(id: ID!): Village
+  villages: [Village!]!
+}
+
+type Village {
+  id: ID!
+  location: LatLng
+  locationId: String
+  name: String!
+}
+
+input VillageCreateInput {
+  location: VillageCreateLocationInput!
+  name: String!
+}
+
+input VillageCreateLocationInput {
+  connect: IdWhereUniqueInput
+  create: LatLngCreateInput
 }

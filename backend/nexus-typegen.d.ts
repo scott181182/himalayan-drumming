@@ -28,6 +28,27 @@ export interface NexusGenInputs {
     latitude: number; // Float!
     longitude: number; // Float!
   }
+  PersonCreateInput: { // input type
+    name: string; // String!
+    parentId?: string | null; // String
+    village?: NexusGenInputs['PersonCreateVillageInput'] | null; // PersonCreateVillageInput
+  }
+  PersonCreateVillageInput: { // input type
+    connect?: NexusGenInputs['IdWhereUniqueInput'] | null; // IdWhereUniqueInput
+    create?: NexusGenInputs['VillageCreateInput'] | null; // VillageCreateInput
+  }
+  PersonInVillageCreateInput: { // input type
+    description?: string | null; // String
+    villageId: string; // ID!
+  }
+  VillageCreateInput: { // input type
+    location: NexusGenInputs['VillageCreateLocationInput']; // VillageCreateLocationInput!
+    name: string; // String!
+  }
+  VillageCreateLocationInput: { // input type
+    connect?: NexusGenInputs['IdWhereUniqueInput'] | null; // IdWhereUniqueInput
+    create?: NexusGenInputs['LatLngCreateInput'] | null; // LatLngCreateInput
+  }
 }
 
 export interface NexusGenEnums {
@@ -46,7 +67,9 @@ export interface NexusGenObjects {
   FileMetadata: prisma.FileMetadata;
   LatLng: prisma.LatLng;
   Mutation: {};
+  Person: prisma.Person;
   Query: {};
+  Village: prisma.Village;
 }
 
 export interface NexusGenInterfaces {
@@ -83,16 +106,35 @@ export interface NexusGenFieldTypes {
     longitude: number; // Float!
   }
   Mutation: { // field return type
+    createPerson: NexusGenRootTypes['Person']; // Person!
+    createVillage: NexusGenRootTypes['Village']; // Village!
     fullscan: NexusGenRootTypes['FileEntry'] | null; // FileEntry
     tagFile: NexusGenRootTypes['FileEntry']; // FileEntry!
     untagFile: NexusGenRootTypes['FileEntry']; // FileEntry!
     updateMetadata: NexusGenRootTypes['FileMetadata']; // FileMetadata!
   }
+  Person: { // field return type
+    children: NexusGenRootTypes['Person'][]; // [Person!]!
+    id: string; // ID!
+    name: string; // String!
+    parent: NexusGenRootTypes['Person'] | null; // Person
+    parentId: string | null; // String
+  }
   Query: { // field return type
     fileEntries: NexusGenRootTypes['FileEntry'][]; // [FileEntry!]!
     fileEntry: NexusGenRootTypes['FileEntry'] | null; // FileEntry
+    people: NexusGenRootTypes['Person'][]; // [Person!]!
+    person: NexusGenRootTypes['Person'] | null; // Person
     rootFileEntry: NexusGenRootTypes['FileEntry']; // FileEntry!
     tags: string[]; // [String!]!
+    village: NexusGenRootTypes['Village'] | null; // Village
+    villages: NexusGenRootTypes['Village'][]; // [Village!]!
+  }
+  Village: { // field return type
+    id: string; // ID!
+    location: NexusGenRootTypes['LatLng'] | null; // LatLng
+    locationId: string | null; // String
+    name: string; // String!
   }
 }
 
@@ -120,21 +162,46 @@ export interface NexusGenFieldTypeNames {
     longitude: 'Float'
   }
   Mutation: { // field return type name
+    createPerson: 'Person'
+    createVillage: 'Village'
     fullscan: 'FileEntry'
     tagFile: 'FileEntry'
     untagFile: 'FileEntry'
     updateMetadata: 'FileMetadata'
   }
+  Person: { // field return type name
+    children: 'Person'
+    id: 'ID'
+    name: 'String'
+    parent: 'Person'
+    parentId: 'String'
+  }
   Query: { // field return type name
     fileEntries: 'FileEntry'
     fileEntry: 'FileEntry'
+    people: 'Person'
+    person: 'Person'
     rootFileEntry: 'FileEntry'
     tags: 'String'
+    village: 'Village'
+    villages: 'Village'
+  }
+  Village: { // field return type name
+    id: 'ID'
+    location: 'LatLng'
+    locationId: 'String'
+    name: 'String'
   }
 }
 
 export interface NexusGenArgTypes {
   Mutation: {
+    createPerson: { // args
+      data: NexusGenInputs['PersonCreateInput']; // PersonCreateInput!
+    }
+    createVillage: { // args
+      data: NexusGenInputs['VillageCreateInput']; // VillageCreateInput!
+    }
     tagFile: { // args
       fileId: string; // ID!
       tag: string; // String!
@@ -151,6 +218,12 @@ export interface NexusGenArgTypes {
   Query: {
     fileEntry: { // args
       id: string; // String!
+    }
+    person: { // args
+      id: string; // ID!
+    }
+    village: { // args
+      id: string; // ID!
     }
   }
 }
