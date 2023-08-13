@@ -1,3 +1,5 @@
+"use client";
+
 import { CompassOutlined } from "@ant-design/icons";
 import { useApolloClient } from "@apollo/client";
 import type { TreeDataNode } from "antd";
@@ -7,7 +9,7 @@ import { useCallback, useMemo } from "react";
 
 import { VideoPlayer } from "./VideoPlayer";
 import { MultiCase } from "../MultiCase";
-import { useDashboardDispatch, useDashboardState } from "@/app/context";
+import { useDashboardDispatch, useDashboardState } from "@/components/DashboardContext";
 import type { FileEntryBasicFragment} from "@/generated/graphql";
 import { AssignFileMetadataDocument, GetAllFileEntriesDocument, StartFullScanDocument } from "@/generated/graphql";
 import { usePromiseMessage } from "@/utils/antd";

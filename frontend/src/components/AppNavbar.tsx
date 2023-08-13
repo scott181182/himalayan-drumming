@@ -1,3 +1,5 @@
+"use client";
+
 import { UserOutlined } from "@ant-design/icons";
 import { useMsal } from "@azure/msal-react";
 import { Avatar, Space } from "antd";

@@ -1,3 +1,5 @@
+"use client";
+
 import { useMutation } from "@apollo/client";
 import { App, Button, Form, Input, Modal } from "antd";
 import { useCallback, useState } from "react";

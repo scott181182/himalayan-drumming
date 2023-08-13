@@ -1,3 +1,5 @@
+"use client";
+
 import { useQuery } from "@apollo/client";
 import { Space, Table } from "antd";
 import type { ColumnsType } from "antd/es/table";

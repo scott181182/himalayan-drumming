@@ -1,9 +1,11 @@
+import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 
-import "./globals.scss";
+import "../assets/globals.scss";
 import { AppLayout } from "@/components/AppLayout";
 import { AuthLayout } from "@/components/AuthLayout";
 import type { LayoutProps } from "@/utils/layout";
+
 
 
 
@@ -11,7 +13,7 @@ const inter = Inter({ subsets: ["latin"] });
 
 
 
-export const metadata = {
+export const metadata: Metadata = {
     title: "Himalayan Drumming",
     description: "Dashboard for enabling research into Himalayan Drumming patterns",
 };

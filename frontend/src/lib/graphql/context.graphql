@@ -1,0 +1,25 @@
+#import FileEntryBasic, LocationComplete from "./files.graphql"
+
+fragment PersonInContext on Person {
+    id
+    name
+
+    files { id }
+    parent {
+        id
+        name
+    }
+}
+
+fragment VillageInContext on Village {
+    id
+    name
+    location { ...LocationComplete }
+}
+
+
+query GetFullContext {
+    fileEntries { ...FileEntryBasic }
+    people { ...PersonInContext }
+    villages { ...VillageInContext }
+}

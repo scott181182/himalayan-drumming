@@ -1,8 +1,10 @@
+"use client";
+
 import { useMutation } from "@apollo/client";
 import { App, Button, Form, Input, Modal, Tooltip } from "antd";
 import { useCallback, useState } from "react";
 
-import { useDashboardState } from "@/app/context";
+import { useDashboardState } from "@/components/DashboardContext";
 import { CreateVillageDocument, GetAllVillagesDocument } from "@/generated/graphql";
 import { selectedLocationToInput } from "@/utils/location";
 
