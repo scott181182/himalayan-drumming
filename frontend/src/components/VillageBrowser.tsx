@@ -1,11 +1,15 @@
+"use client";
+
 import { useQuery } from "@apollo/client";
 import { Space, Table } from "antd";
-import { ColumnsType } from "antd/es/table";
-
-import { AsyncData } from "./AsyncData";
-import { AddVillageButton } from "./AddVillageButton";
-import { GetAllVillagesDocument, SimpleVillageFragment } from "@/generated/graphql";
+import type { ColumnsType } from "antd/es/table";
 import { useMemo } from "react";
+
+import { AddVillageButton } from "./AddVillageButton";
+import { AsyncData } from "./AsyncData";
+import type { SimpleVillageFragment } from "@/generated/graphql";
+import { GetAllVillagesDocument } from "@/generated/graphql";
+
 
 
 
@@ -37,5 +41,5 @@ export function VillageBrowser() {
             }
         </AsyncData>
         <AddVillageButton/>
-    </Space>
+    </Space>;
 }

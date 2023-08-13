@@ -1,4 +1,7 @@
-import { Tabs, TabsProps } from "antd";
+"use client";
+
+import type { TabsProps } from "antd";
+import { Tabs } from "antd";
 
 import { PersonBrowser } from "./PersonBrowser";
 import { VillageBrowser } from "./VillageBrowser";

@@ -1,4 +1,4 @@
-import { LocationCompleteFragment, VillageCreateLocationInput } from "@/generated/graphql";
+import type { LocationCompleteFragment, VillageCreateLocationInput } from "@/generated/graphql";
 
 
 
@@ -10,5 +10,5 @@ export function selectedLocationToInput(location: LocationCompleteFragment): Vil
             latitude: location.latitude,
             longitude: location.longitude
         }
-    }
+    };
 }

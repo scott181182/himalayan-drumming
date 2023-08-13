@@ -99,8 +99,8 @@ type Query {
 
 type Village {
   id: ID!
-  location: LatLng
-  locationId: String
+  location: LatLng!
+  locationId: String!
   name: String!
 }
 

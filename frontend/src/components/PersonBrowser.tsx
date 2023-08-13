@@ -1,11 +1,14 @@
+"use client";
+
 import { useQuery } from "@apollo/client";
 import { Space, Table } from "antd";
-import { ColumnsType } from "antd/es/table";
+import type { ColumnsType } from "antd/es/table";
 import { useMemo } from "react";
 
-import { AsyncData } from "./AsyncData";
-import { GetAllPeopleDocument, PersonAndParentFragment } from "@/generated/graphql";
 import { AddPersonButton } from "./AddPersonButton";
+import { AsyncData } from "./AsyncData";
+import type { PersonAndParentFragment } from "@/generated/graphql";
+import { GetAllPeopleDocument } from "@/generated/graphql";
 
 
 
@@ -38,5 +41,5 @@ export function PersonBrowser() {
             }
         </AsyncData>
         <AddPersonButton/>
-    </Space>
+    </Space>;
 }

@@ -3,7 +3,7 @@
 import { Layout, Typography } from "antd";
 import { useState } from "react";
 
-import { DashboardProvider } from "./context";
+import { DashboardProvider } from "@/components/DashboardContext";
 import { FileBrowser } from "@/components/FileBrowser";
 import { Map } from "@/components/map";
 import { RelationBrowser } from "@/components/RelationBrowser";

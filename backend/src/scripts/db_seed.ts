@@ -14,10 +14,10 @@ const FILE_TYPES = [
     await prismaClient.fileType.deleteMany();
 
     for(const fileType of FILE_TYPES) {
-        await prismaClient.fileType.create({
-            data: {
-                name: fileType
-            }
+        await prismaClient.fileType.upsert({
+            where: { name: fileType },
+            create: { name: fileType },
+            update: {}
         });
     }
 })();

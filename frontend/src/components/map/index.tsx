@@ -5,8 +5,9 @@ import { useCallback, useMemo } from "react";
 import { MapContainer, TileLayer, GeoJSON, type GeoJSONProps, Marker } from "react-leaflet";
 
 import { ClickMarker } from "./ClickMarker";
-import { useDashboardDispatch, useDashboardState } from "@/app/context";
+import { recordingMarkerIcon, villageMarkerIcon } from "./icons";
 import uttarakhandGeo from "@/assets/india_states.json";
+import { useDashboardDispatch, useDashboardState } from "@/components/DashboardContext";
 import type { LocationCompleteFragment } from "@/generated/graphql";
 import { isDefined } from "@/utils/array";
 
@@ -32,7 +33,7 @@ const FreeTileLayers = {
 
 
 export function Map() {
-    const { fileTree } = useDashboardState();
+    const { fileTree, villages } = useDashboardState();
     const { selectLocation } = useDashboardDispatch();
 
     const locations = useMemo(() => (
@@ -50,15 +51,26 @@ export function Map() {
         }
     }) as LeafletEventHandlerFnMap, [selectLocation]);
 
-    const markers = useMemo(() => (
-        locations?.map((l) => (
+    const villageMarkers = useMemo(() => (
+        villages?.map((v) => (
+            <Marker
+                key={v.id}
+                position={[v.location.latitude, v.location.longitude]}
+                // eventHandlers={makeMarkerHandler(v)}
+                icon={villageMarkerIcon}
+            />
+        ) ?? [])
+    ), [villages]);
+    const fileMarkers = useMemo(() => (
+        locations?.filter((l) => !villages.some((v) => v.location.id === l.id)).map((l) => (
             <Marker
                 key={l.id}
                 position={[l.latitude, l.longitude]}
                 eventHandlers={makeMarkerHandler(l)}
+                icon={recordingMarkerIcon}
             />
         ) ?? [])
-    ), [locations, makeMarkerHandler]);
+    ), [locations, makeMarkerHandler, villages]);
 
 
 
@@ -72,7 +84,8 @@ export function Map() {
             <GeoJSON
                 data={uttarakhandGeo as GeoJSONProps["data"]}
             />
-            {markers}
+            {villageMarkers}
+            {fileMarkers}
             <ClickMarker/>
         </MapContainer>
     );

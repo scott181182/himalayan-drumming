@@ -1,10 +1,13 @@
+"use client";
+
 import { useQuery } from "@apollo/client";
 import { App } from "antd";
 import type { Reducer} from "react";
 import { createContext, useContext, useMemo, useReducer } from "react";
 
 import { AsyncData } from "@/components/AsyncData";
-import { GetAllFileEntriesDocument, type FileEntryBasicFragment, type LocationCompleteFragment } from "@/generated/graphql";
+import type { FileEntryBasicFragment, LocationCompleteFragment, VillageInContextFragment, PersonInContextFragment } from "@/generated/graphql";
+import { GetFullContextDocument} from "@/generated/graphql";
 import { FileTree } from "@/utils/tree";
 
 
@@ -13,6 +16,9 @@ export interface DashboardContextValue {
     fileTree: FileTree;
     selectedFiles: FileEntryBasicFragment[];
     selectedLocation?: LocationCompleteFragment;
+
+    people: PersonInContextFragment[];
+    villages: VillageInContextFragment[];
 }
 export type DashboardDispatchAction = {
     type: "setSelectedFiles",
@@ -21,11 +27,17 @@ export type DashboardDispatchAction = {
     type: "setVirtualLocation",
     payload: Pick<LocationCompleteFragment, "latitude" | "longitude">
 } | {
+    type: "selectLocation",
+    payload: LocationCompleteFragment,
+} | {
     type: "setFileTree",
     payload: FileTree
 } | {
-    type: "selectLocation",
-    payload: LocationCompleteFragment,
+    type: "setVillages",
+    payload: VillageInContextFragment[]
+} | {
+    type: "setPeople",
+    payload: PersonInContextFragment[]
 }
 
 export type DashboardDispatchFunctions = {
@@ -63,6 +75,16 @@ export const dashboardReducer: Reducer<DashboardContextValue, DashboardDispatchA
                 ...state,
                 fileTree: action.payload
             };
+        case "setVillages":
+            return {
+                ...state,
+                villages: action.payload
+            };
+        case "setPeople":
+            return {
+                ...state,
+                people: action.payload
+            };
     }
 };
 
@@ -97,14 +119,19 @@ export function DashboardProvider({
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         fileTree: null as any,
         selectedFiles: [],
-        selectedLocation: undefined
+        selectedLocation: undefined,
+
+        people: [],
+        villages: [],
     });
 
-    const { loading, error } = useQuery(GetAllFileEntriesDocument, {
+    const { loading, error } = useQuery(GetFullContextDocument, {
         onCompleted(data) {
             try {
                 const payload = FileTree.fromEntries(data.fileEntries);
                 dispatch({ type: "setFileTree", payload });
+                dispatch({ type: "setPeople", payload: data.people });
+                dispatch({ type: "setVillages", payload: data.villages });
             } catch(err) {
                 console.error(err);
                 message.error("There was a problem loading data from OneDrive");
