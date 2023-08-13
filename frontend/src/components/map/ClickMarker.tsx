@@ -1,6 +1,9 @@
+"use client";
+
 import { Marker, useMapEvent } from "react-leaflet";
 
-import { useDashboardDispatch, useDashboardState } from "@/app/context";
+import { emptyMarkerIcon } from "./icons";
+import { useDashboardDispatch, useDashboardState } from "@/components/DashboardContext";
 
 
 
@@ -19,5 +22,6 @@ export function ClickMarker() {
 
     return selectedLocation && !selectedLocation.id && <Marker
         position={[selectedLocation.latitude, selectedLocation.longitude]}
+        icon={emptyMarkerIcon}
     />;
 }
