@@ -13,7 +13,8 @@
         "db:migrate": "prisma migrate dev",
         "db:seed": "ts-node ./src/scripts/db_seed.ts",
         "db:scan": "ts-node ./src/scripts/db_scan.ts",
-        "build": "tsc -p . --pretty"
+        "build": "tsc -p . --pretty",
+        "start": "node ."
     },
     "dependencies": {
         "@apollo/server": "^4.7.5",

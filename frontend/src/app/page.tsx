@@ -1,18 +1,26 @@
 "use client";
 
-import { Layout, Typography } from "antd";
+import { Layout, Skeleton, Typography } from "antd";
+import dynamic from "next/dynamic";
 import { useState } from "react";
 
 import { DashboardProvider } from "@/components/DashboardContext";
 import { FileBrowser } from "@/components/FileBrowser";
-import { Map } from "@/components/map";
 import { RelationBrowser } from "@/components/RelationBrowser";
+
+// Load map dynamically to avoid Next13 prerender errors.
+const Map = dynamic(() => import("@/components/map").then((mod) => mod.Map), {
+    loading: () => <Skeleton/>,
+    ssr: false
+});
 
 
 
 export default function HomePage() {
     const [fileBrowserCollapsed, setFileBrowserCollapsed] = useState(true);
     const [relationBrowserCollapsed, setRelationBrowserCollapsed] = useState(true);
+
+
 
     return (
         <DashboardProvider>
