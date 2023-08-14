@@ -74,7 +74,6 @@ export function Map() {
 
 
 
-
     return (
         <MapContainer center={UTTARAKHAND_CENTER} zoom={9} scrollWheelZoom={false} className="h-full">
             <TileLayer
