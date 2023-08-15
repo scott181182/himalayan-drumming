@@ -6,6 +6,34 @@ import { makeRelationCreateInput, unnullifyObject } from "./utils";
 
 
 
+
+export const PersonInVillage = objectType({
+    name: "PersonInVillage",
+    definition(t) {
+        t.string("description");
+
+        t.nonNull.id("villageId");
+        t.nonNull.field("village", {
+            type: "Village",
+            resolve: (src, _, ctx) => {
+                return ctx.prisma.village.findUniqueOrThrow({
+                    where: { id: src.villageId }
+                });
+            }
+        });
+
+        t.nonNull.id("personId");
+        t.nonNull.field("person", {
+            type: "Person",
+            resolve: (src, _, ctx) => {
+                return ctx.prisma.person.findUniqueOrThrow({
+                    where: { id: src.personId }
+                });
+            }
+        });
+    },
+});
+
 export const  Village = objectType({
     name: "Village",
     definition(t) {
@@ -20,6 +48,13 @@ export const  Village = objectType({
                     where: { id: src.locationId }
                 });
             }
+        });
+
+        t.nonNull.list.nonNull.field("people", {
+            type: "PersonInVillage",
+            resolve: (src, _, ctx) => ctx.prisma.personInVillage.findMany({
+                where: { villageId: src.id }
+            })
         });
     },
 });

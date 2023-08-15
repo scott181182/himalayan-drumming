@@ -1,4 +1,4 @@
-import { inputObjectType } from "nexus";
+import { enumType, inputObjectType } from "nexus";
 
 export * from "./FileEntry";
 export * from "./FileMetadata";
@@ -12,4 +12,9 @@ export const IdWhereUniqueInput = inputObjectType({
     definition(t) {
         t.nonNull.id("id");
     },
+});
+
+export const OrderDirection = enumType({
+    name: "OrderDirection",
+    members: [ "asc", "desc" ]
 });

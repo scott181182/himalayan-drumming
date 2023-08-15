@@ -1,7 +1,6 @@
-import { extendType, idArg, inputObjectType, nonNull, objectType } from "nexus";
+import { extendType, idArg, inputObjectType, intArg, nonNull, objectType } from "nexus";
 
-import { unnullifyObject } from "./utils";
-
+import { makeRelationCreateInput, makeRelationUpdateInput, unnullifyObject } from "./utils";
 
 
 
@@ -29,6 +28,12 @@ export const  Person = objectType({
                 });
             }
         });
+        t.nonNull.list.nonNull.field("villages", {
+            type: "PersonInVillage",
+            resolve: (src, _, ctx) => ctx.prisma.personInVillage.findMany({
+                where: { personId: src.id }
+            })
+        });
 
         t.nonNull.list.nonNull.field("files", {
             type: "FileEntry",
@@ -39,6 +44,51 @@ export const  Person = objectType({
                 }).then((res) => res.files);
             }
         });
+    },
+});
+
+
+
+export const PersonWhereInput = inputObjectType({
+    name: "PersonWhereInput",
+    definition(t) {
+        t.id("id");
+        t.string("name");
+
+        t.string("parentId");
+        // t.field("parent", {
+        //     type: "Person",
+        //     resolve(src, _args, ctx) {
+        //         return src.parentId ? ctx.prisma.person.findUniqueOrThrow({
+        //             where: { id: src.parentId }
+        //         }) : null;
+        //     }
+        // });
+
+        // t.nonNull.list.nonNull.field("children", {
+        //     type: "Person",
+        //     resolve(src, _args, ctx) {
+        //         return ctx.prisma.person.findMany({
+        //             where: { parentId: src.id }
+        //         });
+        //     }
+        // });
+
+        // t.nonNull.list.nonNull.field("files", {
+        //     type: "FileEntry",
+        //     resolve(src, _args, ctx) {
+        //         return ctx.prisma.person.findUniqueOrThrow({
+        //             where: { id: src.id },
+        //             select: { files: true }
+        //         }).then((res) => res.files);
+        //     }
+        // });
+    },
+});
+export const PersonOrderByInput = inputObjectType({
+    name: "PersonOrderByInput",
+    definition(t) {
+        t.field({ name: "name", type: "OrderDirection" });
     },
 });
 
@@ -59,8 +109,18 @@ export const PersonQuery = extendType({
 
         t.nonNull.list.nonNull.field("people", {
             type: Person,
-            resolve(_, _args, ctx) {
-                return ctx.prisma.person.findMany();
+            args: {
+                where: PersonWhereInput,
+                take: nonNull(intArg({ default: 20 })),
+                skip: nonNull(intArg({ default: 0 })),
+                orderBy: PersonOrderByInput
+            },
+            resolve(_, { where, take, skip, orderBy }, ctx) {
+                return ctx.prisma.person.findMany({
+                    where: unnullifyObject(where),
+                    take, skip,
+                    orderBy: unnullifyObject(orderBy)
+                });
             }
         });
     },
@@ -68,6 +128,21 @@ export const PersonQuery = extendType({
 
 
 
+export const PersonIdVillageIdInput = inputObjectType({
+    name: "PersonIdVillageIdInput",
+    definition(t) {
+        t.nonNull.id("personId");
+        t.nonNull.id("villageId");
+    },
+})
+export const PersonInVillageUniqueWhereInput = inputObjectType({
+    name: "PersonInVillageUniqueWhereInput",
+    definition(t) {
+        t.nonNull.field("personId_villageId", {
+            type: PersonIdVillageIdInput
+        })
+    },
+})
 export const VillageForPersonInput = inputObjectType({
     name: "PersonInVillageCreateInput",
     definition(t) {
@@ -75,12 +150,15 @@ export const VillageForPersonInput = inputObjectType({
         t.string("description");
     },
 });
+export const VillageForPersonRelationCreateInput = makeRelationCreateInput("VillageForPersonRelationCreateInput", "PersonInVillageUniqueWhereInput", "PersonInVillageCreateInput");
+export const VillageForPersonRelationUpdateInput = makeRelationUpdateInput("VillageForPersonRelationUpdateInput", "PersonInVillageUniqueWhereInput", "PersonInVillageCreateInput");
+
 export const PersonCreateInput = inputObjectType({
     name: "PersonCreateInput",
     definition(t) {
         t.nonNull.string("name");
         t.string("parentId");
-        t.field("village", {type: VillageForPersonInput});
+        t.field("villages", { type: VillageForPersonRelationCreateInput });
     },
 });
 
@@ -89,7 +167,7 @@ export const PersonUpdateInput = inputObjectType({
     definition(t) {
         t.string("name");
         t.string("parentId");
-        t.field("village", {type: VillageForPersonInput});
+        t.field("villages", { type: VillageForPersonRelationUpdateInput });
     },
 });
 
@@ -102,15 +180,8 @@ export const PersonMutation = extendType({
                 data: nonNull(PersonCreateInput)
             },
             resolve(_, args, ctx) {
-                const {village, ... data } = unnullifyObject(args.data);
-                return ctx.prisma.person.create({
-                    data: {
-                        ...data,
-                        villages: village ? {
-                            create: village
-                        } : undefined
-                    }
-                });
+                const data = unnullifyObject(args.data);
+                return ctx.prisma.person.create({ data });
             }
         });
         t.nonNull.field("updatePerson", {
@@ -120,15 +191,10 @@ export const PersonMutation = extendType({
                 data: nonNull(PersonUpdateInput)
             },
             resolve(_, args, ctx) {
-                const {village, ... data } = unnullifyObject(args.data);
+                const data = unnullifyObject(args.data);
                 return ctx.prisma.person.update({
                     where: { id: args.id },
-                    data: {
-                        ...data,
-                        villages: village ? {
-                            create: village
-                        } : undefined
-                    }
+                    data
                 });
             }
         });

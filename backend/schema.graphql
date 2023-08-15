@@ -60,6 +60,11 @@ type Mutation {
   updatePerson(data: PersonUpdateInput!, id: ID!): Person!
 }
 
+enum OrderDirection {
+  asc
+  desc
+}
+
 type Person {
   children: [Person!]!
   files: [FileEntry!]!
@@ -67,12 +72,26 @@ type Person {
   name: String!
   parent: Person
   parentId: String
+  villages: [PersonInVillage!]!
 }
 
 input PersonCreateInput {
   name: String!
   parentId: String
-  village: PersonInVillageCreateInput
+  villages: VillageForPersonRelationCreateInput
+}
+
+input PersonIdVillageIdInput {
+  personId: ID!
+  villageId: ID!
+}
+
+type PersonInVillage {
+  description: String
+  person: Person!
+  personId: ID!
+  village: Village!
+  villageId: ID!
 }
 
 input PersonInVillageCreateInput {
@@ -80,16 +99,30 @@ input PersonInVillageCreateInput {
   villageId: ID!
 }
 
+input PersonInVillageUniqueWhereInput {
+  personId_villageId: PersonIdVillageIdInput!
+}
+
+input PersonOrderByInput {
+  name: OrderDirection
+}
+
 input PersonUpdateInput {
   name: String
   parentId: String
-  village: PersonInVillageCreateInput
+  villages: VillageForPersonRelationUpdateInput
+}
+
+input PersonWhereInput {
+  id: ID
+  name: String
+  parentId: String
 }
 
 type Query {
   fileEntries: [FileEntry!]!
   fileEntry(id: String!): FileEntry
-  people: [Person!]!
+  people(orderBy: PersonOrderByInput, skip: Int! = 0, take: Int! = 20, where: PersonWhereInput): [Person!]!
   person(id: ID!): Person
   rootFileEntry: FileEntry!
   tags: [String!]!
@@ -102,6 +135,7 @@ type Village {
   location: LatLng!
   locationId: String!
   name: String!
+  people: [PersonInVillage!]!
 }
 
 input VillageCreateInput {
@@ -112,4 +146,15 @@ input VillageCreateInput {
 input VillageCreateLocationInput {
   connect: IdWhereUniqueInput
   create: LatLngCreateInput
+}
+
+input VillageForPersonRelationCreateInput {
+  connect: PersonInVillageUniqueWhereInput
+  create: PersonInVillageCreateInput
+}
+
+input VillageForPersonRelationUpdateInput {
+  connect: PersonInVillageUniqueWhereInput
+  create: PersonInVillageCreateInput
+  delete: PersonInVillageUniqueWhereInput
 }

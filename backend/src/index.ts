@@ -1,17 +1,51 @@
 require("module-alias/register");
 
-import { ApolloServer } from "@apollo/server";
-import { expressMiddleware } from "@apollo/server/express4";
+import { ApolloServer, ContextFunction } from "@apollo/server";
+import { ExpressContextFunctionArgument, expressMiddleware } from "@apollo/server/express4";
 import { PrismaClient } from "@prisma/client";
 import cors from "cors";
 import express from "express";
 
 import { schema } from "./graphql";
 import type { Context } from "./graphql/context";
+import { GraphQLError } from "graphql";
 
 
 
 const PORT = parseInt(process.env.PORT ?? "3001");
+
+
+
+type ContextFn = (prismaClient: PrismaClient) => ContextFunction<[ExpressContextFunctionArgument], Context>;
+
+const prodContext: ContextFn = (prisma) =>(async ({ req }) => {
+    const auth = req.headers.authorization;
+
+    if(!auth) {
+        throw new GraphQLError("Unauthorized Request", {
+            extensions: {
+                code: "UNAUTHENTICATED",
+                http: { status: 401 }
+            }
+        });
+    }
+    const token = auth.split(" ")[1];
+    if(!token) {
+        throw new GraphQLError("Malformed Authorization", {
+            extensions: {
+                code: "UNAUTHENTICATED",
+                http: { status: 400 }
+            }
+        });
+    }
+
+    return { prisma, token };
+});
+const devContext: ContextFn = (prisma) =>(async () => {
+    return { prisma, token: "" };
+});
+
+
 
 (async function main() {
     const app = express();
@@ -24,37 +58,11 @@ const PORT = parseInt(process.env.PORT ?? "3001");
     // This does NOT block the thread, and must be called prior to mounting it on the Express app.
     await apolloServer.start();
 
-    app.use(cors({
-        origin: "http://localhost:3000"
-    }));
     app.use(
         "/api/graphql",
         express.json(),
         expressMiddleware(apolloServer, {
-            context: async ({ req, res }) => {
-                const auth = req.headers.authorization;
-
-                if(!auth) {
-                    res.status(401).json({
-                        status: "error",
-                        reason: "Expected Authorization header with Bearer token"
-                    });
-                    throw new Error("Unauthorized Request");
-                }
-                const token = auth.split(" ")[1];
-                if(!token) {
-                    res.status(400).json({
-                        status: "error",
-                        reason: "Malformed Authorization header"
-                    });
-                    throw new Error("Malformed Authorization");
-                }
-
-                return {
-                    prisma: prismaClient,
-                    token
-                };
-            }
+            context: process.env.NODE_ENV === "production" ? prodContext(prismaClient) : devContext(prismaClient)
         })
     );
 
