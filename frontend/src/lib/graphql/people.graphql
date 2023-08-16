@@ -6,9 +6,26 @@ fragment PersonAndParent on Person {
     ...SimplePerson
     parent { ...SimplePerson }
 }
+fragment PersonForTable on Person {
+    ...SimplePerson
+    parent { ...SimplePerson }
+    children { ...SimplePerson }
+    villages {
+        description
+        village {
+            id
+            name
+        }
+    }
+}
 
 query GetAllPeople {
     people { ...PersonAndParent }
+}
+query GetPeople($where: PersonWhereInput, $take: Int, $skip: Int, $orderBy: PersonOrderByInput) {
+    people(where: $where, take: $take, skip: $skip, orderBy: $orderBy) {
+        ...PersonForTable
+    }
 }
 
 mutation CreatePerson($data: PersonCreateInput!) {
