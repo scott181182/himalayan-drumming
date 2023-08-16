@@ -1,8 +1,9 @@
 "use client";
 
-import { Col, Row, Select, Tag, Tooltip } from "antd";
+import { Col, Row, Tag, Tooltip } from "antd";
+import type { FilterValue } from "antd/es/table/interface";
 import type { NextPage } from "next";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 
 import type { ResourceSelectorColumns } from "@/components/ResourceSelector";
 import { ResourceSelector } from "@/components/ResourceSelector";
@@ -35,6 +36,10 @@ const personColumns: ResourceSelectorColumns<PersonForTableFragment> = [
                 <Tooltip title={village.description} key={village.village.id}>{villageTag}</Tooltip> :
                 villageTag;
         }) ?? null,
+        /**
+         * Returns a filter option for every village present in the table.
+         * Maybe this could eventually get all villages from the database.
+         */
         filterOptions: (people) => {
             /** Map from village id to name */
             const villageMap: Record<string, string> = {};
@@ -49,7 +54,32 @@ const personColumns: ResourceSelectorColumns<PersonForTableFragment> = [
 ];
 
 const TestPage: NextPage = () => {
+    // An example state value.
+    // This will usually be handled by a form context.
     const [value, setValue] = useState<PersonForTableFragment | undefined>();
+
+    /** Defines how a query for Persons is build up from a set of filters and a search string. */
+    const onQuery = useCallback((filters: Record<string, FilterValue | null>, search?: string) => {
+        const conditions: PersonWhereInput[] = [];
+        if(search) {
+            conditions.push({
+                OR: [
+                    { name: { contains: search } },
+                    { parent: { name: { contains: search } } },
+                    { children: { some: { name: { contains: search } } } },
+                    { villages: { some: { village: { name: { contains: search} } } } }
+                ]
+            });
+        }
+        if(filters.villages) {
+            conditions.push({
+                villages: { some: { villageId: { in: filters.villages as string[] } } }
+            });
+        }
+
+        return { where: { AND: conditions } };
+    }, []);
+
 
 
     return <Row className="w-full p-4" justify="center">
@@ -58,7 +88,6 @@ const TestPage: NextPage = () => {
                 value={value}
                 onChange={setValue}
 
-                // keyFn={(person) => person.id}
                 recordKey="id"
                 renderValue={(person) => person.name}
 
@@ -67,33 +96,7 @@ const TestPage: NextPage = () => {
                 className="w-full"
                 queryDocumentNode={GetPeopleDocument}
                 queryMap={(res) => res.people}
-                onQuery={(filters, search) => {
-                    const conditions: PersonWhereInput[] = [];
-                    if(search) {
-                        conditions.push({
-                            OR: [
-                                { name: { contains: search } },
-                                { parent: { name: { contains: search } } },
-                                { children: { some: { name: { contains: search } } } },
-                                { villages: { some: { village: { name: { contains: search} } } } }
-                            ]
-                        });
-                    }
-                    if(filters.villages) {
-                        conditions.push({
-                            villages: { some: { villageId: { in: filters.villages as string[] } } }
-                        });
-                    }
-
-                    return { where: { AND: conditions } };
-                }}
-            />
-        </Col>
-        <Col span={4}>
-            <Select
-                options={[
-                    {label: "Test", value: "test"}
-                ]}
+                onQuery={onQuery}
             />
         </Col>
     </Row>;
