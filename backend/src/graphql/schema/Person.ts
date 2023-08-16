@@ -1,6 +1,6 @@
 import { extendType, idArg, inputObjectType, intArg, nonNull, objectType } from "nexus";
 
-import { makeRelationCreateInput, makeRelationUpdateInput, unnullifyObject } from "./utils";
+import { combinationOperators, makeListRelationWhereInput, unnullifyObject } from "./utils";
 
 
 
@@ -52,39 +52,22 @@ export const  Person = objectType({
 export const PersonWhereInput = inputObjectType({
     name: "PersonWhereInput",
     definition(t) {
-        t.id("id");
-        t.string("name");
+        t.field("id", { type: "IdNullableFilterInput" });
+        t.field("name", { type: "StringNullableFilterInput" });
 
-        t.string("parentId");
-        // t.field("parent", {
-        //     type: "Person",
-        //     resolve(src, _args, ctx) {
-        //         return src.parentId ? ctx.prisma.person.findUniqueOrThrow({
-        //             where: { id: src.parentId }
-        //         }) : null;
-        //     }
-        // });
+        t.field("parentId", { type: "IdNullableFilterInput" });
+        t.field("parent", { type: "PersonWhereInput" });
 
-        // t.nonNull.list.nonNull.field("children", {
-        //     type: "Person",
-        //     resolve(src, _args, ctx) {
-        //         return ctx.prisma.person.findMany({
-        //             where: { parentId: src.id }
-        //         });
-        //     }
-        // });
+        t.field("children", { type: "PersonWhereManyInput" });
+        t.field("villages", { type: "PersonInVillageWhereManyInput" });
 
-        // t.nonNull.list.nonNull.field("files", {
-        //     type: "FileEntry",
-        //     resolve(src, _args, ctx) {
-        //         return ctx.prisma.person.findUniqueOrThrow({
-        //             where: { id: src.id },
-        //             select: { files: true }
-        //         }).then((res) => res.files);
-        //     }
-        // });
+        combinationOperators(t, "PersonWhereInput");
+
+        // TODO: add files?
     },
 });
+export const PersonWhereManyInput = makeListRelationWhereInput("PersonWhereManyInput", "PersonWhereInput");
+
 export const PersonOrderByInput = inputObjectType({
     name: "PersonOrderByInput",
     definition(t) {
@@ -128,37 +111,13 @@ export const PersonQuery = extendType({
 
 
 
-export const PersonIdVillageIdInput = inputObjectType({
-    name: "PersonIdVillageIdInput",
-    definition(t) {
-        t.nonNull.id("personId");
-        t.nonNull.id("villageId");
-    },
-})
-export const PersonInVillageUniqueWhereInput = inputObjectType({
-    name: "PersonInVillageUniqueWhereInput",
-    definition(t) {
-        t.nonNull.field("personId_villageId", {
-            type: PersonIdVillageIdInput
-        })
-    },
-})
-export const VillageForPersonInput = inputObjectType({
-    name: "PersonInVillageCreateInput",
-    definition(t) {
-        t.nonNull.id("villageId");
-        t.string("description");
-    },
-});
-export const VillageForPersonRelationCreateInput = makeRelationCreateInput("VillageForPersonRelationCreateInput", "PersonInVillageUniqueWhereInput", "PersonInVillageCreateInput");
-export const VillageForPersonRelationUpdateInput = makeRelationUpdateInput("VillageForPersonRelationUpdateInput", "PersonInVillageUniqueWhereInput", "PersonInVillageCreateInput");
 
 export const PersonCreateInput = inputObjectType({
     name: "PersonCreateInput",
     definition(t) {
         t.nonNull.string("name");
         t.string("parentId");
-        t.field("villages", { type: VillageForPersonRelationCreateInput });
+        t.field("villages", { type: "PersonInVillageRelationCreateInput" });
     },
 });
 
@@ -167,7 +126,7 @@ export const PersonUpdateInput = inputObjectType({
     definition(t) {
         t.string("name");
         t.string("parentId");
-        t.field("villages", { type: VillageForPersonRelationUpdateInput });
+        t.field("villages", { type: "PersonInVillageRelationUpdateInput" });
     },
 });
 

@@ -1,4 +1,5 @@
 import { inputObjectType } from "nexus";
+import type { AllInputTypes, AllNexusInputTypeDefs, InputDefinitionBlock } from "nexus/dist/core";
 
 import type { NexusGenInputNames } from "../../../nexus-typegen";
 
@@ -33,6 +34,24 @@ export function makeRelationUpdateInput(name: string, whereInput: NexusGenInputN
             });
         },
     });
+}
+
+
+export function makeListRelationWhereInput(name: string, whereInput: NexusGenInputNames) {
+    return inputObjectType({
+        name: name,
+        definition(t) {
+            t.field("every", { type: whereInput });
+            t.field("some", { type: whereInput });
+            t.field("none", { type: whereInput });
+        },
+    });
+}
+
+export function combinationOperators(t: InputDefinitionBlock<string>, type: AllInputTypes | AllNexusInputTypeDefs) {
+    t.list.nonNull.field("OR", { type });
+    t.list.nonNull.field("AND", { type });
+    t.list.nonNull.field("NOT", { type });
 }
 
 

@@ -31,6 +31,13 @@ input FileMetadataUpdateInput {
   location: FileMetadataCreateLocationInput
 }
 
+input IdNullableFilterInput {
+  equals: String
+  in: [String!]
+  not: NestedIdNullableFilterInput
+  notIn: [String!]
+}
+
 input IdWhereUniqueInput {
   id: ID!
 }
@@ -60,6 +67,27 @@ type Mutation {
   updatePerson(data: PersonUpdateInput!, id: ID!): Person!
 }
 
+input NestedIdNullableFilterInput {
+  equals: String
+  in: [String!]
+  not: NestedIdNullableFilterInput
+  notIn: [String!]
+}
+
+input NestedStringNullableFilterInput {
+  contains: String
+  endsWith: String
+  equals: String
+  gt: String
+  gte: String
+  in: [String!]
+  lt: String
+  lte: String
+  not: NestedStringNullableFilterInput
+  notIn: [String!]
+  startsWith: String
+}
+
 enum OrderDirection {
   asc
   desc
@@ -78,7 +106,7 @@ type Person {
 input PersonCreateInput {
   name: String!
   parentId: String
-  villages: VillageForPersonRelationCreateInput
+  villages: PersonInVillageRelationCreateInput
 }
 
 input PersonIdVillageIdInput {
@@ -99,8 +127,36 @@ input PersonInVillageCreateInput {
   villageId: ID!
 }
 
+input PersonInVillageRelationCreateInput {
+  connect: PersonInVillageUniqueWhereInput
+  create: PersonInVillageCreateInput
+}
+
+input PersonInVillageRelationUpdateInput {
+  connect: PersonInVillageUniqueWhereInput
+  create: PersonInVillageCreateInput
+  delete: PersonInVillageUniqueWhereInput
+}
+
 input PersonInVillageUniqueWhereInput {
   personId_villageId: PersonIdVillageIdInput!
+}
+
+input PersonInVillageWhereInput {
+  AND: [PersonInVillageWhereInput!]
+  NOT: [PersonInVillageWhereInput!]
+  OR: [PersonInVillageWhereInput!]
+  description: StringNullableFilterInput
+  person: PersonWhereInput
+  personId: IdNullableFilterInput
+  village: VillageWhereInput
+  villageId: IdNullableFilterInput
+}
+
+input PersonInVillageWhereManyInput {
+  every: PersonInVillageWhereInput
+  none: PersonInVillageWhereInput
+  some: PersonInVillageWhereInput
 }
 
 input PersonOrderByInput {
@@ -110,13 +166,25 @@ input PersonOrderByInput {
 input PersonUpdateInput {
   name: String
   parentId: String
-  villages: VillageForPersonRelationUpdateInput
+  villages: PersonInVillageRelationUpdateInput
 }
 
 input PersonWhereInput {
-  id: ID
-  name: String
-  parentId: String
+  AND: [PersonWhereInput!]
+  NOT: [PersonWhereInput!]
+  OR: [PersonWhereInput!]
+  children: PersonWhereManyInput
+  id: IdNullableFilterInput
+  name: StringNullableFilterInput
+  parent: PersonWhereInput
+  parentId: IdNullableFilterInput
+  villages: PersonInVillageWhereManyInput
+}
+
+input PersonWhereManyInput {
+  every: PersonWhereInput
+  none: PersonWhereInput
+  some: PersonWhereInput
 }
 
 type Query {
@@ -128,6 +196,31 @@ type Query {
   tags: [String!]!
   village(id: ID!): Village
   villages: [Village!]!
+}
+
+input StringNullableArrayFilterInput {
+  every: StringNullableFilterInput
+  none: StringNullableFilterInput
+  some: StringNullableFilterInput
+}
+
+input StringNullableFilterInput {
+  contains: String
+  endsWith: String
+  equals: String
+  gt: String
+  gte: String
+  in: [String!]
+  lt: String
+  lte: String
+  not: NestedStringNullableFilterInput
+  notIn: [String!]
+  startsWith: String
+}
+
+enum StringQueryModeEnum {
+  default
+  insensitive
 }
 
 type Village {
@@ -148,13 +241,7 @@ input VillageCreateLocationInput {
   create: LatLngCreateInput
 }
 
-input VillageForPersonRelationCreateInput {
-  connect: PersonInVillageUniqueWhereInput
-  create: PersonInVillageCreateInput
-}
-
-input VillageForPersonRelationUpdateInput {
-  connect: PersonInVillageUniqueWhereInput
-  create: PersonInVillageCreateInput
-  delete: PersonInVillageUniqueWhereInput
+input VillageWhereInput {
+  id: IdNullableFilterInput
+  name: StringNullableFilterInput
 }

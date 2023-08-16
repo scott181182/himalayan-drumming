@@ -21,6 +21,12 @@ export interface NexusGenInputs {
   FileMetadataUpdateInput: { // input type
     location?: NexusGenInputs['FileMetadataCreateLocationInput'] | null; // FileMetadataCreateLocationInput
   }
+  IdNullableFilterInput: { // input type
+    equals?: string | null; // String
+    in?: string[] | null; // [String!]
+    not?: NexusGenInputs['NestedIdNullableFilterInput'] | null; // NestedIdNullableFilterInput
+    notIn?: string[] | null; // [String!]
+  }
   IdWhereUniqueInput: { // input type
     id: string; // ID!
   }
@@ -28,10 +34,29 @@ export interface NexusGenInputs {
     latitude: number; // Float!
     longitude: number; // Float!
   }
+  NestedIdNullableFilterInput: { // input type
+    equals?: string | null; // String
+    in?: string[] | null; // [String!]
+    not?: NexusGenInputs['NestedIdNullableFilterInput'] | null; // NestedIdNullableFilterInput
+    notIn?: string[] | null; // [String!]
+  }
+  NestedStringNullableFilterInput: { // input type
+    contains?: string | null; // String
+    endsWith?: string | null; // String
+    equals?: string | null; // String
+    gt?: string | null; // String
+    gte?: string | null; // String
+    in?: string[] | null; // [String!]
+    lt?: string | null; // String
+    lte?: string | null; // String
+    not?: NexusGenInputs['NestedStringNullableFilterInput'] | null; // NestedStringNullableFilterInput
+    notIn?: string[] | null; // [String!]
+    startsWith?: string | null; // String
+  }
   PersonCreateInput: { // input type
     name: string; // String!
     parentId?: string | null; // String
-    villages?: NexusGenInputs['VillageForPersonRelationCreateInput'] | null; // VillageForPersonRelationCreateInput
+    villages?: NexusGenInputs['PersonInVillageRelationCreateInput'] | null; // PersonInVillageRelationCreateInput
   }
   PersonIdVillageIdInput: { // input type
     personId: string; // ID!
@@ -41,8 +66,32 @@ export interface NexusGenInputs {
     description?: string | null; // String
     villageId: string; // ID!
   }
+  PersonInVillageRelationCreateInput: { // input type
+    connect?: NexusGenInputs['PersonInVillageUniqueWhereInput'] | null; // PersonInVillageUniqueWhereInput
+    create?: NexusGenInputs['PersonInVillageCreateInput'] | null; // PersonInVillageCreateInput
+  }
+  PersonInVillageRelationUpdateInput: { // input type
+    connect?: NexusGenInputs['PersonInVillageUniqueWhereInput'] | null; // PersonInVillageUniqueWhereInput
+    create?: NexusGenInputs['PersonInVillageCreateInput'] | null; // PersonInVillageCreateInput
+    delete?: NexusGenInputs['PersonInVillageUniqueWhereInput'] | null; // PersonInVillageUniqueWhereInput
+  }
   PersonInVillageUniqueWhereInput: { // input type
     personId_villageId: NexusGenInputs['PersonIdVillageIdInput']; // PersonIdVillageIdInput!
+  }
+  PersonInVillageWhereInput: { // input type
+    AND?: NexusGenInputs['PersonInVillageWhereInput'][] | null; // [PersonInVillageWhereInput!]
+    NOT?: NexusGenInputs['PersonInVillageWhereInput'][] | null; // [PersonInVillageWhereInput!]
+    OR?: NexusGenInputs['PersonInVillageWhereInput'][] | null; // [PersonInVillageWhereInput!]
+    description?: NexusGenInputs['StringNullableFilterInput'] | null; // StringNullableFilterInput
+    person?: NexusGenInputs['PersonWhereInput'] | null; // PersonWhereInput
+    personId?: NexusGenInputs['IdNullableFilterInput'] | null; // IdNullableFilterInput
+    village?: NexusGenInputs['VillageWhereInput'] | null; // VillageWhereInput
+    villageId?: NexusGenInputs['IdNullableFilterInput'] | null; // IdNullableFilterInput
+  }
+  PersonInVillageWhereManyInput: { // input type
+    every?: NexusGenInputs['PersonInVillageWhereInput'] | null; // PersonInVillageWhereInput
+    none?: NexusGenInputs['PersonInVillageWhereInput'] | null; // PersonInVillageWhereInput
+    some?: NexusGenInputs['PersonInVillageWhereInput'] | null; // PersonInVillageWhereInput
   }
   PersonOrderByInput: { // input type
     name?: NexusGenEnums['OrderDirection'] | null; // OrderDirection
@@ -50,12 +99,41 @@ export interface NexusGenInputs {
   PersonUpdateInput: { // input type
     name?: string | null; // String
     parentId?: string | null; // String
-    villages?: NexusGenInputs['VillageForPersonRelationUpdateInput'] | null; // VillageForPersonRelationUpdateInput
+    villages?: NexusGenInputs['PersonInVillageRelationUpdateInput'] | null; // PersonInVillageRelationUpdateInput
   }
   PersonWhereInput: { // input type
-    id?: string | null; // ID
-    name?: string | null; // String
-    parentId?: string | null; // String
+    AND?: NexusGenInputs['PersonWhereInput'][] | null; // [PersonWhereInput!]
+    NOT?: NexusGenInputs['PersonWhereInput'][] | null; // [PersonWhereInput!]
+    OR?: NexusGenInputs['PersonWhereInput'][] | null; // [PersonWhereInput!]
+    children?: NexusGenInputs['PersonWhereManyInput'] | null; // PersonWhereManyInput
+    id?: NexusGenInputs['IdNullableFilterInput'] | null; // IdNullableFilterInput
+    name?: NexusGenInputs['StringNullableFilterInput'] | null; // StringNullableFilterInput
+    parent?: NexusGenInputs['PersonWhereInput'] | null; // PersonWhereInput
+    parentId?: NexusGenInputs['IdNullableFilterInput'] | null; // IdNullableFilterInput
+    villages?: NexusGenInputs['PersonInVillageWhereManyInput'] | null; // PersonInVillageWhereManyInput
+  }
+  PersonWhereManyInput: { // input type
+    every?: NexusGenInputs['PersonWhereInput'] | null; // PersonWhereInput
+    none?: NexusGenInputs['PersonWhereInput'] | null; // PersonWhereInput
+    some?: NexusGenInputs['PersonWhereInput'] | null; // PersonWhereInput
+  }
+  StringNullableArrayFilterInput: { // input type
+    every?: NexusGenInputs['StringNullableFilterInput'] | null; // StringNullableFilterInput
+    none?: NexusGenInputs['StringNullableFilterInput'] | null; // StringNullableFilterInput
+    some?: NexusGenInputs['StringNullableFilterInput'] | null; // StringNullableFilterInput
+  }
+  StringNullableFilterInput: { // input type
+    contains?: string | null; // String
+    endsWith?: string | null; // String
+    equals?: string | null; // String
+    gt?: string | null; // String
+    gte?: string | null; // String
+    in?: string[] | null; // [String!]
+    lt?: string | null; // String
+    lte?: string | null; // String
+    not?: NexusGenInputs['NestedStringNullableFilterInput'] | null; // NestedStringNullableFilterInput
+    notIn?: string[] | null; // [String!]
+    startsWith?: string | null; // String
   }
   VillageCreateInput: { // input type
     location: NexusGenInputs['VillageCreateLocationInput']; // VillageCreateLocationInput!
@@ -65,19 +143,15 @@ export interface NexusGenInputs {
     connect?: NexusGenInputs['IdWhereUniqueInput'] | null; // IdWhereUniqueInput
     create?: NexusGenInputs['LatLngCreateInput'] | null; // LatLngCreateInput
   }
-  VillageForPersonRelationCreateInput: { // input type
-    connect?: NexusGenInputs['PersonInVillageUniqueWhereInput'] | null; // PersonInVillageUniqueWhereInput
-    create?: NexusGenInputs['PersonInVillageCreateInput'] | null; // PersonInVillageCreateInput
-  }
-  VillageForPersonRelationUpdateInput: { // input type
-    connect?: NexusGenInputs['PersonInVillageUniqueWhereInput'] | null; // PersonInVillageUniqueWhereInput
-    create?: NexusGenInputs['PersonInVillageCreateInput'] | null; // PersonInVillageCreateInput
-    delete?: NexusGenInputs['PersonInVillageUniqueWhereInput'] | null; // PersonInVillageUniqueWhereInput
+  VillageWhereInput: { // input type
+    id?: NexusGenInputs['IdNullableFilterInput'] | null; // IdNullableFilterInput
+    name?: NexusGenInputs['StringNullableFilterInput'] | null; // StringNullableFilterInput
   }
 }
 
 export interface NexusGenEnums {
   OrderDirection: "asc" | "desc"
+  StringQueryModeEnum: "default" | "insensitive"
 }
 
 export interface NexusGenScalars {
