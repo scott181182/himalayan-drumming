@@ -9,6 +9,7 @@ type FileEntry {
   name: String!
   parent: FileEntry
   parentId: ID
+  people: [Person!]!
   tags: [String!]!
   type: String!
   url: String
@@ -30,6 +31,13 @@ input FileMetadataUpdateInput {
   location: FileMetadataCreateLocationInput
 }
 
+input IdNullableFilterInput {
+  equals: String
+  in: [String!]
+  not: NestedIdNullableFilterInput
+  notIn: [String!]
+}
+
 input IdWhereUniqueInput {
   id: ID!
 }
@@ -46,16 +54,194 @@ input LatLngCreateInput {
 }
 
 type Mutation {
+  createPerson(data: PersonCreateInput!): Person!
+  createVillage(data: VillageCreateInput!): Village!
+
   """
   Perform a full scan of OneDrive and other file sources. Creates, updates, and deletes entries as necessary.
   """
   fullscan: FileEntry
+  tagFile(fileId: ID!, tag: String!): FileEntry!
+  untagFile(fileId: ID!, tag: String!): FileEntry!
   updateMetadata(data: FileMetadataUpdateInput!, fileId: ID!): FileMetadata!
+  updatePerson(data: PersonUpdateInput!, id: ID!): Person!
+}
+
+input NestedIdNullableFilterInput {
+  equals: String
+  in: [String!]
+  not: NestedIdNullableFilterInput
+  notIn: [String!]
+}
+
+input NestedStringNullableFilterInput {
+  contains: String
+  endsWith: String
+  equals: String
+  gt: String
+  gte: String
+  in: [String!]
+  lt: String
+  lte: String
+  not: NestedStringNullableFilterInput
+  notIn: [String!]
+  startsWith: String
+}
+
+enum OrderDirection {
+  asc
+  desc
+}
+
+type Person {
+  children: [Person!]!
+  files: [FileEntry!]!
+  id: ID!
+  name: String!
+  parent: Person
+  parentId: String
+  villages: [PersonInVillage!]!
+}
+
+input PersonCreateInput {
+  name: String!
+  parentId: String
+  villages: PersonInVillageRelationCreateInput
+}
+
+input PersonIdVillageIdInput {
+  personId: ID!
+  villageId: ID!
+}
+
+type PersonInVillage {
+  description: String
+  person: Person!
+  personId: ID!
+  village: Village!
+  villageId: ID!
+}
+
+input PersonInVillageCreateInput {
+  description: String
+  villageId: ID!
+}
+
+input PersonInVillageRelationCreateInput {
+  connect: PersonInVillageUniqueWhereInput
+  create: PersonInVillageCreateInput
+}
+
+input PersonInVillageRelationUpdateInput {
+  connect: PersonInVillageUniqueWhereInput
+  create: PersonInVillageCreateInput
+  delete: PersonInVillageUniqueWhereInput
+}
+
+input PersonInVillageUniqueWhereInput {
+  personId_villageId: PersonIdVillageIdInput!
+}
+
+input PersonInVillageWhereInput {
+  AND: [PersonInVillageWhereInput!]
+  NOT: [PersonInVillageWhereInput!]
+  OR: [PersonInVillageWhereInput!]
+  description: StringNullableFilterInput
+  person: PersonWhereInput
+  personId: IdNullableFilterInput
+  village: VillageWhereInput
+  villageId: IdNullableFilterInput
+}
+
+input PersonInVillageWhereManyInput {
+  every: PersonInVillageWhereInput
+  none: PersonInVillageWhereInput
+  some: PersonInVillageWhereInput
+}
+
+input PersonOrderByInput {
+  name: OrderDirection
+}
+
+input PersonUpdateInput {
+  name: String
+  parentId: String
+  villages: PersonInVillageRelationUpdateInput
+}
+
+input PersonWhereInput {
+  AND: [PersonWhereInput!]
+  NOT: [PersonWhereInput!]
+  OR: [PersonWhereInput!]
+  children: PersonWhereManyInput
+  id: IdNullableFilterInput
+  name: StringNullableFilterInput
+  parent: PersonWhereInput
+  parentId: IdNullableFilterInput
+  villages: PersonInVillageWhereManyInput
+}
+
+input PersonWhereManyInput {
+  every: PersonWhereInput
+  none: PersonWhereInput
+  some: PersonWhereInput
 }
 
 type Query {
   fileEntries: [FileEntry!]!
   fileEntry(id: String!): FileEntry
+  people(orderBy: PersonOrderByInput, skip: Int! = 0, take: Int! = 20, where: PersonWhereInput): [Person!]!
+  person(id: ID!): Person
   rootFileEntry: FileEntry!
   tags: [String!]!
+  village(id: ID!): Village
+  villages: [Village!]!
+}
+
+input StringNullableArrayFilterInput {
+  every: StringNullableFilterInput
+  none: StringNullableFilterInput
+  some: StringNullableFilterInput
+}
+
+input StringNullableFilterInput {
+  contains: String
+  endsWith: String
+  equals: String
+  gt: String
+  gte: String
+  in: [String!]
+  lt: String
+  lte: String
+  not: NestedStringNullableFilterInput
+  notIn: [String!]
+  startsWith: String
+}
+
+enum StringQueryModeEnum {
+  default
+  insensitive
+}
+
+type Village {
+  id: ID!
+  location: LatLng!
+  locationId: String!
+  name: String!
+  people: [PersonInVillage!]!
+}
+
+input VillageCreateInput {
+  location: VillageCreateLocationInput!
+  name: String!
+}
+
+input VillageCreateLocationInput {
+  connect: IdWhereUniqueInput
+  create: LatLngCreateInput
+}
+
+input VillageWhereInput {
+  id: IdNullableFilterInput
+  name: StringNullableFilterInput
 }

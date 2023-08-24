@@ -5,5 +5,23 @@
     "eslint.workingDirectories": [
         "./backend",
         "./frontend"
-    ]
+    ],
+    "conventionalCommits.scopes": [
+        "scripts",
+        "frontend",
+        "backend",
+        "cicd",
+        "docs",
+        "docker"
+    ],
+    "terminal.integrated.profiles.linux": {
+        "bash": {
+            "path": "bash",
+            "icon": "terminal-bash"
+        },
+        "zsh": {
+            "path": "zsh"
+        }
+    },
+    "terminal.integrated.defaultProfile.linux": "zsh"
 }

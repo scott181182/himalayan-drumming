@@ -7,7 +7,7 @@ generator client {
 
 datasource db {
   provider = "sqlite"
-  url      = env("DATABASE_URL")
+  url      = "file:./dev.db"
 }
 
 
@@ -27,22 +27,23 @@ model FileEntry {
     parentId String?
 
     typeRef FileType @relation(fields: [type], references: [name])
-    parent FileEntry? @relation("ParentChildren", fields: [parentId], references: [id])
+    parent FileEntry? @relation("ParentChildren", fields: [parentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
     children FileEntry[] @relation("ParentChildren")
 
     metadata FileMetadata?
     withTags TagOnFile[]
+    people Person[]
 
     @@index([parentId])
 }
 
 model FileMetadata {
     fileId String @id
-    file FileEntry @relation(fields: [fileId], references: [id])
+    file FileEntry @relation(fields: [fileId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
     locationId String?
-    location LatLng? @relation(fields: [locationId], references: [id])
+    location LatLng? @relation(fields: [locationId], references: [id], onDelete: SetNull, onUpdate: Cascade)
 }
 
 /// Manual Join table to avoid automatic cascades
@@ -50,8 +51,8 @@ model TagOnFile {
     tagName String
     fileId String
 
-    tag Tag @relation(fields: [tagName], references: [name], onDelete: Cascade)
-    file FileEntry @relation(fields: [fileId], references: [id], onDelete: NoAction)
+    tag Tag @relation(fields: [tagName], references: [name], onDelete: Cascade, onUpdate: Cascade)
+    file FileEntry @relation(fields: [fileId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
     @@id([tagName, fileId])
 }
@@ -67,4 +68,40 @@ model LatLng {
     longitude Float
 
     metadata FileMetadata[]
+    villages Village[]
+}
+
+
+
+model Person {
+    id String @id @default(cuid())
+    name String
+
+    parent Person? @relation("ParentChild", fields: [parentId], references: [id])
+    parentId String?
+
+    children Person[] @relation("ParentChild")
+    villages PersonInVillage[]
+    files FileEntry[]
+}
+model Village {
+    id String @id @default(cuid())
+    name String
+
+    location LatLng @relation(fields: [locationId], references: [id])
+    locationId String
+
+    people PersonInVillage[]
+}
+
+model PersonInVillage {
+    /// The person's relation to the village
+    description String?
+
+    person Person @relation(fields: [personId], references: [id])
+    personId String
+    village Village @relation(fields: [villageId], references: [id])
+    villageId String
+
+    @@id([personId, villageId])
 }

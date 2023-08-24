@@ -5,13 +5,16 @@
     "author": "Scott Fasone",
     "license": "MIT",
     "scripts": {
+        "lint": "eslint",
         "generate": "yarn generate:prisma && yarn generate:nexus",
         "generate:prisma": "prisma generate",
         "generate:nexus": "NEXUS_GEN=1 ts-node --transpile-only ./src/graphql/index.ts",
         "generate:nexus:watch": "NEXUS_GEN=1 ts-node-dev --transpile-only --no-notify ./src/graphql/index.ts",
         "db:migrate": "prisma migrate dev",
         "db:seed": "ts-node ./src/scripts/db_seed.ts",
-        "build": "tsc -p . --pretty"
+        "db:scan": "ts-node ./src/scripts/db_scan.ts",
+        "build": "tsc -p . --pretty",
+        "start": "node ."
     },
     "dependencies": {
         "@apollo/server": "^4.7.5",
@@ -29,7 +32,7 @@
     "devDependencies": {
         "@types/cors": "^2.8.13",
         "@types/express": "^4.17.17",
-        "@types/node": "^20.3.3",
+        "@types/node": "18",
         "@typescript-eslint/eslint-plugin": "^5.61.0",
         "@typescript-eslint/parser": "^5.61.0",
         "eslint": "^8.44.0",
