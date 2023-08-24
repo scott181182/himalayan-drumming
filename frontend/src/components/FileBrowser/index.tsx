@@ -139,25 +139,22 @@ export function FileBrowser() {
                         {selectedFile.tags.map((tag) => <Tag key={tag}>{tag}</Tag>)}
                     </Descriptions.Item>
                 </Descriptions>
-                <Row>
-                    <Col>
-                        <Button
-                            disabled={!selectedLocation}
-                            onClick={assignLocation}
-                            className="mx-8"
-                        >
-                            Assign Location
-                        </Button>
-                    </Col>
-                    <Col>
-                        <Button
-                            onClick={() => previewFile(selectedFile)}
-                            className="mx-8"
-                        >
-                            Preview File
-                        </Button>
-                    </Col>
-                </Row>
+                <Space>
+                    <Button
+                        disabled={!selectedLocation}
+                        onClick={assignLocation}
+                        className="mx-8"
+                    >
+                        Assign Location
+                    </Button>
+
+                    <Button
+                        onClick={() => previewFile(selectedFile)}
+                        className="mx-8"
+                    >
+                        Preview File
+                    </Button>
+                </Space>
             </>}
         />
         {/* <Modal
