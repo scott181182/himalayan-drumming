@@ -10,6 +10,7 @@ import uttarakhandGeo from "@/assets/india_states.json";
 import { useDashboardDispatch, useDashboardState } from "@/components/DashboardContext";
 import type { LocationCompleteFragment } from "@/generated/graphql";
 import { isDefined } from "@/utils/array";
+import { LatLngGoto } from "./LatLngGoto";
 
 
 
@@ -75,7 +76,7 @@ export function Map() {
 
 
     return (
-        <MapContainer center={UTTARAKHAND_CENTER} zoom={9} scrollWheelZoom={false} className="h-full">
+        <MapContainer center={UTTARAKHAND_CENTER} zoom={9} scrollWheelZoom={true} className="h-full">
             <TileLayer
                 attribution={FreeTileLayers.StamenTerrain.attribution}
                 url={FreeTileLayers.StamenTerrain.url}
@@ -83,9 +84,10 @@ export function Map() {
             <GeoJSON
                 data={uttarakhandGeo as GeoJSONProps["data"]}
             />
-            {villageMarkers}
-            {fileMarkers}
+                {villageMarkers}
+                {fileMarkers}
             <ClickMarker/>
+            <LatLngGoto className="absolute top-4 right-4 p-0 z-[1000]"/>
         </MapContainer>
     );
 }

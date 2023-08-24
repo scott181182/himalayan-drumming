@@ -22,8 +22,10 @@ img, video {
 
 
 .ant-table-wrapper.striped {
-    .ant-table-thead th {
-        background-color: #ccc;
+    .ant-table-thead {
+        th, td {
+            background-color: #ccc;
+        }
     }
 
 

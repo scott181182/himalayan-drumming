@@ -13,6 +13,11 @@ export interface AntdTreeConfig<T extends IdObject> {
     isLeafFn: (t: T) => boolean;
 }
 
+export type AntDTreeNode<T> = TreeDataNode & {
+    children?: AntDTreeNode<T>[],
+    data: T
+};
+
 
 
 export class ImmutableTree<T extends IdObject> {
@@ -53,17 +58,18 @@ export class ImmutableTree<T extends IdObject> {
 
 
 
-    private toAntdTreeNode(t: T, options: AntdTreeConfig<T>): TreeDataNode {
+    private toAntdTreeNode(t: T, options: AntdTreeConfig<T>): AntDTreeNode<T> {
         return {
             key: t.id,
             title: options.titleFn(t),
             isLeaf: options.isLeafFn(t),
             children: t.id in this.parentMap ?
                 this.parentMap[t.id].map((id) => this.nodeMap[id]).map((n) => this.toAntdTreeNode(n, options)) :
-                undefined
+                undefined,
+            data: t
         };
     }
-    public toAntdTree(options: AntdTreeConfig<T>): TreeDataNode {
+    public toAntdTree(options: AntdTreeConfig<T>): AntDTreeNode<T> {
         return this.toAntdTreeNode(this.root, options);
     }
 }
