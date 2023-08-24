@@ -3,7 +3,7 @@
 import { CompassOutlined } from "@ant-design/icons";
 import { useApolloClient } from "@apollo/client";
 import type { TreeDataNode } from "antd";
-import { App, Button, Descriptions, Tag, Table, Row, Col, Space } from "antd";
+import { App, Button, Descriptions, Tag, Table, Row, Col, Space, Select } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { useCallback, useMemo } from "react";
 
@@ -15,6 +15,8 @@ import { AssignFileMetadataDocument, GetAllFileEntriesDocument, GetFullContextDo
 import { usePromiseMessage } from "@/utils/antd";
 import { isDefined } from "@/utils/array";
 import { AntDTreeNode } from "@/utils/tree";
+import { useEnums } from "../EnumContext";
+import { TagSelector } from "./TagSelector";
 
 
 
@@ -111,6 +113,8 @@ export function FileBrowser() {
         }
     };
 
+
+
     return <div className="flex flex-col h-full gap-1">
         <Button onClick={startFullScan} className="m-4">
             Full Scan
@@ -136,7 +140,7 @@ export function FileBrowser() {
                     size="small"
                 >
                     <Descriptions.Item label="Tags">
-                        {selectedFile.tags.map((tag) => <Tag key={tag}>{tag}</Tag>)}
+                        <TagSelector file={selectedFile}/>
                     </Descriptions.Item>
                 </Descriptions>
                 <Space>
@@ -147,7 +151,6 @@ export function FileBrowser() {
                     >
                         Assign Location
                     </Button>
-
                     <Button
                         onClick={() => previewFile(selectedFile)}
                         className="mx-8"
