@@ -57,8 +57,23 @@ mutation AssignFileMetadata($fileId: ID!, $data: FileMetadataUpdateInput!) {
         ...MetadataBasic
     }
 }
+mutation TagFile($fileId: ID!, $tag: String!) {
+    tagFile(fileId: $fileId, tag: $tag) {
+        tags
+    }
+}
+mutation UntagFile($fileId: ID!, $tag: String!) {
+    untagFile(fileId: $fileId, tag: $tag) {
+        tags
+    }
+}
+
+
+
 mutation StartFullScan {
     fullscan {
         ...FileEntryWithChildren
     }
 }
+
+

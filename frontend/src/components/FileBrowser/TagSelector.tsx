@@ -1,13 +1,13 @@
 
 import { PlusOutlined } from "@ant-design/icons";
-import { useMutation } from "@apollo/client";
+import { useApolloClient, useMutation } from "@apollo/client";
 import type { InputRef} from "antd";
 import { Button, Divider, Input, Select, Space } from "antd";
 import { useCallback, useRef, useState } from "react";
 
 import { useEnums } from "../EnumContext";
 import type { FileEntryBasicFragment} from "@/generated/graphql";
-import { GetAllTagsDocument, GetFullContextDocument, TagFileDocument } from "@/generated/graphql";
+import { GetAllTagsDocument, GetFullContextDocument, TagFileDocument, UntagFileDocument } from "@/generated/graphql";
 import { usePromiseMessage } from "@/utils/antd";
 
 
@@ -21,6 +21,7 @@ export function TagSelector({
 }: TagSelectorProps) {
     const { tagOptions } = useEnums();
     const handlePromise = usePromiseMessage();
+    const apollo = useApolloClient();
     const [tagFile, { loading }] = useMutation(TagFileDocument, {
         refetchQueries: [ GetAllTagsDocument, GetFullContextDocument ]
     });
@@ -32,7 +33,30 @@ export function TagSelector({
         setNewTag("");
     }, [setNewTag]);
 
-    const onAddTag = useCallback((e: React.MouseEvent<HTMLButtonElement | HTMLAnchorElement>) => {
+
+
+    const onAddTag = useCallback((tag: string) => {
+        apollo.mutate({
+            mutation: TagFileDocument,
+            refetchQueries: [ GetFullContextDocument ],
+            variables: {
+                fileId: file.id,
+                tag
+            }
+        }).then(...handlePromise("File tagged", "Error tagging file"));
+    }, [apollo, file.id, handlePromise]);
+    const onRemoveTag = useCallback((tag: string) => {
+        apollo.mutate({
+            mutation: UntagFileDocument,
+            refetchQueries: [ GetFullContextDocument ],
+            variables: {
+                fileId: file.id,
+                tag
+            }
+        }).then(...handlePromise("File tag remove", "Error untagging file"));
+    }, [apollo, file.id, handlePromise]);
+
+    const createTag = useCallback((e: React.MouseEvent<HTMLButtonElement | HTMLAnchorElement>) => {
         e.preventDefault();
         console.log(newTag);
         if(!newTag) { return; }
@@ -54,6 +78,10 @@ export function TagSelector({
             className="w-full"
             value={file.tags}
             options={tagOptions}
+            mode="tags"
+
+            onSelect={onAddTag}
+            onDeselect={onRemoveTag}
 
             dropdownRender={(menu) => <>
                 {menu}
@@ -65,7 +93,7 @@ export function TagSelector({
                         value={newTag}
                         onChange={(ev) => setNewTag(ev.target.value)}
                     />
-                    <Button type="text" icon={<PlusOutlined />} onClick={onAddTag} disabled={!newTag} loading={loading}>
+                    <Button type="text" icon={<PlusOutlined />} onClick={createTag} disabled={!newTag} loading={loading}>
                         Add Tag
                     </Button>
                 </Space>

@@ -27,8 +27,3 @@ query GetFullContext {
 query GetAllTags {
     tags
 }
-mutation TagFile($fileId: ID!, $tag: String!) {
-    tagFile(fileId: $fileId, tag: $tag) {
-        tags
-    }
-}
