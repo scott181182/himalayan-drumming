@@ -1,6 +1,6 @@
 import { App } from "antd";
 import type { JointContent } from "antd/es/message/interface";
-import { DefaultOptionType } from "antd/es/select";
+import type { DefaultOptionType } from "antd/es/select";
 
 
 

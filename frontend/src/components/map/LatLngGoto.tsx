@@ -1,6 +1,7 @@
 import { Button, Card, Input, Space } from "antd";
 import { useCallback, useState } from "react";
 import { useMap } from "react-leaflet";
+
 import { useDashboardDispatch, useDashboardState } from "../DashboardContext";
 
 
@@ -24,7 +25,7 @@ export function LatLngGoto({ className }: LatLngGotoProps) {
                 longitude: latlng[1]
             });
         }
-    }, [latLngStr]);
+    }, [latLngStr, map, setVirtualLocation]);
 
     return (
         <Card className={className}>
@@ -39,5 +40,5 @@ export function LatLngGoto({ className }: LatLngGotoProps) {
                 </Space>
             </Space>
         </Card>
-    )
+    );
 }

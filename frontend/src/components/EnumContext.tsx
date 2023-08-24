@@ -1,9 +1,10 @@
-import { GetAllTagsDocument } from "@/generated/graphql";
 import { useQuery } from "@apollo/client";
-import { LayoutProps } from "antd";
+import type { LayoutProps } from "antd";
+import type { DefaultOptionType } from "antd/es/select";
 import { createContext, useContext, useState } from "react";
+
 import { AsyncData } from "./AsyncData";
-import { DefaultOptionType } from "antd/es/select";
+import { GetAllTagsDocument } from "@/generated/graphql";
 import { makeOptions } from "@/utils/antd";
 
 

@@ -1,10 +1,13 @@
-import { FileEntryBasicFragment, GetAllTagsDocument, GetFullContextDocument, TagFileDocument } from "@/generated/graphql";
-import { App, Button, Divider, Input, InputRef, Select, Space } from "antd";
+
+import { PlusOutlined } from "@ant-design/icons";
+import { useMutation } from "@apollo/client";
+import type { InputRef} from "antd";
+import { Button, Divider, Input, Select, Space } from "antd";
+import { useCallback, useRef, useState } from "react";
 
 import { useEnums } from "../EnumContext";
-import { PlusOutlined } from "@ant-design/icons";
-import { useCallback, useMemo, useRef, useState } from "react";
-import { useMutation } from "@apollo/client";
+import type { FileEntryBasicFragment} from "@/generated/graphql";
+import { GetAllTagsDocument, GetFullContextDocument, TagFileDocument } from "@/generated/graphql";
 import { usePromiseMessage } from "@/utils/antd";
 
 
@@ -42,7 +45,7 @@ export function TagSelector({
         })
             .then(...handlePromise("Tag Created", "Error Creating Tag", { onSuccess: onTagSuccess }))
             .then(() => inputRef.current?.focus());
-    }, [newTag, tagFile, handlePromise, onTagSuccess]);
+    }, [newTag, tagFile, file.id, handlePromise, onTagSuccess]);
 
 
 

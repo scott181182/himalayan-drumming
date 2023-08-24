@@ -2,11 +2,11 @@
 
 import { CompassOutlined } from "@ant-design/icons";
 import { useApolloClient } from "@apollo/client";
-import type { TreeDataNode } from "antd";
-import { App, Button, Descriptions, Tag, Table, Row, Col, Space, Select } from "antd";
+import { App, Button, Descriptions, Table, Space } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { useCallback, useMemo } from "react";
 
+import { TagSelector } from "./TagSelector";
 import { VideoPlayer } from "./VideoPlayer";
 import { MultiCase } from "../MultiCase";
 import { useDashboardDispatch, useDashboardState } from "@/components/DashboardContext";
@@ -14,9 +14,7 @@ import type { FileEntryBasicFragment} from "@/generated/graphql";
 import { AssignFileMetadataDocument, GetAllFileEntriesDocument, GetFullContextDocument, StartFullScanDocument } from "@/generated/graphql";
 import { usePromiseMessage } from "@/utils/antd";
 import { isDefined } from "@/utils/array";
-import { AntDTreeNode } from "@/utils/tree";
-import { useEnums } from "../EnumContext";
-import { TagSelector } from "./TagSelector";
+import type { AntDTreeNode } from "@/utils/tree";
 
 
 

@@ -6,11 +6,11 @@ import { MapContainer, TileLayer, GeoJSON, type GeoJSONProps, Marker } from "rea
 
 import { ClickMarker } from "./ClickMarker";
 import { recordingMarkerIcon, villageMarkerIcon } from "./icons";
+import { LatLngGoto } from "./LatLngGoto";
 import uttarakhandGeo from "@/assets/india_states.json";
 import { useDashboardDispatch, useDashboardState } from "@/components/DashboardContext";
 import type { LocationCompleteFragment } from "@/generated/graphql";
 import { isDefined } from "@/utils/array";
-import { LatLngGoto } from "./LatLngGoto";
 
 
 
@@ -84,8 +84,8 @@ export function Map() {
             <GeoJSON
                 data={uttarakhandGeo as GeoJSONProps["data"]}
             />
-                {villageMarkers}
-                {fileMarkers}
+            {villageMarkers}
+            {fileMarkers}
             <ClickMarker/>
             <LatLngGoto className="absolute top-4 right-4 p-0 z-[1000]"/>
         </MapContainer>
