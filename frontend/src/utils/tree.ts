@@ -42,6 +42,35 @@ export class ImmutableTree<T extends IdObject> {
     public hasNode(id: string): boolean { return id in this.nodeMap; }
     public getNode(id: string): T { return this.nodeMap[id]; }
 
+    public getNodeParent(id: string): T | undefined {
+        const parentEntry = Object.entries(this.parentMap).find(([_, children]) => children.includes(id));
+        return parentEntry && this.nodeMap[parentEntry[0]];
+    }
+
+    public getTraversedRange(fromId: string, toId: string): T[] {
+        const parent = this.getNodeParent(fromId);
+        if(!parent) {
+            // `fromId` is the root node, so the range includes the full tree.
+            return Object.values(this.nodeMap);
+        }
+
+        const siblings = this.parentMap[parent.id];
+        const toIdIdx = siblings.indexOf(toId);
+        if(toIdIdx) {
+            // Every node in this range comes from the same parent.
+            return siblings.slice(siblings.indexOf(fromId), toIdIdx + 1)
+                // Exclude non-leaf nodes from this traversal.
+                .filter((id) => !(id in this.parentMap))
+                .map((id) => this.nodeMap[id]);
+        }
+
+        const startNode = this.nodeMap[fromId];
+        const nodes = [ startNode ];
+        // TODO: implement ranges the span multiple parent nodes.
+        console.warn("Cannot range-select nodes from different directories yet");
+        return nodes;
+    }
+
 
 
     public expandNode(id: string, children: T[]): ImmutableTree<T> {

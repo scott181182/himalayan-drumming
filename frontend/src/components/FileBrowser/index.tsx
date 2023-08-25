@@ -4,6 +4,7 @@ import { CompassOutlined } from "@ant-design/icons";
 import { useApolloClient } from "@apollo/client";
 import { App, Button, Descriptions, Table, Space, Input } from "antd";
 import type { ColumnsType } from "antd/es/table";
+import type { MouseEvent} from "react";
 import { useCallback, useMemo } from "react";
 
 import { TagSelector } from "./TagSelector";
@@ -44,7 +45,7 @@ export function FileBrowser() {
 
 
     const onSelect = useCallback((keys: (string | number)[]) => {
-        const files = keys.map((k) => typeof k === "string" && fileTree.hasNode(k) ?
+        const files = keys.map((k, i, a) => typeof k === "string" && fileTree.hasNode(k) && a.indexOf(k) === i ?
             fileTree.getNode(k) :
             undefined
         ).filter(isDefined);
@@ -116,6 +117,28 @@ export function FileBrowser() {
         }
     }, [filterFiles]);
 
+    const onRowClick = useCallback((row: AntDTreeNode<FileEntryBasicFragment>) => {
+        return (ev: MouseEvent) => {
+            if(ev.ctrlKey) {
+                // Individual multi-select
+                onSelect([ ...selectedFiles.map((f) => f.id), row.key ]);
+            } else if(ev.shiftKey) {
+                // Remove text selection that is caused by shift-clicking text.
+                document.getSelection()?.removeAllRanges();
+
+                // Range multi-selected
+                const lastFile = selectedFiles[selectedFiles.length - 1];
+                onSelect([
+                    ...selectedFiles.slice(0, -1).map((f) => f.id),
+                    ...fileTree.getTraversedRange(lastFile.id, row.key as string).map((f) => f.id)
+                ]);
+            } else {
+                // Single select
+                onSelect([ row.key ]);
+            }
+        };
+    }, [fileTree, onSelect, selectedFiles]);
+
 
     return <div className="flex flex-col h-full gap-1 p-4">
         <Input.Search
@@ -128,10 +151,13 @@ export function FileBrowser() {
             className="flex-1 overflow-y-auto striped"
             rowClassName={(row) => selectedFiles.some((sf) => sf.id === row.key) ? "selected cursor-pointer" : " cursor-pointer"}
             onRow={(row) => ({
-                onClick: () => onSelect([ row.key ])
+                onClick: onRowClick(row),
             })}
             columns={fileBrowserColumns}
             size="small"
+            expandable={{
+                defaultExpandAllRows: true
+            }}
         />
         <MultiCase
             value={selectedFiles}
