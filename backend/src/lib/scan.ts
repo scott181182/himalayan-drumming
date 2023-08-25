@@ -1,6 +1,7 @@
 import type { FileEntry, Prisma, PrismaClient } from "@prisma/client";
 
-import { FileItem, getFileTree } from "./local";
+import type { FileItem} from "./local";
+import { getFileTree } from "./local";
 import type { TreeNode} from "./tree";
 import { diffObject, mergeTrees } from "./tree";
 
@@ -51,7 +52,7 @@ type PrismaTreeNode = TreeNode<FileEntry>;
 
 function odTree2prismaCreateInput(odNode: TreeNode<FileItem>): Prisma.FileEntryUncheckedCreateWithoutParentInput {
     return {
-        id: odNode.id,
+        path: odNode.id,
         name: odNode.value.name,
         type: odNode.value.type,
         url: `/blob/files/${odNode.id == "/" ? "" : odNode.id}`,
