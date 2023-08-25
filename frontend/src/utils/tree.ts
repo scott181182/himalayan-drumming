@@ -11,6 +11,8 @@ export interface IdObject {
 export interface AntdTreeConfig<T extends IdObject> {
     titleFn: (t: T) => React.ReactNode;
     isLeafFn: (t: T) => boolean;
+
+    filter?: (t: T) => boolean;
 }
 
 export type AntDTreeNode<T> = TreeDataNode & {
@@ -64,7 +66,10 @@ export class ImmutableTree<T extends IdObject> {
             title: options.titleFn(t),
             isLeaf: options.isLeafFn(t),
             children: t.id in this.parentMap ?
-                this.parentMap[t.id].map((id) => this.nodeMap[id]).map((n) => this.toAntdTreeNode(n, options)) :
+                this.parentMap[t.id]
+                    .map((id) => this.nodeMap[id])
+                    .filter((c) => (options.filter && options.isLeafFn(c)) ? options.filter(c) : true)
+                    .map((n) => this.toAntdTreeNode(n, options)) :
                 undefined,
             data: t
         };

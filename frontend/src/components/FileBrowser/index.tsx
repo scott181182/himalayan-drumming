@@ -2,7 +2,7 @@
 
 import { CompassOutlined } from "@ant-design/icons";
 import { useApolloClient } from "@apollo/client";
-import { App, Button, Descriptions, Table, Space } from "antd";
+import { App, Button, Descriptions, Table, Space, Input } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { useCallback, useMemo } from "react";
 
@@ -11,7 +11,7 @@ import { VideoPlayer } from "./VideoPlayer";
 import { MultiCase } from "../MultiCase";
 import { useDashboardDispatch, useDashboardState } from "@/components/DashboardContext";
 import type { FileEntryBasicFragment} from "@/generated/graphql";
-import { AssignFileMetadataDocument, GetAllFileEntriesDocument, StartFullScanDocument } from "@/generated/graphql";
+import { AssignFileMetadataDocument } from "@/generated/graphql";
 import { usePromiseMessage } from "@/utils/antd";
 import { isDefined } from "@/utils/array";
 import type { AntDTreeNode } from "@/utils/tree";
@@ -38,18 +38,10 @@ export function FileBrowser() {
     const apolloClient = useApolloClient();
     const promiseMsg = usePromiseMessage();
 
-    const { fileTree, selectedFiles, selectedLocation } = useDashboardState();
-    const { setSelectedFiles, updateFile } = useDashboardDispatch();
+    const { fileTree, selectedFiles, selectedLocation, filePredicate } = useDashboardState();
+    const { setSelectedFiles, updateFile, filterFiles } = useDashboardDispatch();
 
-    const startFullScan = useCallback(() => {
-        apolloClient.mutate({
-            mutation: StartFullScanDocument,
-            refetchQueries: [ GetAllFileEntriesDocument ]
-        }).then(...promiseMsg(
-            "Full File Scan Completed!",
-            "An error occurred during the file scan."
-        ));
-    }, [apolloClient, promiseMsg]);
+
 
     const onSelect = useCallback((keys: (string | number)[]) => {
         const files = keys.map((k) => typeof k === "string" && fileTree.hasNode(k) ?
@@ -94,9 +86,10 @@ export function FileBrowser() {
     const files = useMemo<AntDTreeNode<FileEntryBasicFragment>[]>(
         () => fileTree.toAntdTree({
             titleFn: (t) => t.name,
-            isLeafFn: (t) => t.type !== "directory"
+            isLeafFn: (t) => t.type !== "directory",
+            filter: filePredicate
         })?.children ?? [],
-        [fileTree]
+        [filePredicate, fileTree]
     );
 
     const previewFile = (file: FileEntryBasicFragment) => {
@@ -114,15 +107,25 @@ export function FileBrowser() {
         }
     };
 
+    const onSearch = useCallback((value: string) => {
+        if(value) {
+            filterFiles((file) =>
+                file.name.includes(value) || file.tags.some((t) => t.includes(value)));
+        } else {
+            filterFiles();
+        }
+    }, [filterFiles]);
 
 
-    return <div className="flex flex-col h-full gap-1">
-        <Button onClick={startFullScan} className="m-4">
-            Full Scan
-        </Button>
+    return <div className="flex flex-col h-full gap-1 p-4">
+        <Input.Search
+            placeholder="Search Files"
+            onSearch={onSearch}
+            className="mb-4"
+        />
         <Table
             dataSource={files}
-            className="flex-1 overflow-y-auto striped px-4"
+            className="flex-1 overflow-y-auto striped"
             rowClassName={(row) => selectedFiles.some((sf) => sf.id === row.key) ? "selected cursor-pointer" : " cursor-pointer"}
             onRow={(row) => ({
                 onClick: () => onSelect([ row.key ])

@@ -14,6 +14,7 @@ import { FileTree } from "@/utils/tree";
 
 export interface DashboardContextValue {
     fileTree: FileTree;
+    filePredicate?: (file: FileEntryBasicFragment) => boolean;
     selectedFiles: FileEntryBasicFragment[];
     selectedLocation?: LocationCompleteFragment;
 
@@ -41,6 +42,9 @@ export type DashboardDispatchAction = {
 } | {
     type: "updateFile",
     payload: FileEntryBasicFragment
+} | {
+    type: "filterFiles",
+    payload?: (file: FileEntryBasicFragment) => boolean
 }
 
 export type DashboardDispatchFunctions = {
@@ -49,6 +53,7 @@ export type DashboardDispatchFunctions = {
     setFileTree: (fileTree: FileTree) => void;
     selectLocation: (location: LocationCompleteFragment) => void;
     updateFile: (file: FileEntryBasicFragment) => void;
+    filterFiles: (filterFn?: (file: FileEntryBasicFragment) => boolean) => void;
 }
 
 
@@ -94,6 +99,11 @@ export const dashboardReducer: Reducer<DashboardContextValue, DashboardDispatchA
                 ...state,
                 fileTree: state.fileTree.updateNode(action.payload),
                 selectedFiles: state.selectedFiles.map((sf) => sf.id === action.payload.id ? action.payload : sf),
+            };
+        case "filterFiles":
+            return {
+                ...state,
+                filePredicate: action.payload
             };
     }
 };
@@ -159,7 +169,9 @@ export function DashboardProvider({
         selectLocation: (location: LocationCompleteFragment) =>
             dispatch({ type: "selectLocation", payload: location }),
         updateFile: (file: FileEntryBasicFragment) =>
-            dispatch({ type: "updateFile", payload: file })
+            dispatch({ type: "updateFile", payload: file }),
+        filterFiles: (filterFn?: (file: FileEntryBasicFragment) => boolean) =>
+            dispatch({ type: "filterFiles", payload: filterFn })
     }), [dispatch]);
 
     return (
