@@ -15,6 +15,10 @@ type FileEntry {
   url: String
 }
 
+input FileEntryWhereInput {
+  id: IdNullableFilterInput
+}
+
 type FileMetadata {
   file: FileEntry!
   fileId: ID!
@@ -38,6 +42,13 @@ input FilesForPersonCreateInput {
 input FilesForPersonUpdateInput {
   connect: [IdWhereUniqueInput!]
   disconnect: [IdWhereUniqueInput!]
+}
+
+input IdNullableFilterInput {
+  equals: String
+  in: [String!]
+  not: NestedIdNullableFilterInput
+  notIn: [String!]
 }
 
 input IdWhereUniqueInput {
@@ -69,6 +80,32 @@ type Mutation {
   updatePerson(data: PersonUpdateInput!, id: ID!): Person!
 }
 
+input NestedIdNullableFilterInput {
+  equals: String
+  in: [String!]
+  not: NestedIdNullableFilterInput
+  notIn: [String!]
+}
+
+input NestedStringNullableFilterInput {
+  contains: String
+  endsWith: String
+  equals: String
+  gt: String
+  gte: String
+  in: [String!]
+  lt: String
+  lte: String
+  not: NestedStringNullableFilterInput
+  notIn: [String!]
+  startsWith: String
+}
+
+enum OrderDirection {
+  asc
+  desc
+}
+
 type Person {
   children: [Person!]!
   files: [FileEntry!]!
@@ -76,13 +113,27 @@ type Person {
   name: String!
   parent: Person
   parentId: String
+  villages: [PersonInVillage!]!
 }
 
 input PersonCreateInput {
   files: FilesForPersonCreateInput
   name: String!
   parentId: String
-  village: PersonInVillageCreateInput
+  villages: PersonInVillageRelationCreateInput
+}
+
+input PersonIdVillageIdInput {
+  personId: ID!
+  villageId: ID!
+}
+
+type PersonInVillage {
+  description: String
+  person: Person!
+  personId: ID!
+  village: Village!
+  villageId: ID!
 }
 
 input PersonInVillageCreateInput {
@@ -90,17 +141,71 @@ input PersonInVillageCreateInput {
   villageId: ID!
 }
 
+input PersonInVillageRelationCreateInput {
+  connect: PersonInVillageUniqueWhereInput
+  create: PersonInVillageCreateInput
+}
+
+input PersonInVillageRelationUpdateInput {
+  connect: PersonInVillageUniqueWhereInput
+  create: PersonInVillageCreateInput
+  delete: PersonInVillageUniqueWhereInput
+}
+
+input PersonInVillageUniqueWhereInput {
+  personId_villageId: PersonIdVillageIdInput!
+}
+
+input PersonInVillageWhereInput {
+  AND: [PersonInVillageWhereInput!]
+  NOT: [PersonInVillageWhereInput!]
+  OR: [PersonInVillageWhereInput!]
+  description: StringNullableFilterInput
+  person: PersonWhereInput
+  personId: IdNullableFilterInput
+  village: VillageWhereInput
+  villageId: IdNullableFilterInput
+}
+
+input PersonInVillageWhereManyInput {
+  every: PersonInVillageWhereInput
+  none: PersonInVillageWhereInput
+  some: PersonInVillageWhereInput
+}
+
+input PersonOrderByInput {
+  name: OrderDirection
+}
+
 input PersonUpdateInput {
   files: FilesForPersonUpdateInput
   name: String
   parentId: String
-  village: PersonInVillageCreateInput
+  villages: PersonInVillageRelationUpdateInput
+}
+
+input PersonWhereInput {
+  AND: [PersonWhereInput!]
+  NOT: [PersonWhereInput!]
+  OR: [PersonWhereInput!]
+  children: PersonWhereManyInput
+  id: IdNullableFilterInput
+  name: StringNullableFilterInput
+  parent: PersonWhereInput
+  parentId: IdNullableFilterInput
+  villages: PersonInVillageWhereManyInput
+}
+
+input PersonWhereManyInput {
+  every: PersonWhereInput
+  none: PersonWhereInput
+  some: PersonWhereInput
 }
 
 type Query {
-  fileEntries: [FileEntry!]!
-  fileEntry(id: String!): FileEntry
-  people: [Person!]!
+  fileEntries(where: FileEntryWhereInput): [FileEntry!]!
+  fileEntry(id: ID!): FileEntry
+  people(orderBy: PersonOrderByInput, skip: Int! = 0, take: Int! = 20, where: PersonWhereInput): [Person!]!
   person(id: ID!): Person
   rootFileEntry: FileEntry!
   tags: [String!]!
@@ -108,11 +213,37 @@ type Query {
   villages: [Village!]!
 }
 
+input StringNullableArrayFilterInput {
+  every: StringNullableFilterInput
+  none: StringNullableFilterInput
+  some: StringNullableFilterInput
+}
+
+input StringNullableFilterInput {
+  contains: String
+  endsWith: String
+  equals: String
+  gt: String
+  gte: String
+  in: [String!]
+  lt: String
+  lte: String
+  not: NestedStringNullableFilterInput
+  notIn: [String!]
+  startsWith: String
+}
+
+enum StringQueryModeEnum {
+  default
+  insensitive
+}
+
 type Village {
   id: ID!
   location: LatLng!
   locationId: String!
   name: String!
+  people: [PersonInVillage!]!
 }
 
 input VillageCreateInput {
@@ -123,4 +254,9 @@ input VillageCreateInput {
 input VillageCreateLocationInput {
   connect: IdWhereUniqueInput
   create: LatLngCreateInput
+}
+
+input VillageWhereInput {
+  id: IdNullableFilterInput
+  name: StringNullableFilterInput
 }
