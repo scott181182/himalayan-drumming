@@ -4,6 +4,7 @@ import { CompassOutlined } from "@ant-design/icons";
 import { useApolloClient } from "@apollo/client";
 import { App, Button, Descriptions, Table, Space, Input } from "antd";
 import type { ColumnsType } from "antd/es/table";
+import Link from "next/link";
 import type { MouseEvent} from "react";
 import { useCallback, useMemo } from "react";
 
@@ -161,7 +162,26 @@ export function FileBrowser() {
         />
         <MultiCase
             value={selectedFiles}
-            multiple={<Descriptions title={`${selectedFiles.length} files selected`}></Descriptions>}
+            multiple={<>
+                <Descriptions
+                    title={`${selectedFiles.length} files selected`}
+                    className="p-4 border-t-2 border-t-black wrap-title"
+                ></Descriptions>
+                <Space>
+                    {/* <Button
+                        onClick={() => previewFile(selectedFile)}
+                        className="mx-8"
+                    >
+                        Preview Files
+                    </Button> */}
+                    <Link
+                        href={`/compare?files=${selectedFiles.map((f) => f.id).join(",")}`}
+                        target="_blank"
+                    >
+                        Preview Files
+                    </Link>
+                </Space>
+            </>}
             single={(selectedFile) => <>
                 <Descriptions
                     title={selectedFile.name}

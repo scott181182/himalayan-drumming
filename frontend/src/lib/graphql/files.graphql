@@ -49,6 +49,11 @@ query GetAllFileEntries {
         ...FileEntryBasic
     }
 }
+query GetFileEntries($where: FileEntryWhereInput) {
+    fileEntries(where: $where) {
+        ...FileEntryBasic
+    }
+}
 
 
 
