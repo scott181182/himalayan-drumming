@@ -4,24 +4,24 @@ import type { DefaultOptionType } from "antd/es/select";
 
 
 
-export interface PromiseMessageOptions {
-    onSuccess?: () => void;
+export interface PromiseMessageOptions<T> {
+    onSuccess?: (value: T) => void;
     onError?: (err: unknown) => void;
 }
-export type promiseMessageFn = (
+export type promiseMessageFn<T> = (
     successMessage: JointContent,
     errorMessage: JointContent,
-    options?: PromiseMessageOptions
-) => [() => void, (err: unknown) => void];
+    options?: PromiseMessageOptions<T>
+) => [(value: T) => void, (err: unknown) => void];
 
-export function usePromiseMessage(): promiseMessageFn {
+export function usePromiseMessage<T>(): promiseMessageFn<T> {
     const { message } = App.useApp();
 
     return (successMessage, errorMessage, options) => {
         return [
-            () => {
+            (value: T) => {
                 message.success(successMessage);
-                options?.onSuccess?.();
+                options?.onSuccess?.(value);
             },
             (err: unknown) => {
                 console.error(err);

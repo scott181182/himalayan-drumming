@@ -86,7 +86,6 @@ export class FileTree extends ImmutableTree<FileEntryBasicFragment> {
         super(root, nodeMap, parentMap);
     }
 
-
     public static fromEntries(entries: FileEntryBasicFragment[]): FileTree {
         let rootIndex = -1;
         const nodeMap: Record<string, FileEntryBasicFragment> = {};
@@ -133,4 +132,59 @@ export class FileTree extends ImmutableTree<FileEntryBasicFragment> {
 
     public getLocations() { return this.locations; }
     public getFilesAtLocation(locId: string) { return this.locationMap[locId]; }
+
+
+
+    public updateNode(file: FileEntryBasicFragment): FileTree {
+        const oldFile = this.nodeMap[file.id];
+
+        const locations = [ ...this.locations ];
+        const locationMap = { ...this.locationMap };
+
+        // Functions for handling locations changes.
+        const removeFileFromLocation = (locationId: string) => {
+            if(!(locationId in locationMap)) { return; }
+            if(locationMap[locationId].length <= 1) {
+                delete locationMap[locationId];
+                const locationIndex = locations.findIndex((l) => l.id === locationId);
+                if(locationIndex >= 0) {
+                    locations.splice(locationIndex, 1);
+                }
+            } else {
+                const fileIndex = locationMap[locationId].findIndex((f) => f.id === file.id);
+                locationMap[locationId].splice(fileIndex, 1);
+            }
+        };
+        const addFileToLocation = (location: LocationCompleteFragment) => {
+            if(location.id in locationMap) {
+                locationMap[location.id].push(file);
+            } else {
+                locationMap[location.id] = [ file ];
+                locations.push(location);
+            }
+        };
+
+        // Check if locations need to be updated.
+        if(file.metadata?.location && !oldFile.metadata?.location) {
+            // Location is first assigned.
+            addFileToLocation(file.metadata.location);
+        } else if(file.metadata?.location && oldFile.metadata?.location) {
+            // Files present in both. Check if it changed.
+            if(file.metadata.location.id !== oldFile.metadata.location.id) {
+                removeFileFromLocation(oldFile.metadata.location.id);
+                addFileToLocation(file.metadata.location);
+            }
+        } else if(!file.metadata?.location && oldFile.metadata?.location) {
+            // Location removed
+            removeFileFromLocation(oldFile.metadata.location.id);
+        }
+
+        return new FileTree(
+            file.id === this.root.id ? file : this.root,
+            { ...this.nodeMap, [file.id]: file },
+            { ...this.parentMap },
+            locations,
+            locationMap
+        );
+    }
 }

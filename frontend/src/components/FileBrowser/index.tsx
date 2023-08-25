@@ -11,7 +11,7 @@ import { VideoPlayer } from "./VideoPlayer";
 import { MultiCase } from "../MultiCase";
 import { useDashboardDispatch, useDashboardState } from "@/components/DashboardContext";
 import type { FileEntryBasicFragment} from "@/generated/graphql";
-import { AssignFileMetadataDocument, GetAllFileEntriesDocument, GetFullContextDocument, StartFullScanDocument } from "@/generated/graphql";
+import { AssignFileMetadataDocument, GetAllFileEntriesDocument, StartFullScanDocument } from "@/generated/graphql";
 import { usePromiseMessage } from "@/utils/antd";
 import { isDefined } from "@/utils/array";
 import type { AntDTreeNode } from "@/utils/tree";
@@ -39,7 +39,7 @@ export function FileBrowser() {
     const promiseMsg = usePromiseMessage();
 
     const { fileTree, selectedFiles, selectedLocation } = useDashboardState();
-    const { setSelectedFiles } = useDashboardDispatch();
+    const { setSelectedFiles, updateFile } = useDashboardDispatch();
 
     const startFullScan = useCallback(() => {
         apolloClient.mutate({
@@ -66,7 +66,6 @@ export function FileBrowser() {
 
         apolloClient.mutate({
             mutation: AssignFileMetadataDocument,
-            refetchQueries: [ GetFullContextDocument ],
             variables: {
                 fileId: selectedFile.id,
                 data: {
@@ -80,11 +79,15 @@ export function FileBrowser() {
                     }
                 }
             }
-        }).then(...promiseMsg(
-            "Successfully assigned location to file!",
-            "There was an unexpected error assigning location to file"
-        ));
-    }, [apolloClient, promiseMsg, selectedFiles, selectedLocation]);
+        })
+            .then((res) => {
+                if(res.data?.updateMetadata) { updateFile(res.data.updateMetadata); }
+            })
+            .then(...promiseMsg(
+                "Successfully assigned location to file!",
+                "There was an unexpected error assigning location to file"
+            ));
+    }, [apolloClient, promiseMsg, selectedFiles, selectedLocation, updateFile]);
 
 
 

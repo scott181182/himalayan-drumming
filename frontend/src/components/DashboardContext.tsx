@@ -38,6 +38,9 @@ export type DashboardDispatchAction = {
 } | {
     type: "setPeople",
     payload: PersonInContextFragment[]
+} | {
+    type: "updateFile",
+    payload: FileEntryBasicFragment
 }
 
 export type DashboardDispatchFunctions = {
@@ -45,6 +48,7 @@ export type DashboardDispatchFunctions = {
     setVirtualLocation: (location: Pick<LocationCompleteFragment, "latitude" | "longitude">) => void;
     setFileTree: (fileTree: FileTree) => void;
     selectLocation: (location: LocationCompleteFragment) => void;
+    updateFile: (file: FileEntryBasicFragment) => void;
 }
 
 
@@ -84,6 +88,12 @@ export const dashboardReducer: Reducer<DashboardContextValue, DashboardDispatchA
             return {
                 ...state,
                 people: action.payload
+            };
+        case "updateFile":
+            return {
+                ...state,
+                fileTree: state.fileTree.updateNode(action.payload),
+                selectedFiles: state.selectedFiles.map((sf) => sf.id === action.payload.id ? action.payload : sf),
             };
     }
 };
@@ -147,7 +157,9 @@ export function DashboardProvider({
         setFileTree: (fileTree: FileTree) =>
             dispatch({ type: "setFileTree", payload: fileTree }),
         selectLocation: (location: LocationCompleteFragment) =>
-            dispatch({ type: "selectLocation", payload: location })
+            dispatch({ type: "selectLocation", payload: location }),
+        updateFile: (file: FileEntryBasicFragment) =>
+            dispatch({ type: "updateFile", payload: file })
     }), [dispatch]);
 
     return (
