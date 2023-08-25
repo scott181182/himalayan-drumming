@@ -48,7 +48,7 @@ export const FileMetadataMutation = extendType({
     type: "Mutation",
     definition(t) {
         t.nonNull.field("updateMetadata", {
-            type: FileMetadata,
+            type: "FileEntry",
             args: {
                 fileId: nonNull(idArg()),
                 data: nonNull(FileMetadataUpdateInput)
@@ -60,8 +60,9 @@ export const FileMetadataMutation = extendType({
                         file: { connect: { id: args.fileId } },
                         ...unnullifyObject(args.data)
                     },
-                    update: unnullifyObject(args.data)
-                });
+                    update: unnullifyObject(args.data),
+                    select: { file: true }
+                }).then((res) => res.file);
             }
         });
     },

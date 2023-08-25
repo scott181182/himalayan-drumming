@@ -113,7 +113,7 @@ export interface NexusGenFieldTypes {
     fullscan: NexusGenRootTypes['FileEntry'] | null; // FileEntry
     tagFile: NexusGenRootTypes['FileEntry']; // FileEntry!
     untagFile: NexusGenRootTypes['FileEntry']; // FileEntry!
-    updateMetadata: NexusGenRootTypes['FileMetadata']; // FileMetadata!
+    updateMetadata: NexusGenRootTypes['FileEntry']; // FileEntry!
     updatePerson: NexusGenRootTypes['Person']; // Person!
   }
   Person: { // field return type
@@ -172,7 +172,7 @@ export interface NexusGenFieldTypeNames {
     fullscan: 'FileEntry'
     tagFile: 'FileEntry'
     untagFile: 'FileEntry'
-    updateMetadata: 'FileMetadata'
+    updateMetadata: 'FileEntry'
     updatePerson: 'Person'
   }
   Person: { // field return type name

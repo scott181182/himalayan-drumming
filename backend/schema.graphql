@@ -56,7 +56,7 @@ type Mutation {
   fullscan: FileEntry
   tagFile(fileId: ID!, tag: String!): FileEntry!
   untagFile(fileId: ID!, tag: String!): FileEntry!
-  updateMetadata(data: FileMetadataUpdateInput!, fileId: ID!): FileMetadata!
+  updateMetadata(data: FileMetadataUpdateInput!, fileId: ID!): FileEntry!
   updatePerson(data: PersonUpdateInput!, id: ID!): Person!
 }
 
