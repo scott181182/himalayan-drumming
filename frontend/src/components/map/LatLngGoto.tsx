@@ -3,6 +3,7 @@ import { useCallback, useState } from "react";
 import { useMap } from "react-leaflet";
 
 import { useDashboardDispatch, useDashboardState } from "../DashboardContext";
+import { formatLatLng } from "@/utils/location";
 
 
 
@@ -32,7 +33,7 @@ export function LatLngGoto({ className }: LatLngGotoProps) {
             <Space direction="vertical">
                 <Space>
                     Current Location:
-                    {selectedLocation ? `(${selectedLocation.latitude}, ${selectedLocation.longitude})` : <em>none.</em>}
+                    {selectedLocation ? `(${formatLatLng(selectedLocation.latitude, selectedLocation.longitude)})` : <em>none.</em>}
                 </Space>
                 <Space>
                     <Input size="small" value={latLngStr} onChange={(ev) => setLatLngStr(ev.target.value)}/>
