@@ -87,7 +87,7 @@ export function Map() {
             {villageMarkers}
             {fileMarkers}
             <ClickMarker/>
-            <LatLngGoto className="absolute top-4 right-4 p-0 z-[1000]"/>
+            <LatLngGoto className="absolute top-4 right-4 p-0 z-[1000] cursor-default"/>
         </MapContainer>
     );
 }

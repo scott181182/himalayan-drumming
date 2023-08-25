@@ -1,5 +1,7 @@
 import { Button, Card, Input, Space } from "antd";
-import { useCallback, useState } from "react";
+import L from "leaflet";
+import type { MouseEventHandler} from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useMap } from "react-leaflet";
 
 import { useDashboardDispatch, useDashboardState } from "../DashboardContext";
@@ -16,8 +18,9 @@ export function LatLngGoto({ className }: LatLngGotoProps) {
     const { selectedLocation } = useDashboardState();
     const { setVirtualLocation } = useDashboardDispatch();
 
+    const cardRef = useRef<HTMLDivElement>(null);
     const [latLngStr, setLatLngStr ] = useState<string | undefined>();
-    const onGoto = useCallback(() => {
+    const onGoto = useCallback<MouseEventHandler>(() => {
         if(latLngStr) {
             const latlng = latLngStr.split(/\s*,\s*/).map((l) => parseFloat(l)) as [number, number];
             map.setView(latlng);
@@ -28,8 +31,14 @@ export function LatLngGoto({ className }: LatLngGotoProps) {
         }
     }, [latLngStr, map, setVirtualLocation]);
 
+    useEffect(() => {
+        if(cardRef.current) {
+            L.DomEvent.disableClickPropagation(cardRef.current);
+        }
+    }, []);
+
     return (
-        <Card className={className}>
+        <Card className={className} ref={cardRef}>
             <Space direction="vertical">
                 <Space>
                     Current Location:
