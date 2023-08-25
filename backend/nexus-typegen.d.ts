@@ -21,6 +21,13 @@ export interface NexusGenInputs {
   FileMetadataUpdateInput: { // input type
     location?: NexusGenInputs['FileMetadataCreateLocationInput'] | null; // FileMetadataCreateLocationInput
   }
+  FilesForPersonCreateInput: { // input type
+    connect?: NexusGenInputs['IdWhereUniqueInput'][] | null; // [IdWhereUniqueInput!]
+  }
+  FilesForPersonUpdateInput: { // input type
+    connect?: NexusGenInputs['IdWhereUniqueInput'][] | null; // [IdWhereUniqueInput!]
+    disconnect?: NexusGenInputs['IdWhereUniqueInput'][] | null; // [IdWhereUniqueInput!]
+  }
   IdWhereUniqueInput: { // input type
     id: string; // ID!
   }
@@ -29,6 +36,7 @@ export interface NexusGenInputs {
     longitude: number; // Float!
   }
   PersonCreateInput: { // input type
+    files?: NexusGenInputs['FilesForPersonCreateInput'] | null; // FilesForPersonCreateInput
     name: string; // String!
     parentId?: string | null; // String
     village?: NexusGenInputs['PersonInVillageCreateInput'] | null; // PersonInVillageCreateInput
@@ -38,6 +46,7 @@ export interface NexusGenInputs {
     villageId: string; // ID!
   }
   PersonUpdateInput: { // input type
+    files?: NexusGenInputs['FilesForPersonUpdateInput'] | null; // FilesForPersonUpdateInput
     name?: string | null; // String
     parentId?: string | null; // String
     village?: NexusGenInputs['PersonInVillageCreateInput'] | null; // PersonInVillageCreateInput

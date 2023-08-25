@@ -31,6 +31,15 @@ input FileMetadataUpdateInput {
   location: FileMetadataCreateLocationInput
 }
 
+input FilesForPersonCreateInput {
+  connect: [IdWhereUniqueInput!]
+}
+
+input FilesForPersonUpdateInput {
+  connect: [IdWhereUniqueInput!]
+  disconnect: [IdWhereUniqueInput!]
+}
+
 input IdWhereUniqueInput {
   id: ID!
 }
@@ -70,6 +79,7 @@ type Person {
 }
 
 input PersonCreateInput {
+  files: FilesForPersonCreateInput
   name: String!
   parentId: String
   village: PersonInVillageCreateInput
@@ -81,6 +91,7 @@ input PersonInVillageCreateInput {
 }
 
 input PersonUpdateInput {
+  files: FilesForPersonUpdateInput
   name: String
   parentId: String
   village: PersonInVillageCreateInput
