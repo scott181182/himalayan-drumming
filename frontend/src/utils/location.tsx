@@ -12,3 +12,7 @@ export function selectedLocationToInput(location: LocationCompleteFragment): Vil
         }
     };
 }
+
+export function formatLatLng(lat: number, lng: number) {
+    return `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
+}

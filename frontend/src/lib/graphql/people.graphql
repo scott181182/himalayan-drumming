@@ -1,3 +1,5 @@
+#import PersonInContext from "./context.graphql"
+
 fragment SimplePerson on Person {
     id
     name
@@ -14,5 +16,11 @@ query GetAllPeople {
 mutation CreatePerson($data: PersonCreateInput!) {
     createPerson(data: $data) {
         ...PersonAndParent
+    }
+}
+
+mutation UpdatePerson($personId: ID!, $data: PersonUpdateInput!) {
+    updatePerson(id: $personId, data: $data) {
+        ...PersonInContext
     }
 }

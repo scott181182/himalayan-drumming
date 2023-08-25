@@ -4,7 +4,9 @@ export * from "./FileEntry";
 export * from "./FileMetadata";
 export * from "./LatLng";
 export * from "./Person";
+export * from "./Tag";
 export * from "./Village";
+
 
 
 export const IdWhereUniqueInput = inputObjectType({

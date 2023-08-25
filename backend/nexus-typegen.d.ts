@@ -21,6 +21,13 @@ export interface NexusGenInputs {
   FileMetadataUpdateInput: { // input type
     location?: NexusGenInputs['FileMetadataCreateLocationInput'] | null; // FileMetadataCreateLocationInput
   }
+  FilesForPersonCreateInput: { // input type
+    connect?: NexusGenInputs['IdWhereUniqueInput'][] | null; // [IdWhereUniqueInput!]
+  }
+  FilesForPersonUpdateInput: { // input type
+    connect?: NexusGenInputs['IdWhereUniqueInput'][] | null; // [IdWhereUniqueInput!]
+    disconnect?: NexusGenInputs['IdWhereUniqueInput'][] | null; // [IdWhereUniqueInput!]
+  }
   IdWhereUniqueInput: { // input type
     id: string; // ID!
   }
@@ -29,6 +36,7 @@ export interface NexusGenInputs {
     longitude: number; // Float!
   }
   PersonCreateInput: { // input type
+    files?: NexusGenInputs['FilesForPersonCreateInput'] | null; // FilesForPersonCreateInput
     name: string; // String!
     parentId?: string | null; // String
     village?: NexusGenInputs['PersonInVillageCreateInput'] | null; // PersonInVillageCreateInput
@@ -38,6 +46,7 @@ export interface NexusGenInputs {
     villageId: string; // ID!
   }
   PersonUpdateInput: { // input type
+    files?: NexusGenInputs['FilesForPersonUpdateInput'] | null; // FilesForPersonUpdateInput
     name?: string | null; // String
     parentId?: string | null; // String
     village?: NexusGenInputs['PersonInVillageCreateInput'] | null; // PersonInVillageCreateInput
@@ -113,7 +122,7 @@ export interface NexusGenFieldTypes {
     fullscan: NexusGenRootTypes['FileEntry'] | null; // FileEntry
     tagFile: NexusGenRootTypes['FileEntry']; // FileEntry!
     untagFile: NexusGenRootTypes['FileEntry']; // FileEntry!
-    updateMetadata: NexusGenRootTypes['FileMetadata']; // FileMetadata!
+    updateMetadata: NexusGenRootTypes['FileEntry']; // FileEntry!
     updatePerson: NexusGenRootTypes['Person']; // Person!
   }
   Person: { // field return type
@@ -172,7 +181,7 @@ export interface NexusGenFieldTypeNames {
     fullscan: 'FileEntry'
     tagFile: 'FileEntry'
     untagFile: 'FileEntry'
-    updateMetadata: 'FileMetadata'
+    updateMetadata: 'FileEntry'
     updatePerson: 'Person'
   }
   Person: { // field return type name

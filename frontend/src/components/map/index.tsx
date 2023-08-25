@@ -6,6 +6,7 @@ import { MapContainer, TileLayer, GeoJSON, type GeoJSONProps, Marker } from "rea
 
 import { ClickMarker } from "./ClickMarker";
 import { recordingMarkerIcon, villageMarkerIcon } from "./icons";
+import { LatLngGoto } from "./LatLngGoto";
 import uttarakhandGeo from "@/assets/india_states.json";
 import { useDashboardDispatch, useDashboardState } from "@/components/DashboardContext";
 import type { LocationCompleteFragment } from "@/generated/graphql";
@@ -75,7 +76,7 @@ export function Map() {
 
 
     return (
-        <MapContainer center={UTTARAKHAND_CENTER} zoom={9} scrollWheelZoom={false} className="h-full">
+        <MapContainer center={UTTARAKHAND_CENTER} zoom={9} scrollWheelZoom={true} className="h-full">
             <TileLayer
                 attribution={FreeTileLayers.StamenTerrain.attribution}
                 url={FreeTileLayers.StamenTerrain.url}
@@ -86,6 +87,7 @@ export function Map() {
             {villageMarkers}
             {fileMarkers}
             <ClickMarker/>
+            <LatLngGoto className="absolute top-4 right-4 p-0 z-[1000] cursor-default"/>
         </MapContainer>
     );
 }

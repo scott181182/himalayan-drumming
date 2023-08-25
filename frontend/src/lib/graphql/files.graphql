@@ -54,11 +54,26 @@ query GetAllFileEntries {
 
 mutation AssignFileMetadata($fileId: ID!, $data: FileMetadataUpdateInput!) {
     updateMetadata(fileId: $fileId, data: $data) {
-        ...MetadataBasic
+        ...FileEntryBasic
     }
 }
+mutation TagFile($fileId: ID!, $tag: String!) {
+    tagFile(fileId: $fileId, tag: $tag) {
+        ...FileEntryBasic
+    }
+}
+mutation UntagFile($fileId: ID!, $tag: String!) {
+    untagFile(fileId: $fileId, tag: $tag) {
+        ...FileEntryBasic
+    }
+}
+
+
+
 mutation StartFullScan {
     fullscan {
         ...FileEntryWithChildren
     }
 }
+
+

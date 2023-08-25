@@ -31,6 +31,15 @@ input FileMetadataUpdateInput {
   location: FileMetadataCreateLocationInput
 }
 
+input FilesForPersonCreateInput {
+  connect: [IdWhereUniqueInput!]
+}
+
+input FilesForPersonUpdateInput {
+  connect: [IdWhereUniqueInput!]
+  disconnect: [IdWhereUniqueInput!]
+}
+
 input IdWhereUniqueInput {
   id: ID!
 }
@@ -56,7 +65,7 @@ type Mutation {
   fullscan: FileEntry
   tagFile(fileId: ID!, tag: String!): FileEntry!
   untagFile(fileId: ID!, tag: String!): FileEntry!
-  updateMetadata(data: FileMetadataUpdateInput!, fileId: ID!): FileMetadata!
+  updateMetadata(data: FileMetadataUpdateInput!, fileId: ID!): FileEntry!
   updatePerson(data: PersonUpdateInput!, id: ID!): Person!
 }
 
@@ -70,6 +79,7 @@ type Person {
 }
 
 input PersonCreateInput {
+  files: FilesForPersonCreateInput
   name: String!
   parentId: String
   village: PersonInVillageCreateInput
@@ -81,6 +91,7 @@ input PersonInVillageCreateInput {
 }
 
 input PersonUpdateInput {
+  files: FilesForPersonUpdateInput
   name: String
   parentId: String
   village: PersonInVillageCreateInput

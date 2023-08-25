@@ -75,12 +75,33 @@ export const VillageForPersonInput = inputObjectType({
         t.string("description");
     },
 });
+export const FilesForPersonCreateInput = inputObjectType({
+    name: "FilesForPersonCreateInput",
+    definition(t) {
+        t.list.nonNull.field("connect", {
+            type: "IdWhereUniqueInput"
+        });
+    },
+});
+export const FilesForPersonUpdateInput = inputObjectType({
+    name: "FilesForPersonUpdateInput",
+    definition(t) {
+        t.list.nonNull.field("connect", {
+            type: "IdWhereUniqueInput"
+        });
+        t.list.nonNull.field("disconnect", {
+            type: "IdWhereUniqueInput"
+        });
+    },
+});
+
 export const PersonCreateInput = inputObjectType({
     name: "PersonCreateInput",
     definition(t) {
         t.nonNull.string("name");
         t.string("parentId");
-        t.field("village", {type: VillageForPersonInput});
+        t.field("village", { type: VillageForPersonInput });
+        t.field("files", { type: FilesForPersonCreateInput });
     },
 });
 
@@ -89,7 +110,8 @@ export const PersonUpdateInput = inputObjectType({
     definition(t) {
         t.string("name");
         t.string("parentId");
-        t.field("village", {type: VillageForPersonInput});
+        t.field("village", { type: VillageForPersonInput });
+        t.field("files", { type: FilesForPersonUpdateInput });
     },
 });
 
@@ -127,7 +149,7 @@ export const PersonMutation = extendType({
                         ...data,
                         villages: village ? {
                             create: village
-                        } : undefined
+                        } : undefined,
                     }
                 });
             }

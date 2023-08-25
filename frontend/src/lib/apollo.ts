@@ -3,14 +3,12 @@ import { ApolloClient, HttpLink, InMemoryCache } from "@apollo/client";
 
 
 export function createApolloClient(token: string) {
-    if(!process.env.NEXT_PUBLIC_API_ROOT_ENDPOINT) {
-        throw new Error("Could not find GraphQL API route!");
-    }
+    const api_root = process.env.NEXT_PUBLIC_API_ROOT_ENDPOINT || "/api";
 
     return new ApolloClient({
         cache: new InMemoryCache(),
         link: new HttpLink({
-            uri: process.env.NEXT_PUBLIC_API_ROOT_ENDPOINT + "/graphql",
+            uri: api_root + "/graphql",
             headers: {
                 Authorization: `Bearer ${token}`
             }

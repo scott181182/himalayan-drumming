@@ -23,3 +23,7 @@ query GetFullContext {
     people { ...PersonInContext }
     villages { ...VillageInContext }
 }
+
+query GetAllTags {
+    tags
+}

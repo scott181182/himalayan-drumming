@@ -2,18 +2,35 @@
 
 import { CompassOutlined } from "@ant-design/icons";
 import { useApolloClient } from "@apollo/client";
-import type { TreeDataNode } from "antd";
-import { App, Button, Descriptions, Tag, Table, Row, Col } from "antd";
+import { App, Button, Descriptions, Table, Space, Input } from "antd";
 import type { ColumnsType } from "antd/es/table";
+import type { MouseEvent} from "react";
 import { useCallback, useMemo } from "react";
 
+import { TagSelector } from "./TagSelector";
 import { VideoPlayer } from "./VideoPlayer";
 import { MultiCase } from "../MultiCase";
 import { useDashboardDispatch, useDashboardState } from "@/components/DashboardContext";
 import type { FileEntryBasicFragment} from "@/generated/graphql";
-import { AssignFileMetadataDocument, GetAllFileEntriesDocument, StartFullScanDocument } from "@/generated/graphql";
+import { AssignFileMetadataDocument } from "@/generated/graphql";
 import { usePromiseMessage } from "@/utils/antd";
 import { isDefined } from "@/utils/array";
+import type { AntDTreeNode } from "@/utils/tree";
+
+
+
+const fileBrowserColumns: ColumnsType<AntDTreeNode<FileEntryBasicFragment>> = [
+    {
+        title: <h3 className="ml-4 text-lg font-bold">Files</h3>,
+        dataIndex: "title",
+    },
+    {
+        key: "icons",
+        render: (_, record) => <Space>
+            {record.data.metadata?.location && <CompassOutlined/>}
+        </Space>
+    }
+];
 
 
 
@@ -22,21 +39,13 @@ export function FileBrowser() {
     const apolloClient = useApolloClient();
     const promiseMsg = usePromiseMessage();
 
-    const { fileTree, selectedFiles, selectedLocation } = useDashboardState();
-    const { setSelectedFiles } = useDashboardDispatch();
+    const { fileTree, selectedFiles, selectedLocation, filePredicate } = useDashboardState();
+    const { setSelectedFiles, updateFile, filterFiles } = useDashboardDispatch();
 
-    const startFullScan = useCallback(() => {
-        apolloClient.mutate({
-            mutation: StartFullScanDocument,
-            refetchQueries: [ GetAllFileEntriesDocument ]
-        }).then(...promiseMsg(
-            "Full File Scan Completed!",
-            "An error occurred during the file scan."
-        ));
-    }, [apolloClient, promiseMsg]);
+
 
     const onSelect = useCallback((keys: (string | number)[]) => {
-        const files = keys.map((k) => typeof k === "string" && fileTree.hasNode(k) ?
+        const files = keys.map((k, i, a) => typeof k === "string" && fileTree.hasNode(k) && a.indexOf(k) === i ?
             fileTree.getNode(k) :
             undefined
         ).filter(isDefined);
@@ -50,7 +59,6 @@ export function FileBrowser() {
 
         apolloClient.mutate({
             mutation: AssignFileMetadataDocument,
-            refetchQueries: [ GetAllFileEntriesDocument ],
             variables: {
                 fileId: selectedFile.id,
                 data: {
@@ -64,20 +72,25 @@ export function FileBrowser() {
                     }
                 }
             }
-        }).then(...promiseMsg(
-            "Successfully assigned location to file!",
-            "There was an unexpected error assigning location to file"
-        ));
-    }, [apolloClient, promiseMsg, selectedFiles, selectedLocation]);
+        })
+            .then((res) => {
+                if(res.data?.updateMetadata) { updateFile(res.data.updateMetadata); }
+            })
+            .then(...promiseMsg(
+                "Successfully assigned location to file!",
+                "There was an unexpected error assigning location to file"
+            ));
+    }, [apolloClient, promiseMsg, selectedFiles, selectedLocation, updateFile]);
 
 
 
-    const files = useMemo<TreeDataNode[]>(
+    const files = useMemo<AntDTreeNode<FileEntryBasicFragment>[]>(
         () => fileTree.toAntdTree({
             titleFn: (t) => t.name,
-            isLeafFn: (t) => t.type !== "directory"
+            isLeafFn: (t) => t.type !== "directory",
+            filter: filePredicate
         })?.children ?? [],
-        [fileTree]
+        [filePredicate, fileTree]
     );
 
     const previewFile = (file: FileEntryBasicFragment) => {
@@ -95,26 +108,56 @@ export function FileBrowser() {
         }
     };
 
-    const columns: ColumnsType<TreeDataNode> = [
-        {
-            title: <h3 className="ml-4 text-lg font-bold">Files</h3>,
-            dataIndex: "title",
+    const onSearch = useCallback((value: string) => {
+        if(value) {
+            filterFiles((file) =>
+                file.name.includes(value) || file.tags.some((t) => t.includes(value)));
+        } else {
+            filterFiles();
         }
-    ];
+    }, [filterFiles]);
 
-    return <div className="flex flex-col h-full gap-1">
-        <Button onClick={startFullScan} className="m-4">
-            Full Scan
-        </Button>
+    const onRowClick = useCallback((row: AntDTreeNode<FileEntryBasicFragment>) => {
+        return (ev: MouseEvent) => {
+            if(ev.ctrlKey) {
+                // Individual multi-select
+                onSelect([ ...selectedFiles.map((f) => f.id), row.key ]);
+            } else if(ev.shiftKey) {
+                // Remove text selection that is caused by shift-clicking text.
+                document.getSelection()?.removeAllRanges();
+
+                // Range multi-selected
+                const lastFile = selectedFiles[selectedFiles.length - 1];
+                onSelect([
+                    ...selectedFiles.slice(0, -1).map((f) => f.id),
+                    ...fileTree.getTraversedRange(lastFile.id, row.key as string).map((f) => f.id)
+                ]);
+            } else {
+                // Single select
+                onSelect([ row.key ]);
+            }
+        };
+    }, [fileTree, onSelect, selectedFiles]);
+
+
+    return <div className="flex flex-col h-full gap-1 p-4">
+        <Input.Search
+            placeholder="Search Files"
+            onSearch={onSearch}
+            className="mb-4"
+        />
         <Table
             dataSource={files}
-            className="flex-1 overflow-y-auto striped px-4"
+            className="flex-1 overflow-y-auto striped"
             rowClassName={(row) => selectedFiles.some((sf) => sf.id === row.key) ? "selected cursor-pointer" : " cursor-pointer"}
             onRow={(row) => ({
-                onClick: () => onSelect([ row.key ])
+                onClick: onRowClick(row),
             })}
-            columns={columns}
+            columns={fileBrowserColumns}
             size="small"
+            expandable={{
+                defaultExpandAllRows: true
+            }}
         />
         <MultiCase
             value={selectedFiles}
@@ -127,37 +170,24 @@ export function FileBrowser() {
                     size="small"
                 >
                     <Descriptions.Item label="Tags">
-                        {selectedFile.tags.map((tag) => <Tag key={tag}>{tag}</Tag>)}
-                    </Descriptions.Item>
-                    <Descriptions.Item label="Location">
-                        {selectedFile.metadata?.location ?
-                            <Button
-                                icon={<CompassOutlined/>}
-                                onClick={() => message.info(`(${selectedFile.metadata?.location?.latitude}, ${selectedFile.metadata?.location?.longitude})`)}
-                            /> :
-                            <em>None</em>
-                        }
+                        <TagSelector file={selectedFile}/>
                     </Descriptions.Item>
                 </Descriptions>
-                <Row>
-                    <Col>
-                        <Button
-                            disabled={!selectedLocation}
-                            onClick={assignLocation}
-                            className="mx-8"
-                        >
-                            Assign Location
-                        </Button>
-                    </Col>
-                    <Col>
-                        <Button
-                            onClick={() => previewFile(selectedFile)}
-                            className="mx-8"
-                        >
-                            Preview File
-                        </Button>
-                    </Col>
-                </Row>
+                <Space>
+                    <Button
+                        disabled={!selectedLocation}
+                        onClick={assignLocation}
+                        className="mx-8"
+                    >
+                        Assign Location
+                    </Button>
+                    <Button
+                        onClick={() => previewFile(selectedFile)}
+                        className="mx-8"
+                    >
+                        Preview File
+                    </Button>
+                </Space>
             </>}
         />
         {/* <Modal

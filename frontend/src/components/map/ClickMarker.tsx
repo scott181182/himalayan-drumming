@@ -12,8 +12,6 @@ export function ClickMarker() {
     const { setVirtualLocation } = useDashboardDispatch();
 
     useMapEvent("click", (ev) => {
-        console.log("Click!");
-
         setVirtualLocation({
             latitude: ev.latlng.lat,
             longitude: ev.latlng.lng,
