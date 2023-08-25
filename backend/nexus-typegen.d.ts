@@ -16,6 +16,11 @@ declare global {
 export interface NexusGenInputs {
   FileEntryWhereInput: { // input type
     id?: NexusGenInputs['IdNullableFilterInput'] | null; // IdNullableFilterInput
+    name?: NexusGenInputs['StringNullableFilterInput'] | null; // StringNullableFilterInput
+    parentId?: NexusGenInputs['IdNullableFilterInput'] | null; // IdNullableFilterInput
+    tags?: NexusGenInputs['StringNullableArrayFilterInput'] | null; // StringNullableArrayFilterInput
+    type?: NexusGenInputs['StringNullableFilterInput'] | null; // StringNullableFilterInput
+    url?: NexusGenInputs['StringNullableFilterInput'] | null; // StringNullableFilterInput
   }
   FileMetadataCreateLocationInput: { // input type
     connect?: NexusGenInputs['IdWhereUniqueInput'] | null; // IdWhereUniqueInput

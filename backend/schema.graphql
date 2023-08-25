@@ -17,6 +17,11 @@ type FileEntry {
 
 input FileEntryWhereInput {
   id: IdNullableFilterInput
+  name: StringNullableFilterInput
+  parentId: IdNullableFilterInput
+  tags: StringNullableArrayFilterInput
+  type: StringNullableFilterInput
+  url: StringNullableFilterInput
 }
 
 type FileMetadata {
