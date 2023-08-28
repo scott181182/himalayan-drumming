@@ -15,7 +15,7 @@
         "@apollo/client": "^3.7.16",
         "@azure/msal-browser": "^2.37.1",
         "@azure/msal-react": "^1.5.8",
-        "@types/node": "20.3.3",
+        "@types/node": "20.5.7",
         "@types/react": "18.2.14",
         "@types/react-dom": "18.2.6",
         "antd": "^5.6.3",
