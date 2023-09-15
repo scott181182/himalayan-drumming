@@ -112,6 +112,7 @@ enum OrderDirection {
 }
 
 type Person {
+  avatarUrl: String
   children: [Person!]!
   files: [FileEntry!]!
   id: ID!
