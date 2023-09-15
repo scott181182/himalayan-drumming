@@ -1,0 +1,18 @@
+
+
+
+.person-picture-container {
+    position: relative;
+
+    &>button {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+
+        visibility: hidden;
+    }
+
+    &:hover>button {
+        visibility: visible;
+    }
+}

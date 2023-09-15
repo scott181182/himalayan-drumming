@@ -3,6 +3,7 @@
 fragment SimplePerson on Person {
     id
     name
+    avatarUrl
 }
 fragment PersonAndParent on Person {
     ...SimplePerson

@@ -3,6 +3,7 @@
 fragment PersonInContext on Person {
     id
     name
+    avatarUrl
 
     files { id }
     parent {
