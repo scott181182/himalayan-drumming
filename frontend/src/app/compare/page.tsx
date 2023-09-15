@@ -29,7 +29,6 @@ const ComparePage: NextPage = () => {
         }
     });
 
-
     return (
         <EnumProvider>
             <Layout className="h-full">
@@ -39,7 +38,19 @@ const ComparePage: NextPage = () => {
                         loading={loading}
                         error={error}
                     >
-                        {(files) => files.map((file) => <MediaPlayerRow key={file.id} src={file.url}/>)}
+                        {(files) => files.map((file) => <MediaPlayerRow
+                            key={file.id}
+                            src={file.url}
+                            gutter={24}
+                            mediaColProps={{
+                                xs: { span: 12, offset: 0 },
+                                md: { span: 10, offset: 2}
+                            }}
+                            waveformColProps={{
+                                xs: { span: 12},
+                                md: { span: 10 }
+                            }}
+                        />)}
                     </AsyncData>
                 </Layout.Content>
             </Layout>

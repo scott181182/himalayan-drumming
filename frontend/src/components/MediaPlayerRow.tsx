@@ -1,3 +1,4 @@
+import type { ColProps} from "antd";
 import { Col, Row } from "antd";
 import { useEffect, useRef } from "react";
 import WaveSurfer from "wavesurfer.js";
@@ -6,8 +7,17 @@ import WaveSurfer from "wavesurfer.js";
 
 export interface MediaPlayerRowProps {
     src: string | null | undefined;
+
+    gutter?: number;
+    mediaColProps?: ColProps;
+    waveformColProps?: ColProps;
 }
-export function MediaPlayerRow({ src }: MediaPlayerRowProps) {
+export function MediaPlayerRow({
+    src,
+    gutter,
+    mediaColProps,
+    waveformColProps
+}: MediaPlayerRowProps) {
     const videoRef = useRef<HTMLVideoElement | null>(null);
     const waveformRef = useRef<HTMLDivElement | null>(null);
 
@@ -45,14 +55,14 @@ export function MediaPlayerRow({ src }: MediaPlayerRowProps) {
 
     if(!src) { return <i>Could not load preview for this file</i>; }
 
-    return <Row justify="center" gutter={24} align="middle">
-        <Col xs={{ span: 12, offset: 0 }} md={{ span: 10, offset: 2}}>
+    return <Row justify="center" align="middle" gutter={gutter ?? 0}>
+        <Col {...mediaColProps}>
             <video ref={videoRef} controls>
                 <source src={src} type="video/mp4"/>
                 Your browser does not support this video
             </video>
         </Col>
-        <Col xs={{ span: 12}} md={{ span: 10 }}>
+        <Col {...waveformColProps}>
             <div
                 ref={waveformRef}
                 className="waveform-container py-4 bg-yellow-100 border-black border"
