@@ -50,22 +50,29 @@ type PrismaTreeNode = TreeNode<FileEntry>;
 
 
 
-function odTree2prismaCreateInput(odNode: TreeNode<FileItem>): Prisma.FileEntryUncheckedCreateWithoutParentInput {
+function odTree2prismaCreateInput(odNode: TreeNode<FileItem>, parentId: string | null): Prisma.FileEntryUncheckedCreateInput {
+    return {
+        ...odTree2prismaCreateWithoutParentInput(odNode),
+        parentId
+    };
+}
+function odTree2prismaCreateWithoutParentInput(odNode: TreeNode<FileItem>): Prisma.FileEntryUncheckedCreateWithoutParentInput {
     return {
         path: odNode.id,
         name: odNode.value.name,
         type: odNode.value.type,
         url: `/blob/files/${odNode.id == "/" ? "" : odNode.id}`,
 
+
         children: odNode.children ? {
-            create: odNode.children.map(odTree2prismaCreateInput)
+            create: odNode.children.map(odTree2prismaCreateWithoutParentInput)
         } : undefined
     };
 }
 
-function createPrismaFileTree(odRoot: TreeNode<FileItem>, prisma: PrismaClient) {
+function createPrismaFileTree(odRoot: TreeNode<FileItem>, parentId: string | null, prisma: PrismaClient) {
     return prisma.fileEntry.create({
-        data: odTree2prismaCreateInput(odRoot)
+        data: odTree2prismaCreateInput(odRoot, parentId)
     });
 }
 
@@ -86,7 +93,8 @@ async function updatePrismaFileTree(pRoot: PrismaTreeNode, odRoot: TreeNode<File
         odRoot,
         pRoot,
         {
-            onNew: (odNode) => createPrismaFileTree(odNode, prisma),
+            idFn: (node) => node.value.path,
+            onNew: (odNode, parent) => createPrismaFileTree(odNode, parent.id, prisma),
             async onExisting(odNode, pNode) {
                 const odValue = {
                     ...odNode.value,
@@ -125,10 +133,9 @@ export async function executeFullScan(prisma: PrismaClient) {
 
     let pFileRoot: FileEntry;
 
-    // TODO: implement merging the file tree with the Prisma tree, to avoid unnecessary deletions
     const pTree = await getPrismaFileTree(prisma);
     if(!pTree) {
-        pFileRoot = await createPrismaFileTree(fTree, prisma);
+        pFileRoot = await createPrismaFileTree(fTree, null, prisma);
     } else {
         await updatePrismaFileTree(pTree, fTree, prisma);
         pFileRoot = await prisma.fileEntry.findUniqueOrThrow({

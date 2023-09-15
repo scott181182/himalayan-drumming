@@ -8,8 +8,10 @@ export interface TreeNode<T> {
 }
 
 export interface MergeTreeOptions<T, U> {
-    onNew: (node: TreeNode<T>) => Promise<unknown>;
-    onExisting: (newNode: TreeNode<T>, oldNode: TreeNode<U>) => Promise<unknown>;
+    idFn?: (node: TreeNode<T> | TreeNode<U>) => string;
+
+    onNew: (node: TreeNode<T>, parent: TreeNode<U>) => Promise<unknown>;
+    onExisting: (newNode: TreeNode<T>, oldNode: TreeNode<U>, parent: TreeNode<U>) => Promise<unknown>;
     onOld: (node: TreeNode<U>) => Promise<unknown>;
 }
 
@@ -33,7 +35,7 @@ export async function mergeTrees<T, U>(newTree: TreeNode<T>, oldTree: TreeNode<U
 
     if(oldTree.children.length === 0) {
         for(const child of newTree.children) {
-            await options.onNew(child);
+            await options.onNew(child, oldTree);
         }
 
         return;
@@ -43,17 +45,18 @@ export async function mergeTrees<T, U>(newTree: TreeNode<T>, oldTree: TreeNode<U
      * Keeps track of nodes in the old tree that DON'T have a corresponding node in the new tree.
      * This will be used to delete nodes that no longer exist.
      */
-    const unseenNodes = new Map(oldTree.children.map((oldChild) => [oldChild.id, oldChild]));
+    const unseenNodes = new Map(oldTree.children.map((oldChild) => [options.idFn ? options.idFn(oldChild) : oldChild.id, oldChild]));
 
     for(const newChild of newTree.children) {
-        const oldChild = unseenNodes.get(newChild.id);
+        const newChildId = options.idFn ? options.idFn(newChild) : newChild.id;
+        const oldChild = unseenNodes.get(newChildId);
 
         if(!oldChild) {
-            await options.onNew(newChild);
+            await options.onNew(newChild, oldTree);
         } else {
-            unseenNodes.delete(oldChild.id);
+            unseenNodes.delete(newChildId);
 
-            await options.onExisting(newChild, oldChild);
+            await options.onExisting(newChild, oldChild, oldTree);
             await mergeTrees(newChild, oldChild, options);
         }
     }

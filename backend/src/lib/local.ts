@@ -27,7 +27,7 @@ export async function readDirRecursive(dirpath: string, rootpath: string): Promi
         const id = path.relative(rootpath, fullpath);
         const value: FileItem = {
             name: dirent.name,
-            path: fullpath,
+            path: id,
             type: dirent.isFile() ? "file" : "directory"
         };
 
