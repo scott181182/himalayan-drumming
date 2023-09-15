@@ -116,7 +116,7 @@ export function ResourceSelector<V extends object, QRes, QVar extends OperationV
     ///////////////////////////////////////////////////
 
     /** The current value for the `<Select>` component that is rendered outside the modal. */
-    const selectValue = useMemo<Key | undefined>(() => value ? value[recordKey] : undefined, [value, recordKey]);
+    const selectValue = useMemo<Key | undefined>(() => value ? value[recordKey] as Key : undefined, [value, recordKey]);
     /**
      * The current options for the `<Select>` component that is rendered outside the modal.
      * This is just computed to be the current value so we can render it nicely.
@@ -124,7 +124,7 @@ export function ResourceSelector<V extends object, QRes, QVar extends OperationV
     const selectOptions = useMemo<DefaultOptionType[]>(() => {
         if(!value) { return []; }
         return [
-            { label: renderValue(value), value: value[recordKey] }
+            { label: renderValue(value), value: value[recordKey] as Key }
         ];
     }, [recordKey, renderValue, value]);
 
@@ -233,7 +233,7 @@ export function ResourceSelector<V extends object, QRes, QVar extends OperationV
                 rowSelection={{
                     type: "radio",
                     onChange: (_, selectedValues) => setSelectedValue(selectedValues[0]),
-                    selectedRowKeys: selectedValue ? [ selectedValue[recordKey] ] : []
+                    selectedRowKeys: selectedValue ? [ selectedValue[recordKey] as Key ] : []
                 }}
                 rowKey={recordKey}
             />
