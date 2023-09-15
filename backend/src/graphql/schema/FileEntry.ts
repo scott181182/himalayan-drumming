@@ -1,5 +1,7 @@
-import { extendType, idArg, nonNull, objectType, stringArg } from "nexus";
+import { extendType, idArg, inputObjectType, nonNull, objectType, stringArg } from "nexus";
 
+import { IdNullableFilterInput, StringNullableArrayFilterInput, StringNullableFilterInput } from "./filters";
+import { unnullifyObject } from "./utils";
 import { executeFullScan } from "@/lib/scan";
 
 
@@ -66,6 +68,18 @@ export const FileEntry = objectType({
 
 
 
+export const FileEntryWhereInput = inputObjectType({
+    name: "FileEntryWhereInput",
+    definition(t) {
+        t.field("id", { type: IdNullableFilterInput });
+        t.field("name", { type: StringNullableFilterInput });
+        t.field("url", { type: StringNullableFilterInput });
+        t.field("type", { type: StringNullableFilterInput });
+
+        t.field("parentId", { type: IdNullableFilterInput });
+        t.field("tags", { type: StringNullableArrayFilterInput });
+    },
+});
 export const FileEntryQuery = extendType({
     type: "Query",
     definition(t) {
@@ -83,7 +97,7 @@ export const FileEntryQuery = extendType({
         t.field("fileEntry", {
             type: FileEntry,
             args: {
-                id: nonNull(stringArg())
+                id: nonNull(idArg())
             },
             resolve(_, args, ctx) {
                 return ctx.prisma.fileEntry.findUnique({
@@ -94,8 +108,13 @@ export const FileEntryQuery = extendType({
 
         t.nonNull.list.nonNull.field("fileEntries", {
             type: FileEntry,
-            resolve(_, _args, ctx) {
-                return ctx.prisma.fileEntry.findMany();
+            args: {
+                where: FileEntryWhereInput
+            },
+            resolve(_, args, ctx) {
+                return ctx.prisma.fileEntry.findMany({
+                    where: unnullifyObject(args.where)
+                });
             }
         });
 

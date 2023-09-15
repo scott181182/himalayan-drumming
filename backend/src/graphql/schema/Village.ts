@@ -21,9 +21,25 @@ export const  Village = objectType({
                 });
             }
         });
+
+        t.nonNull.list.nonNull.field("people", {
+            type: "PersonInVillage",
+            resolve: (src, _, ctx) => ctx.prisma.personInVillage.findMany({
+                where: { villageId: src.id }
+            })
+        });
     },
 });
 
+
+
+export const VillageWhereInput = inputObjectType({
+    name: "VillageWhereInput",
+    definition(t) {
+        t.field("id", { type: "IdNullableFilterInput" });
+        t.field("name", { type: "StringNullableFilterInput" });
+    },
+});
 export const VillageQuery = extendType({
     type: "Query",
     definition(t) {

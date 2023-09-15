@@ -19,7 +19,8 @@ model FileType {
 }
 
 model FileEntry {
-    id String @id
+    id String @id @default(cuid())
+    path String @unique
     name String
     url String?
 

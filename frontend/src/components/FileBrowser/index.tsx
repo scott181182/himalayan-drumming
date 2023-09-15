@@ -4,11 +4,12 @@ import { CompassOutlined } from "@ant-design/icons";
 import { useApolloClient } from "@apollo/client";
 import { App, Button, Descriptions, Table, Space, Input } from "antd";
 import type { ColumnsType } from "antd/es/table";
+import Link from "next/link";
 import type { MouseEvent} from "react";
 import { useCallback, useMemo } from "react";
 
 import { TagSelector } from "./TagSelector";
-import { VideoPlayer } from "./VideoPlayer";
+import { MediaPlayerRow } from "../MediaPlayerRow";
 import { MultiCase } from "../MultiCase";
 import { useDashboardDispatch, useDashboardState } from "@/components/DashboardContext";
 import type { FileEntryBasicFragment} from "@/generated/graphql";
@@ -83,7 +84,6 @@ export function FileBrowser() {
     }, [apolloClient, promiseMsg, selectedFiles, selectedLocation, updateFile]);
 
 
-
     const files = useMemo<AntDTreeNode<FileEntryBasicFragment>[]>(
         () => fileTree.toAntdTree({
             titleFn: (t) => t.name,
@@ -100,7 +100,11 @@ export function FileBrowser() {
             modal.info({
                 title: file.name,
                 closable: true,
-                content: <VideoPlayer src={file.url}/>,
+                content: <MediaPlayerRow
+                    src={file.url}
+                    mediaColProps={{ span: 24 }}
+                    waveformColProps={{ span: 24 }}
+                />,
                 width: "50%"
             });
         } else {
@@ -161,7 +165,20 @@ export function FileBrowser() {
         />
         <MultiCase
             value={selectedFiles}
-            multiple={<Descriptions title={`${selectedFiles.length} files selected`}></Descriptions>}
+            multiple={<>
+                <Descriptions
+                    title={`${selectedFiles.length} files selected`}
+                    className="p-4 border-t-2 border-t-black wrap-title"
+                ></Descriptions>
+                <Space>
+                    <Link
+                        href={`/compare?files=${selectedFiles.map((f) => f.id).join(",")}`}
+                        target="_blank"
+                    >
+                        Preview Files
+                    </Link>
+                </Space>
+            </>}
             single={(selectedFile) => <>
                 <Descriptions
                     title={selectedFile.name}

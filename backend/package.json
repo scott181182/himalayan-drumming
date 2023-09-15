@@ -13,6 +13,7 @@
         "db:migrate": "prisma migrate dev",
         "db:seed": "ts-node ./src/scripts/db_seed.ts",
         "db:scan": "ts-node ./src/scripts/db_scan.ts",
+        "regen_ids": "ts-node ./src/scripts/regen_ids.ts",
         "build": "tsc -p . --pretty",
         "start": "node ."
     },
@@ -30,6 +31,7 @@
         "zod": "^3.22.2"
     },
     "devDependencies": {
+        "@paralleldrive/cuid2": "^2.2.2",
         "@types/cors": "^2.8.13",
         "@types/express": "^4.17.17",
         "@types/node": "18.17.1",

@@ -21,10 +21,10 @@ img, video {
 
 
 
-.ant-table-wrapper.striped {
+.ant-table-wrapper {
     .ant-table-thead {
         th, td {
-            background-color: #ccc;
+            background-color: #ccc !important;
         }
     }
 
@@ -32,8 +32,10 @@ img, video {
     .ant-table-row:hover td {
         background-color: #cbe1ff !important;
     }
-    .ant-table-row.selected td {
-        background-color: #a7cbfa !important;
+    .ant-table-row.selected, .ant-table-row.ant-table-row-selected {
+        td {
+            background-color: #a7cbfa !important;
+        }
     }
     .ant-table-row:nth-child(2n) {
         background-color: #e0e0e0;

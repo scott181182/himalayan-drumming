@@ -1,4 +1,4 @@
-import { readdir, readFile } from "node:fs/promises";
+import { readdir } from "node:fs/promises";
 import path from "node:path";
 
 import type { TreeNode } from "./tree";
@@ -57,5 +57,5 @@ export async function getFileTree(): Promise<TreeNode<FileItem>> {
             type: "directory"
         },
         children: await readDirRecursive(rootDir, rootDir)
-    }
+    };
 }

@@ -38,7 +38,7 @@ query GetRootFileEntry {
         ...FileEntryWithChildren
     }
 }
-query GetFileEntry($id: String!) {
+query GetFileEntry($id: ID!) {
     fileEntry(id: $id) {
         ...FileEntryWithChildren
     }
@@ -46,6 +46,11 @@ query GetFileEntry($id: String!) {
 
 query GetAllFileEntries {
     fileEntries {
+        ...FileEntryBasic
+    }
+}
+query GetFileEntries($where: FileEntryWhereInput) {
+    fileEntries(where: $where) {
         ...FileEntryBasic
     }
 }
