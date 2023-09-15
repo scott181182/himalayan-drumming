@@ -9,7 +9,7 @@ import type { MouseEvent} from "react";
 import { useCallback, useMemo } from "react";
 
 import { TagSelector } from "./TagSelector";
-import { VideoPlayer } from "./VideoPlayer";
+import { MediaPlayerRow } from "../MediaPlayerRow";
 import { MultiCase } from "../MultiCase";
 import { useDashboardDispatch, useDashboardState } from "@/components/DashboardContext";
 import type { FileEntryBasicFragment} from "@/generated/graphql";
@@ -84,7 +84,6 @@ export function FileBrowser() {
     }, [apolloClient, promiseMsg, selectedFiles, selectedLocation, updateFile]);
 
 
-
     const files = useMemo<AntDTreeNode<FileEntryBasicFragment>[]>(
         () => fileTree.toAntdTree({
             titleFn: (t) => t.name,
@@ -101,7 +100,11 @@ export function FileBrowser() {
             modal.info({
                 title: file.name,
                 closable: true,
-                content: <VideoPlayer src={file.url}/>,
+                content: <MediaPlayerRow
+                    src={file.url}
+                    mediaColProps={{ span: 24 }}
+                    waveformColProps={{ span: 24 }}
+                />,
                 width: "50%"
             });
         } else {
@@ -168,12 +171,6 @@ export function FileBrowser() {
                     className="p-4 border-t-2 border-t-black wrap-title"
                 ></Descriptions>
                 <Space>
-                    {/* <Button
-                        onClick={() => previewFile(selectedFile)}
-                        className="mx-8"
-                    >
-                        Preview Files
-                    </Button> */}
                     <Link
                         href={`/compare?files=${selectedFiles.map((f) => f.id).join(",")}`}
                         target="_blank"
