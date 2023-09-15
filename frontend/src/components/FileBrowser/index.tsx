@@ -2,14 +2,14 @@
 
 import { CompassOutlined } from "@ant-design/icons";
 import { useApolloClient } from "@apollo/client";
-import { App, Button, Descriptions, Table, Space, Input } from "antd";
+import { Button, Descriptions, Table, Space, Input } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import Link from "next/link";
 import type { MouseEvent} from "react";
 import { useCallback, useMemo } from "react";
 
+import { useFilePreview } from "./FilePreview";
 import { TagSelector } from "./TagSelector";
-import { MediaPlayerRow } from "../MediaPlayerRow";
 import { MultiCase } from "../MultiCase";
 import { useDashboardDispatch, useDashboardState } from "@/components/DashboardContext";
 import type { FileEntryBasicFragment} from "@/generated/graphql";
@@ -36,7 +36,6 @@ const fileBrowserColumns: ColumnsType<AntDTreeNode<FileEntryBasicFragment>> = [
 
 
 export function FileBrowser() {
-    const { modal, message } = App.useApp();
     const apolloClient = useApolloClient();
     const promiseMsg = usePromiseMessage();
 
@@ -93,24 +92,7 @@ export function FileBrowser() {
         [filePredicate, fileTree]
     );
 
-    const previewFile = (file: FileEntryBasicFragment) => {
-        const ext = file.name.substring(file.name.lastIndexOf(".") + 1);
-
-        if(["mp4", "mov"].includes(ext)) {
-            modal.info({
-                title: file.name,
-                closable: true,
-                content: <MediaPlayerRow
-                    src={file.url}
-                    mediaColProps={{ span: 24 }}
-                    waveformColProps={{ span: 24 }}
-                />,
-                width: "50%"
-            });
-        } else {
-            message.warning("Unsupported file for preview");
-        }
-    };
+    const previewFile = useFilePreview();
 
     const onSearch = useCallback((value: string) => {
         if(value) {
