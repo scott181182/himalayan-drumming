@@ -122,10 +122,8 @@ const devContext: ContextFn = (prisma) =>(async () => {
                         parent.id
                     );
                     
-                    prismaClient.fileEntry.upsert({
-                        where: { id: fileCreateInput.id },
-                        update: fileCreateInput,
-                        create: fileCreateInput
+                    prismaClient.fileEntry.create({
+                        data: fileCreateInput
                     }).then(() => {
                         res.status(200).json({ status: "success" });
                     }).catch((gerr) => {
