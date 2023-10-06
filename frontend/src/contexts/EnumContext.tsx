@@ -3,7 +3,7 @@ import type { LayoutProps } from "antd";
 import type { DefaultOptionType } from "antd/es/select";
 import { createContext, useContext, useState } from "react";
 
-import { AsyncData } from "./AsyncData";
+import { AsyncData } from "@/components/AsyncData";
 import { GetAllTagsDocument } from "@/generated/graphql";
 import { makeOptions } from "@/utils/antd";
 

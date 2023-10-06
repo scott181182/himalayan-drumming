@@ -11,7 +11,7 @@ import { useCallback, useMemo } from "react";
 import { useFilePreview } from "./FilePreview";
 import { TagSelector } from "./TagSelector";
 import { MultiCase } from "../MultiCase";
-import { useDashboardDispatch, useDashboardState } from "@/components/DashboardContext";
+import { useDashboardDispatch, useDashboardState } from "@/contexts/DashboardContext";
 import type { FileEntryBasicFragment} from "@/generated/graphql";
 import { AssignFileMetadataDocument } from "@/generated/graphql";
 import { usePromiseMessage } from "@/utils/antd";

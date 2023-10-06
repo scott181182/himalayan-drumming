@@ -7,7 +7,7 @@ import { useState } from "react";
 
 import { PersonDetails } from "./PersonDetails";
 import { AddPersonButton } from "../AddPersonButton";
-import { useDashboardState } from "../DashboardContext";
+import { useDashboardState } from "../../contexts/DashboardContext";
 import type { PersonInContextFragment } from "@/generated/graphql";
 
 

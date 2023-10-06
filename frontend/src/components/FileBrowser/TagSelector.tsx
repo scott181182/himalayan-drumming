@@ -5,8 +5,8 @@ import type { InputRef} from "antd";
 import { Button, Divider, Input, Select, Space } from "antd";
 import { useCallback, useRef, useState } from "react";
 
-import { useDashboardDispatch } from "../DashboardContext";
-import { useEnums } from "../EnumContext";
+import { useDashboardDispatch } from "@/contexts/DashboardContext";
+import { useEnums } from "@/contexts/EnumContext";
 import type { FileEntryBasicFragment} from "@/generated/graphql";
 import { GetAllTagsDocument, GetFullContextDocument, TagFileDocument, UntagFileDocument } from "@/generated/graphql";
 import { usePromiseMessage } from "@/utils/antd";

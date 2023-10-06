@@ -5,7 +5,7 @@ import { App, Button, Descriptions, Space, Upload } from "antd";
 import { useCallback } from "react";
 
 import cls from "./PersonDetail.module.scss";
-import { useDashboardState } from "../DashboardContext";
+import { useDashboardState } from "../../contexts/DashboardContext";
 import { UpdatePersonDocument, type PersonInContextFragment } from "@/generated/graphql";
 import { usePromiseMessage } from "@/utils/antd";
 
