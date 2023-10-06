@@ -72,6 +72,7 @@ input LatLngCreateInput {
 }
 
 type Mutation {
+  createDirectory(name: String!, parentId: ID!): FileEntry
   createPerson(data: PersonCreateInput!): Person!
   createVillage(data: VillageCreateInput!): Village!
 

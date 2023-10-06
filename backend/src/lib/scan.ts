@@ -50,7 +50,7 @@ type PrismaTreeNode = TreeNode<FileEntry>;
 
 
 
-function odTree2prismaCreateInput(odNode: TreeNode<FileItem>, parentId: string | null): Prisma.FileEntryUncheckedCreateInput {
+export function odTree2prismaCreateInput(odNode: TreeNode<FileItem>, parentId: string | null): Prisma.FileEntryUncheckedCreateInput {
     return {
         ...odTree2prismaCreateWithoutParentInput(odNode),
         parentId
