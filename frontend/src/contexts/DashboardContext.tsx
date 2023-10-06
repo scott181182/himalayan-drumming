@@ -60,6 +60,7 @@ export type DashboardDispatchFunctions = {
 
     // Async Operators
     refetchPerson: (personId: string) => Promise<void>;
+    refetchDashboard: () => void;
 }
 
 
@@ -163,7 +164,7 @@ export function DashboardProvider({
     });
 
 
-    const { loading, error } = useQuery(GetFullContextDocument, {
+    const { loading, error, refetch } = useQuery(GetFullContextDocument, {
         onCompleted(data) {
             try {
                 const payload = FileTree.fromEntries(data.fileEntries);
@@ -206,6 +207,9 @@ export function DashboardProvider({
                     console.error(JSON.stringify(res.errors, null, 4));
                 }
             })
+        },
+        refetchDashboard: () => {
+            refetch();
         }
     }), [dispatch]);
 
