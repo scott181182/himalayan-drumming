@@ -20,8 +20,10 @@ model FileType {
 
 model FileEntry {
     id String @id @default(cuid())
+    /// Virtual path, in the application.
     path String @unique
     name String
+    /// Endpoint the file can be retrieved at.
     url String?
 
     type String

@@ -225,6 +225,7 @@ export interface NexusGenFieldTypes {
     longitude: number; // Float!
   }
   Mutation: { // field return type
+    createDirectory: NexusGenRootTypes['FileEntry'] | null; // FileEntry
     createPerson: NexusGenRootTypes['Person']; // Person!
     createVillage: NexusGenRootTypes['Village']; // Village!
     fullscan: NexusGenRootTypes['FileEntry'] | null; // FileEntry
@@ -294,6 +295,7 @@ export interface NexusGenFieldTypeNames {
     longitude: 'Float'
   }
   Mutation: { // field return type name
+    createDirectory: 'FileEntry'
     createPerson: 'Person'
     createVillage: 'Village'
     fullscan: 'FileEntry'
@@ -340,6 +342,10 @@ export interface NexusGenFieldTypeNames {
 
 export interface NexusGenArgTypes {
   Mutation: {
+    createDirectory: { // args
+      name: string; // String!
+      parentId: string; // ID!
+    }
     createPerson: { // args
       data: NexusGenInputs['PersonCreateInput']; // PersonCreateInput!
     }

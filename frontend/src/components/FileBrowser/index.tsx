@@ -2,7 +2,7 @@
 
 import { CompassOutlined } from "@ant-design/icons";
 import { useApolloClient } from "@apollo/client";
-import { Button, Descriptions, Table, Space, Input } from "antd";
+import { Button, Descriptions, Table, Space, Input, App } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import Link from "next/link";
 import type { MouseEvent} from "react";
@@ -17,6 +17,7 @@ import { AssignFileMetadataDocument } from "@/generated/graphql";
 import { usePromiseMessage } from "@/utils/antd";
 import { isDefined } from "@/utils/array";
 import type { AntDTreeNode } from "@/utils/tree";
+import { useCreateFolderModal, useUploadFileModal } from "./hooks";
 
 
 
@@ -36,6 +37,7 @@ const fileBrowserColumns: ColumnsType<AntDTreeNode<FileEntryBasicFragment>> = [
 
 
 export function FileBrowser() {
+    const { modal } = App.useApp();
     const apolloClient = useApolloClient();
     const promiseMsg = usePromiseMessage();
 
@@ -93,6 +95,11 @@ export function FileBrowser() {
     );
 
     const previewFile = useFilePreview();
+
+    const { createFolderModalContent, openCreateFolderModal } = useCreateFolderModal();
+    const { uploadFileModalContent, openUploadFileModal } = useUploadFileModal();
+
+
 
     const onSearch = useCallback((value: string) => {
         if(value) {
@@ -180,12 +187,33 @@ export function FileBrowser() {
                     >
                         Assign Location
                     </Button>
-                    <Button
-                        onClick={() => previewFile(selectedFile)}
-                        className="mx-8"
-                    >
-                        Preview File
-                    </Button>
+                    {
+                        selectedFile.type === "file" &&
+                        <Button
+                            onClick={() => previewFile(selectedFile)}
+                            className="mx-8"
+                        >
+                            Preview File
+                        </Button>
+                    }
+                    {
+                        selectedFile.type === "directory" && <>
+                            <Button
+                                onClick={() => openCreateFolderModal(selectedFile.id)}
+                                className="mx-8"
+                            >
+                                Create Folder
+                            </Button>
+                            {createFolderModalContent}
+                            <Button
+                                onClick={() => openUploadFileModal(selectedFile.id)}
+                                className="mx-8"
+                            >
+                                Upload File
+                            </Button>
+                            {uploadFileModalContent}
+                        </>
+                    }
                 </Space>
             </>}
         />

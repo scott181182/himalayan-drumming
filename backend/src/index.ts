@@ -13,10 +13,12 @@ import { GraphQLError } from "graphql";
 
 import { schema } from "./graphql";
 import type { Context } from "./graphql/context";
+import { odTree2prismaCreateInput } from "./lib/scan";
 
 
 
 const PORT = parseInt(process.env.PORT ?? "3001");
+const FILE_DIR = "/workspace/blob/files";
 const AVATAR_DIR = "/workspace/blob/avatars";
 
 
@@ -70,6 +72,69 @@ const devContext: ContextFn = (prisma) =>(async () => {
             context: process.env.NODE_ENV === "production" ? prodContext(prismaClient) : devContext(prismaClient)
         })
     );
+
+
+
+    app.post(
+        "/api/files/:parentId/children",
+        fileUpload({ preserveExtension: true }),
+        async (req, res) => {
+            const parentId = req.params.parentId;
+            if(!parentId) { return res.status(404).send(); }
+            
+            const file = req.files?.file;
+            if(!file) {
+                return res.status(400).json({ status: "error", reason: "No file in request" });
+            }
+            if(Array.isArray(file)) {
+                return res.status(400).json({ status: "error", reason: "Only one file allowed for upload" });
+            }
+
+            const parent = await prismaClient.fileEntry.findUnique({
+                where: { id: parentId }
+            });
+            if(!parent) {
+                return res.status(404).json({ status: "error", reason: "Could not find parent directory" });
+            }
+            if(parent?.type !== "directory") {
+                return res.status(400).json({ status: "error", reason: "Can only upload files underneath directories" });
+            }
+
+            const vPath = path.join(parent.path, file.name);
+            const fileDestFull = path.join(FILE_DIR, vPath);
+            // TODO: check if file already exists
+            
+            file.mv(fileDestFull, (err) => {
+                if(err) {
+                    console.error(err);
+                    res.status(500).json({ status: "error", reason: "There was an error uploading the file" });
+                } else {
+                    const fileCreateInput = odTree2prismaCreateInput(
+                        {
+                            id: vPath,
+                            value: {
+                                name: file.name,
+                                path: vPath,
+                                type: "file"
+                            },
+                            children: []
+                        },
+                        parent.id
+                    );
+                    
+                    prismaClient.fileEntry.create({
+                        data: fileCreateInput
+                    }).then(() => {
+                        res.status(200).json({ status: "success" });
+                    }).catch((gerr) => {
+                        console.error(gerr);
+                        res.status(500).json({ status: "error", reason: "There was an error updating the person record" });
+                    });
+                }
+            });
+        }
+    );
+
     app.put(
         "/api/people/:id/avatar",
         fileUpload({ preserveExtension: true }),

@@ -3,6 +3,8 @@ import { extendType, idArg, inputObjectType, nonNull, objectType, stringArg } fr
 import { IdNullableFilterInput, StringNullableArrayFilterInput, StringNullableFilterInput } from "./filters";
 import { unnullifyObject } from "./utils";
 import { executeFullScan } from "@/lib/scan";
+import { mkdir } from "node:fs/promises";
+import path from "node:path";
 
 
 
@@ -137,6 +139,32 @@ export const FileEntryMutation = extendType({
                 return executeFullScan(ctx.prisma);
             }
         });
+
+        t.field("createDirectory", {
+            type: "FileEntry",
+            args: {
+                parentId: nonNull(idArg()),
+                name: nonNull(stringArg())
+            },
+            async resolve(_, { parentId, name }, ctx) {
+                const parent = await ctx.prisma.fileEntry.findUniqueOrThrow({
+                    where: { id: parentId }
+                });
+
+                const vPath = parent.path === "/" ? name : path.join(parent.path, name);
+                await mkdir(path.join("/workspace/blob/files", vPath));
+
+                return ctx.prisma.fileEntry.create({
+                    data: {
+                        name,
+                        parentId,
+                        path: vPath,
+                        url: `/blob/files/${vPath}`,
+                        type: "directory"
+                    }
+                });
+            }
+        })
 
 
 
