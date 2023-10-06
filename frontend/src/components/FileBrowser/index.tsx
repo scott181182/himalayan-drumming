@@ -17,7 +17,7 @@ import { AssignFileMetadataDocument } from "@/generated/graphql";
 import { usePromiseMessage } from "@/utils/antd";
 import { isDefined } from "@/utils/array";
 import type { AntDTreeNode } from "@/utils/tree";
-import { useCreateFolderModal } from "./hooks";
+import { useCreateFolderModal, useUploadFileModal } from "./hooks";
 
 
 
@@ -97,6 +97,7 @@ export function FileBrowser() {
     const previewFile = useFilePreview();
 
     const { createFolderModalContent, openCreateFolderModal } = useCreateFolderModal();
+    const { uploadFileModalContent, openUploadFileModal } = useUploadFileModal();
 
 
 
@@ -204,6 +205,13 @@ export function FileBrowser() {
                                 Create Folder
                             </Button>
                             {createFolderModalContent}
+                            <Button
+                                onClick={() => openUploadFileModal(selectedFile.id)}
+                                className="mx-8"
+                            >
+                                Upload File
+                            </Button>
+                            {uploadFileModalContent}
                         </>
                     }
                 </Space>
