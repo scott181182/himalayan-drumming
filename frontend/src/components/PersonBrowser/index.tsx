@@ -3,11 +3,11 @@
 import { LeftOutlined } from "@ant-design/icons";
 import { Button, Space, Table } from "antd";
 import type { ColumnsType } from "antd/es/table";
-import { useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 
 import { PersonDetails } from "./PersonDetails";
 import { AddPersonButton } from "../AddPersonButton";
-import { useDashboardState } from "../../contexts/DashboardContext";
+import { useDashboardDispatch, useDashboardState } from "../../contexts/DashboardContext";
 import type { PersonInContextFragment } from "@/generated/graphql";
 
 
@@ -23,16 +23,27 @@ const columns: ColumnsType<PersonInContextFragment> = [
 
 export function PersonBrowser() {
     const { people } = useDashboardState();
-    const [ selectedPerson, setSelectedPerson ] = useState<PersonInContextFragment | undefined>();
+    const { refetchPerson } = useDashboardDispatch();
+    const [ selectedPersonId, setSelectedPersonId ] = useState<string | undefined>();
+
+    const selectedPerson = useMemo(() => {
+        if(!selectedPersonId) { return undefined; }
+        return people.find((p) => p.id === selectedPersonId);
+    }, [people, selectedPersonId])
+
+    const onPersonUpdate = useCallback(() => {
+        if(!selectedPersonId) { return; }
+        refetchPerson(selectedPersonId);
+    }, [refetchPerson, selectedPersonId])
 
 
 
     return selectedPerson ?
         <Space direction="vertical" className="w-full h-full">
-            <Button onClick={() => setSelectedPerson(undefined)}>
+            <Button onClick={() => setSelectedPersonId(undefined)}>
                 <LeftOutlined/>
             </Button>
-            <PersonDetails person={selectedPerson}/>
+            <PersonDetails person={selectedPerson} onUpdate={onPersonUpdate}/>
         </Space> :
         <Space direction="vertical" className="w-full h-full">
             {/* TODO: add search bar */}
@@ -44,7 +55,7 @@ export function PersonBrowser() {
 
                 rowClassName={(p) => selectedPerson === p.id ? "selected cursor-pointer" : " cursor-pointer"}
                 onRow={(p) => ({
-                    onClick: () => setSelectedPerson(p)
+                    onClick: () => setSelectedPersonId(p.id)
                 })}
             />
             <AddPersonButton/>

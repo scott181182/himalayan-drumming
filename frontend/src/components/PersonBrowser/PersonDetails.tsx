@@ -14,10 +14,12 @@ import { usePromiseMessage } from "@/utils/antd";
 
 export interface PersonDetailsProps {
     person: PersonInContextFragment
+    onUpdate?: () => void;
 }
 
 export function PersonDetails({
-    person
+    person,
+    onUpdate,
 }: PersonDetailsProps) {
     const { modal } = App.useApp();
     const handlePromise = usePromiseMessage();
@@ -39,14 +41,22 @@ export function PersonDetails({
         }).then(...handlePromise("Associated file(s)!", "Error associating files with person"));
     }, [handlePromise, person.id, selectedFiles, updatePerson]);
 
+
+
     const editPicture = useCallback(() => {
-        modal.info({
+        const uploadModal = modal.info({
             content: <Upload.Dragger
                 method="PUT"
                 action={`/api/people/${person.id}/avatar`}
                 accept="image/*"
                 name="image"
                 multiple={false}
+                onChange={(info) => {
+                    if(info.file.status === "done") {
+                        onUpdate?.()
+                        uploadModal.destroy();
+                    }
+                }}
             >
                 <p className="ant-upload-drag-icon">
                     <FileImageOutlined />
@@ -56,6 +66,8 @@ export function PersonDetails({
         });
     }, [modal, person.id]);
 
+
+    
     return <Space direction="vertical">
         <div className={cls["person-picture-container"]}>
             <img src={person.avatarUrl ?? "/empty_person.webp"} alt={person.name + " profile picture"}/>

@@ -31,6 +31,12 @@ query GetPeople($where: PersonWhereInput, $take: Int, $skip: Int, $orderBy: Pers
     }
 }
 
+query GetPerson($personId: ID!) {
+    person(id: $personId) {
+        ...PersonInContext
+    }
+}
+
 mutation CreatePerson($data: PersonCreateInput!) {
     createPerson(data: $data) {
         ...PersonAndParent
