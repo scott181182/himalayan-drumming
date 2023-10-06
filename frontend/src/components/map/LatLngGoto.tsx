@@ -4,7 +4,7 @@ import type { MouseEventHandler} from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useMap } from "react-leaflet";
 
-import { useDashboardDispatch, useDashboardState } from "../DashboardContext";
+import { useDashboardDispatch, useDashboardState } from "../../contexts/DashboardContext";
 import { formatLatLng } from "@/utils/location";
 
 

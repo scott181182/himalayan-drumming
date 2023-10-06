@@ -35,7 +35,7 @@ export function MediaPlayerRow({
             wavesurfer = WaveSurfer.create({
                 container: waveformRef.current,
                 media: this,
-                // minPxPerSec: 32,
+                minPxPerSec: 64,
 
                 waveColor: "#4F4A85",
                 progressColor: "#383351",

@@ -3,7 +3,7 @@
 import { Marker, useMapEvent } from "react-leaflet";
 
 import { emptyMarkerIcon } from "./icons";
-import { useDashboardDispatch, useDashboardState } from "@/components/DashboardContext";
+import { useDashboardDispatch, useDashboardState } from "@/contexts/DashboardContext";
 
 
 

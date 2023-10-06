@@ -77,6 +77,7 @@ model LatLng {
 model Person {
     id String @id @default(cuid())
     name String
+    avatarUrl String?
 
     parent Person? @relation("ParentChild", fields: [parentId], references: [id])
     parentId String?

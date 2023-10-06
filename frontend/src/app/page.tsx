@@ -4,8 +4,8 @@ import { Layout, Skeleton, Typography } from "antd";
 import dynamic from "next/dynamic";
 import { useState } from "react";
 
-import { DashboardProvider } from "@/components/DashboardContext";
-import { EnumProvider } from "@/components/EnumContext";
+import { DashboardProvider } from "@/contexts/DashboardContext";
+import { EnumProvider } from "@/contexts/EnumContext";
 import { FileBrowser } from "@/components/FileBrowser";
 import { RelationBrowser } from "@/components/RelationBrowser";
 

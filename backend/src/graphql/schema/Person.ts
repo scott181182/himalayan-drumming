@@ -9,6 +9,7 @@ export const  Person = objectType({
     definition(t) {
         t.nonNull.id("id");
         t.nonNull.string("name");
+        t.string("avatarUrl");
 
         t.string("parentId");
         t.field("parent", {

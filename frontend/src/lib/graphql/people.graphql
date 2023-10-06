@@ -3,6 +3,7 @@
 fragment SimplePerson on Person {
     id
     name
+    avatarUrl
 }
 fragment PersonAndParent on Person {
     ...SimplePerson
@@ -27,6 +28,12 @@ query GetAllPeople {
 query GetPeople($where: PersonWhereInput, $take: Int, $skip: Int, $orderBy: PersonOrderByInput) {
     people(where: $where, take: $take, skip: $skip, orderBy: $orderBy) {
         ...PersonForTable
+    }
+}
+
+query GetPerson($personId: ID!) {
+    person(id: $personId) {
+        ...PersonInContext
     }
 }
 

@@ -1,13 +1,13 @@
 "use client";
 
-import { useQuery } from "@apollo/client";
+import { useApolloClient, useQuery } from "@apollo/client";
 import { App } from "antd";
 import type { Reducer} from "react";
 import { createContext, useContext, useMemo, useReducer } from "react";
 
 import { AsyncData } from "@/components/AsyncData";
 import type { FileEntryBasicFragment, LocationCompleteFragment, VillageInContextFragment, PersonInContextFragment } from "@/generated/graphql";
-import { GetFullContextDocument} from "@/generated/graphql";
+import { GetFullContextDocument, GetPersonDocument} from "@/generated/graphql";
 import { FileTree } from "@/utils/tree";
 
 
@@ -40,6 +40,9 @@ export type DashboardDispatchAction = {
     type: "setPeople",
     payload: PersonInContextFragment[]
 } | {
+    type: "updatePerson",
+    payload: PersonInContextFragment
+} | {
     type: "updateFile",
     payload: FileEntryBasicFragment
 } | {
@@ -54,6 +57,9 @@ export type DashboardDispatchFunctions = {
     selectLocation: (location: LocationCompleteFragment) => void;
     updateFile: (file: FileEntryBasicFragment) => void;
     filterFiles: (filterFn?: (file: FileEntryBasicFragment) => boolean) => void;
+
+    // Async Operators
+    refetchPerson: (personId: string) => Promise<void>;
 }
 
 
@@ -94,6 +100,16 @@ export const dashboardReducer: Reducer<DashboardContextValue, DashboardDispatchA
                 ...state,
                 people: action.payload
             };
+        case "updatePerson": {
+            const personIndex = state.people.findIndex((p) => p.id === action.payload.id);
+            const newPeople = [ ...state.people ];
+            newPeople.splice(personIndex, 1, action.payload);
+            return {
+                ...state,
+                people: newPeople
+            };
+        }
+
         case "updateFile":
             return {
                 ...state,
@@ -133,6 +149,7 @@ export function DashboardProvider({
     children
 }: DashboardProviderProps) {
     const { message } = App.useApp();
+    const apolloClient = useApolloClient();
 
     const [state, dispatch] = useReducer(dashboardReducer, {
         // Unsafe code, but the `<AsyncData>` component is guaranteeing that this will be defined prior to access.
@@ -144,6 +161,7 @@ export function DashboardProvider({
         people: [],
         villages: [],
     });
+
 
     const { loading, error } = useQuery(GetFullContextDocument, {
         onCompleted(data) {
@@ -171,7 +189,24 @@ export function DashboardProvider({
         updateFile: (file: FileEntryBasicFragment) =>
             dispatch({ type: "updateFile", payload: file }),
         filterFiles: (filterFn?: (file: FileEntryBasicFragment) => boolean) =>
-            dispatch({ type: "filterFiles", payload: filterFn })
+            dispatch({ type: "filterFiles", payload: filterFn }),
+
+        refetchPerson: (personId) => {
+            return apolloClient.query({
+                query: GetPersonDocument,
+                variables: { personId }
+            }).then((res) => {
+                if(res.data.person) {
+                    dispatch({
+                        type: "updatePerson",
+                        payload: res.data.person
+                    })
+                } else {
+                    console.error(`Tried to fetch new data for person ${personId} but failed:`);
+                    console.error(JSON.stringify(res.errors, null, 4));
+                }
+            })
+        }
     }), [dispatch]);
 
     return (

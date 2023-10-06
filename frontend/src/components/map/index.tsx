@@ -8,7 +8,7 @@ import { ClickMarker } from "./ClickMarker";
 import { recordingMarkerIcon, villageMarkerIcon } from "./icons";
 import { LatLngGoto } from "./LatLngGoto";
 import uttarakhandGeo from "@/assets/india_states.json";
-import { useDashboardDispatch, useDashboardState } from "@/components/DashboardContext";
+import { useDashboardDispatch, useDashboardState } from "@/contexts/DashboardContext";
 import type { LocationCompleteFragment } from "@/generated/graphql";
 import { isDefined } from "@/utils/array";
 

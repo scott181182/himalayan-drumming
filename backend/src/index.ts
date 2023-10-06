@@ -1,18 +1,23 @@
 require("module-alias/register");
 
-import { ApolloServer, ContextFunction } from "@apollo/server";
-import { ExpressContextFunctionArgument, expressMiddleware } from "@apollo/server/express4";
+import path from "node:path";
+
+import type { ContextFunction } from "@apollo/server";
+import { ApolloServer } from "@apollo/server";
+import type { ExpressContextFunctionArgument} from "@apollo/server/express4";
+import { expressMiddleware } from "@apollo/server/express4";
 import { PrismaClient } from "@prisma/client";
-import cors from "cors";
 import express from "express";
+import fileUpload from "express-fileupload";
+import { GraphQLError } from "graphql";
 
 import { schema } from "./graphql";
 import type { Context } from "./graphql/context";
-import { GraphQLError } from "graphql";
 
 
 
 const PORT = parseInt(process.env.PORT ?? "3001");
+const AVATAR_DIR = "/workspace/blob/avatars";
 
 
 
@@ -64,6 +69,43 @@ const devContext: ContextFn = (prisma) =>(async () => {
         expressMiddleware(apolloServer, {
             context: process.env.NODE_ENV === "production" ? prodContext(prismaClient) : devContext(prismaClient)
         })
+    );
+    app.put(
+        "/api/people/:id/avatar",
+        fileUpload({ preserveExtension: true }),
+        (req, res) => {
+            const personId = req.params.id;
+            if(!personId) { return res.status(404).send(); }
+
+            const image = req.files?.image;
+            if(!image) {
+                return res.status(400).json({ status: "error", reason: "No image in request" });
+            }
+            if(Array.isArray(image)) {
+                return res.status(400).json({ status: "error", reason: "Only one image allowed for upload" });
+            }
+
+            const imageExt = image.name.slice(image.name.lastIndexOf(".") + 1);
+            const avatarFilename = `${personId}.${imageExt}`;
+            image.mv(path.join(AVATAR_DIR, avatarFilename), (err) => {
+                if(err) {
+                    console.error(err);
+                    res.status(500).json({ status: "error", reason: "There was an error uploading the file" });
+                } else {
+                    prismaClient.person.update({
+                        where: { id: personId },
+                        data: {
+                            avatarUrl: `/blob/avatars/${avatarFilename}`
+                        }
+                    }).then(() => {
+                        res.status(200).json({ status: "success" });
+                    }).catch((gerr) => {
+                        console.error(gerr);
+                        res.status(500).json({ status: "error", reason: "There was an error updating the person record" });
+                    });
+                }
+            });
+        }
     );
 
 

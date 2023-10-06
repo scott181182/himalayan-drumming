@@ -234,6 +234,7 @@ export interface NexusGenFieldTypes {
     updatePerson: NexusGenRootTypes['Person']; // Person!
   }
   Person: { // field return type
+    avatarUrl: string | null; // String
     children: NexusGenRootTypes['Person'][]; // [Person!]!
     files: NexusGenRootTypes['FileEntry'][]; // [FileEntry!]!
     id: string; // ID!
@@ -302,6 +303,7 @@ export interface NexusGenFieldTypeNames {
     updatePerson: 'Person'
   }
   Person: { // field return type name
+    avatarUrl: 'String'
     children: 'Person'
     files: 'FileEntry'
     id: 'ID'
