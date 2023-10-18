@@ -133,15 +133,15 @@ export function FileBrowser() {
     }, [fileTree, onSelect, selectedFiles]);
 
 
-    return <div className="flex flex-col h-full gap-1 p-4">
+    return <div className="flex flex-col h-full gap-1">
         <Input.Search
             placeholder="Search Files"
             onSearch={onSearch}
-            className="mb-4"
+            className="p-4"
         />
         <Table
             dataSource={files}
-            className="flex-1 overflow-y-auto striped"
+            className="flex-1 overflow-y-auto striped px-4"
             rowClassName={(row) => selectedFiles.some((sf) => sf.id === row.key) ? "selected cursor-pointer" : " cursor-pointer"}
             onRow={(row) => ({
                 onClick: onRowClick(row),
@@ -152,76 +152,73 @@ export function FileBrowser() {
                 defaultExpandAllRows: true
             }}
         />
-        <MultiCase
-            value={selectedFiles}
-            multiple={<>
-                <Descriptions
-                    title={`${selectedFiles.length} files selected`}
-                    className="p-4 border-t-2 border-t-black wrap-title"
-                ></Descriptions>
-                <Space>
-                    <Link
-                        href={`/compare?files=${selectedFiles.map((f) => f.id).join(",")}`}
-                        target="_blank"
+        <div className="border-solid border-l-0 border-r-0 border-b-0 border-t-2">
+            <MultiCase
+                value={selectedFiles}
+                multiple={<>
+                    <Descriptions
+                        title={`${selectedFiles.length} files selected`}
+                        className="p-4 border-t-2 border-t-black wrap-title"
+                    ></Descriptions>
+                    <Space>
+                        <Link
+                            href={`/compare?files=${selectedFiles.map((f) => f.id).join(",")}`}
+                            target="_blank"
+                        >
+                            Preview Files
+                        </Link>
+                    </Space>
+                </>}
+                single={(selectedFile) => <>
+                    <Descriptions
+                        title={selectedFile.name}
+                        className="p-4 border-t-2 border-t-black wrap-title"
+                        bordered
+                        size="small"
                     >
-                        Preview Files
-                    </Link>
-                </Space>
-            </>}
-            single={(selectedFile) => <>
-                <Descriptions
-                    title={selectedFile.name}
-                    className="p-4 border-t-2 border-t-black wrap-title"
-                    bordered
-                    size="small"
-                >
-                    <Descriptions.Item label="Tags">
-                        <TagSelector file={selectedFile}/>
-                    </Descriptions.Item>
-                </Descriptions>
-                <Space>
-                    <Button
-                        disabled={!selectedLocation}
-                        onClick={assignLocation}
-                        className="mx-8"
-                    >
-                        Assign Location
-                    </Button>
-                    {
-                        selectedFile.type === "file" &&
+                        <Descriptions.Item label="Tags">
+                            <TagSelector file={selectedFile}/>
+                        </Descriptions.Item>
+                    </Descriptions>
+                    <Space>
                         <Button
-                            onClick={() => previewFile(selectedFile)}
+                            disabled={!selectedLocation}
+                            onClick={assignLocation}
                             className="mx-8"
                         >
-                            Preview File
+                            Assign Location
                         </Button>
-                    }
-                    {
-                        selectedFile.type === "directory" && <>
+                        {
+                            selectedFile.type === "file" &&
                             <Button
-                                onClick={() => openCreateFolderModal(selectedFile.id)}
+                                onClick={() => previewFile(selectedFile)}
                                 className="mx-8"
                             >
-                                Create Folder
+                                Preview File
                             </Button>
-                            {createFolderModalContent}
-                            <Button
-                                onClick={() => openUploadFileModal(selectedFile.id)}
-                                className="mx-8"
-                            >
-                                Upload File
-                            </Button>
-                            {uploadFileModalContent}
-                        </>
-                    }
-                </Space>
-            </>}
-        />
-        {/* <Modal
-
-        >
-
-        </Modal> */}
+                        }
+                        {
+                            selectedFile.type === "directory" && <>
+                                <Button
+                                    onClick={() => openCreateFolderModal(selectedFile.id)}
+                                    className="mx-8"
+                                >
+                                    Create Folder
+                                </Button>
+                                {createFolderModalContent}
+                                <Button
+                                    onClick={() => openUploadFileModal(selectedFile.id)}
+                                    className="mx-8"
+                                >
+                                    Upload File
+                                </Button>
+                                {uploadFileModalContent}
+                            </>
+                        }
+                    </Space>
+                </>}
+            />
+        </div>
     </div>;
 
 }
