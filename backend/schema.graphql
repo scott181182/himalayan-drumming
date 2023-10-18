@@ -3,6 +3,7 @@
 
 
 type FileEntry {
+  associatedFiles: [FileEntry!]!
   children: [FileEntry!]
   id: ID!
   metadata: FileMetadata
@@ -72,6 +73,7 @@ input LatLngCreateInput {
 }
 
 type Mutation {
+  associateFiles(file1Id: ID!, file2Id: ID!): Boolean!
   createDirectory(name: String!, parentId: ID!): FileEntry
   createPerson(data: PersonCreateInput!): Person!
   createVillage(data: VillageCreateInput!): Village!

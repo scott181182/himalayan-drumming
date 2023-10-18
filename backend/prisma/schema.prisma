@@ -38,7 +38,19 @@ model FileEntry {
     withTags TagOnFile[]
     people Person[]
 
+    associatedFiles1 FileAssociations[] @relation("File1Associations")
+    associatedFiles2 FileAssociations[] @relation("File2Associations")
+
     @@index([parentId])
+}
+
+model FileAssociations {
+    file1Id String
+    file1 FileEntry @relation("File1Associations", fields: [file1Id], references: [id])
+    file2Id String
+    file2 FileEntry @relation("File2Associations", fields: [file2Id], references: [id])
+
+    @@id([file1Id, file2Id])
 }
 
 model FileMetadata {

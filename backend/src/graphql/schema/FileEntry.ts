@@ -65,6 +65,31 @@ export const FileEntry = objectType({
                 });
             }
         });
+        
+
+
+        t.nonNull.list.nonNull.field("associatedFiles", {
+            type: "FileEntry",
+            resolve(src, _, ctx) {
+                return ctx.prisma.$transaction(async (tx) => {
+                    const fileAssociations = await tx.fileAssociations.findMany({
+                        where: {
+                            OR: [
+                                { file1Id: { equals: src.id } },
+                                { file2Id: { equals: src.id } },
+                            ]
+                        }
+                    });
+    
+                    const associatedFileIds = fileAssociations.map((fa) => fa.file1Id === src.id ? fa.file2Id : fa.file1Id);
+                    return tx.fileEntry.findMany({
+                        where: {
+                            id: { in: associatedFileIds }
+                        }
+                    });
+                })
+            }
+        });
     },
 });
 
@@ -132,6 +157,10 @@ export const FileEntryQuery = extendType({
         });
     },
 });
+
+
+
+
 
 export const FileEntryMutation = extendType({
     type: "Mutation",
@@ -218,6 +247,23 @@ export const FileEntryMutation = extendType({
                         file: true
                     }
                 }).then((res) => res.file);
+            }
+        });
+
+        t.nonNull.boolean("associateFiles", {
+            args: {
+                file1Id: nonNull(idArg()),
+                file2Id: nonNull(idArg())
+            },
+            resolve(_, { file1Id, file2Id }, ctx) {
+                if(file1Id === file2Id) { return false; }
+
+                return ctx.prisma.fileAssociations.create({
+                    data: {
+                        file1Id,
+                        file2Id
+                    }
+                }).then(() => true);
             }
         });
     }

@@ -202,6 +202,7 @@ export type NexusGenAllTypes = NexusGenRootTypes & NexusGenScalars & NexusGenEnu
 
 export interface NexusGenFieldTypes {
   FileEntry: { // field return type
+    associatedFiles: NexusGenRootTypes['FileEntry'][]; // [FileEntry!]!
     children: NexusGenRootTypes['FileEntry'][] | null; // [FileEntry!]
     id: string; // ID!
     metadata: NexusGenRootTypes['FileMetadata'] | null; // FileMetadata
@@ -225,6 +226,7 @@ export interface NexusGenFieldTypes {
     longitude: number; // Float!
   }
   Mutation: { // field return type
+    associateFiles: boolean; // Boolean!
     createDirectory: NexusGenRootTypes['FileEntry'] | null; // FileEntry
     createPerson: NexusGenRootTypes['Person']; // Person!
     createVillage: NexusGenRootTypes['Village']; // Village!
@@ -272,6 +274,7 @@ export interface NexusGenFieldTypes {
 
 export interface NexusGenFieldTypeNames {
   FileEntry: { // field return type name
+    associatedFiles: 'FileEntry'
     children: 'FileEntry'
     id: 'ID'
     metadata: 'FileMetadata'
@@ -295,6 +298,7 @@ export interface NexusGenFieldTypeNames {
     longitude: 'Float'
   }
   Mutation: { // field return type name
+    associateFiles: 'Boolean'
     createDirectory: 'FileEntry'
     createPerson: 'Person'
     createVillage: 'Village'
@@ -342,6 +346,10 @@ export interface NexusGenFieldTypeNames {
 
 export interface NexusGenArgTypes {
   Mutation: {
+    associateFiles: { // args
+      file1Id: string; // ID!
+      file2Id: string; // ID!
+    }
     createDirectory: { // args
       name: string; // String!
       parentId: string; // ID!
