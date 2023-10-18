@@ -10,7 +10,7 @@
 		"vscode": {
 			"extensions": [
 				"vivaxy.vscode-conventional-commits",
-				"graphql.vscode-graphql-syntax",
+				"graphql.vscode-graphql",
 				"bradlc.vscode-tailwindcss",
 				"britesnow.vscode-toggle-quotes",
 				"streetsidesoftware.code-spell-checker",
