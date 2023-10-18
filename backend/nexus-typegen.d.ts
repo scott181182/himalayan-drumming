@@ -371,6 +371,8 @@ export interface NexusGenArgTypes {
   }
   Query: {
     fileEntries: { // args
+      skip: number; // Int!
+      take?: number | null; // Int
       where?: NexusGenInputs['FileEntryWhereInput'] | null; // FileEntryWhereInput
     }
     fileEntry: { // args

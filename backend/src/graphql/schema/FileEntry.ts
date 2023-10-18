@@ -1,4 +1,4 @@
-import { extendType, idArg, inputObjectType, nonNull, objectType, stringArg } from "nexus";
+import { extendType, idArg, inputObjectType, intArg, nonNull, objectType, stringArg } from "nexus";
 
 import { IdNullableFilterInput, StringNullableArrayFilterInput, StringNullableFilterInput } from "./filters";
 import { unnullifyObject } from "./utils";
@@ -111,11 +111,15 @@ export const FileEntryQuery = extendType({
         t.nonNull.list.nonNull.field("fileEntries", {
             type: FileEntry,
             args: {
-                where: FileEntryWhereInput
+                skip: nonNull(intArg({ default: 0 })),
+                take: intArg(),
+                where: FileEntryWhereInput,
             },
-            resolve(_, args, ctx) {
+            resolve(_, { skip, take, where }, ctx) {
                 return ctx.prisma.fileEntry.findMany({
-                    where: unnullifyObject(args.where)
+                    skip,
+                    take: take ?? undefined,
+                    where: unnullifyObject(where)
                 });
             }
         });

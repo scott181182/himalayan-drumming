@@ -210,7 +210,7 @@ input PersonWhereManyInput {
 }
 
 type Query {
-  fileEntries(where: FileEntryWhereInput): [FileEntry!]!
+  fileEntries(skip: Int! = 0, take: Int, where: FileEntryWhereInput): [FileEntry!]!
   fileEntry(id: ID!): FileEntry
   people(orderBy: PersonOrderByInput, skip: Int! = 0, take: Int! = 20, where: PersonWhereInput): [Person!]!
   person(id: ID!): Person
