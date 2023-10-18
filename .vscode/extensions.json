@@ -1,0 +1,12 @@
+{
+    "recommendations": [
+        "vivaxy.vscode-conventional-commits",
+        "graphql.vscode-graphql-syntax",
+        "bradlc.vscode-tailwindcss",
+        "britesnow.vscode-toggle-quotes",
+        "streetsidesoftware.code-spell-checker",
+        "sleistner.vscode-fileutils",
+        "ms-azuretools.vscode-docker",
+        "ahmadalli.vscode-nginx-conf"
+    ]
+}
