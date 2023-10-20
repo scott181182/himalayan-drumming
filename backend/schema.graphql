@@ -2,6 +2,21 @@
 ### Do not make changes to this file directly
 
 
+"""
+A date string, such as 2007-12-03, compliant with the `full-date` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
+"""
+scalar Date
+
+input DateNullableFilterInput {
+  equals: Date
+  gt: Date
+  gte: Date
+  in: [Date!]
+  lt: Date
+  lte: Date
+  notIn: [Date!]
+}
+
 type FileEntry {
   associatedFiles: [FileEntry!]!
   children: [FileEntry!]
@@ -117,18 +132,28 @@ enum OrderDirection {
 
 type Person {
   avatarUrl: String
+  birthdate: Date
+  caste: String
   children: [Person!]!
+  education: String
   files: [FileEntry!]!
+  gender: String
   id: ID!
   name: String!
+  notes: String
   parent: Person
   parentId: String
   villages: [PersonInVillage!]!
 }
 
 input PersonCreateInput {
+  birthdate: Date
+  caste: String
+  education: String
   files: FilesForPersonCreateInput
+  gender: String
   name: String!
+  notes: String
   parentId: String
   villages: PersonInVillageRelationCreateInput
 }
@@ -188,8 +213,13 @@ input PersonOrderByInput {
 }
 
 input PersonUpdateInput {
+  birthdate: Date
+  caste: String
+  education: String
   files: FilesForPersonUpdateInput
+  gender: String
   name: String
+  notes: String
   parentId: String
   villages: PersonInVillageRelationUpdateInput
 }
@@ -198,9 +228,14 @@ input PersonWhereInput {
   AND: [PersonWhereInput!]
   NOT: [PersonWhereInput!]
   OR: [PersonWhereInput!]
+  birthdate: DateNullableFilterInput
+  caste: StringNullableFilterInput
   children: PersonWhereManyInput
+  education: StringNullableFilterInput
+  gender: StringNullableFilterInput
   id: IdNullableFilterInput
   name: StringNullableFilterInput
+  notes: StringNullableFilterInput
   parent: PersonWhereInput
   parentId: IdNullableFilterInput
   villages: PersonInVillageWhereManyInput
@@ -213,8 +248,10 @@ input PersonWhereManyInput {
 }
 
 type Query {
+  castes: [String!]!
   fileEntries(skip: Int! = 0, take: Int, where: FileEntryWhereInput): [FileEntry!]!
   fileEntry(id: ID!): FileEntry
+  genders: [String!]!
   people(orderBy: PersonOrderByInput, skip: Int! = 0, take: Int! = 20, where: PersonWhereInput): [Person!]!
   person(id: ID!): Person
   rootFileEntry: FileEntry!

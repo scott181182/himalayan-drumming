@@ -73,11 +73,17 @@ const devContext: ContextFn = (prisma) =>(async () => {
         })
     );
 
+    const fileUploadConfig: fileUpload.Options = {
+        preserveExtension: true,
+        limits: {
+            fileSize: 8_000_000 // 8 MB
+        }
+    };
 
 
     app.post(
         "/api/files/:parentId/children",
-        fileUpload({ preserveExtension: true }),
+        fileUpload(fileUploadConfig),
         async (req, res) => {
             const parentId = req.params.parentId;
             if(!parentId) { return res.status(404).send(); }
@@ -137,7 +143,7 @@ const devContext: ContextFn = (prisma) =>(async () => {
 
     app.put(
         "/api/people/:id/avatar",
-        fileUpload({ preserveExtension: true }),
+        fileUpload(fileUploadConfig),
         (req, res) => {
             const personId = req.params.id;
             if(!personId) { return res.status(404).send(); }

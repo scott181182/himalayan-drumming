@@ -5,6 +5,13 @@ fragment PersonInContext on Person {
     name
     avatarUrl
 
+    birthdate
+    education
+    notes
+
+    gender
+    caste
+
     files { id }
     parent {
         id
@@ -27,4 +34,10 @@ query GetFullContext {
 
 query GetAllTags {
     tags
+}
+
+query GetAllEnums {
+    tags
+    castes
+    genders
 }

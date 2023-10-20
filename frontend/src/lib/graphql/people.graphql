@@ -4,6 +4,13 @@ fragment SimplePerson on Person {
     id
     name
     avatarUrl
+
+    birthdate
+    education
+    notes
+
+    gender
+    caste
 }
 fragment PersonAndParent on Person {
     ...SimplePerson

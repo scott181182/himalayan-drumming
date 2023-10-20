@@ -5,8 +5,23 @@
 
 import type * as prisma from "./node_modules/.prisma/client/index"
 import type { Context } from "./src/graphql/context"
-
-
+import type { core } from "nexus"
+declare global {
+  interface NexusGenCustomInputMethods<TypeName extends string> {
+    /**
+     * A date string, such as 2007-12-03, compliant with the `full-date` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
+     */
+    date<FieldName extends string>(fieldName: FieldName, opts?: core.CommonInputFieldConfig<TypeName, FieldName>): void // "Date";
+  }
+}
+declare global {
+  interface NexusGenCustomOutputMethods<TypeName extends string> {
+    /**
+     * A date string, such as 2007-12-03, compliant with the `full-date` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
+     */
+    date<FieldName extends string>(fieldName: FieldName, ...opts: core.ScalarOutSpread<TypeName, FieldName>): void // "Date";
+  }
+}
 
 
 declare global {
@@ -14,6 +29,15 @@ declare global {
 }
 
 export interface NexusGenInputs {
+  DateNullableFilterInput: { // input type
+    equals?: NexusGenScalars['Date'] | null; // Date
+    gt?: NexusGenScalars['Date'] | null; // Date
+    gte?: NexusGenScalars['Date'] | null; // Date
+    in?: NexusGenScalars['Date'][] | null; // [Date!]
+    lt?: NexusGenScalars['Date'] | null; // Date
+    lte?: NexusGenScalars['Date'] | null; // Date
+    notIn?: NexusGenScalars['Date'][] | null; // [Date!]
+  }
   FileEntryWhereInput: { // input type
     id?: NexusGenInputs['IdNullableFilterInput'] | null; // IdNullableFilterInput
     name?: NexusGenInputs['StringNullableFilterInput'] | null; // StringNullableFilterInput
@@ -69,8 +93,13 @@ export interface NexusGenInputs {
     startsWith?: string | null; // String
   }
   PersonCreateInput: { // input type
+    birthdate?: NexusGenScalars['Date'] | null; // Date
+    caste?: string | null; // String
+    education?: string | null; // String
     files?: NexusGenInputs['FilesForPersonCreateInput'] | null; // FilesForPersonCreateInput
+    gender?: string | null; // String
     name: string; // String!
+    notes?: string | null; // String
     parentId?: string | null; // String
     villages?: NexusGenInputs['PersonInVillageRelationCreateInput'] | null; // PersonInVillageRelationCreateInput
   }
@@ -113,8 +142,13 @@ export interface NexusGenInputs {
     name?: NexusGenEnums['OrderDirection'] | null; // OrderDirection
   }
   PersonUpdateInput: { // input type
+    birthdate?: NexusGenScalars['Date'] | null; // Date
+    caste?: string | null; // String
+    education?: string | null; // String
     files?: NexusGenInputs['FilesForPersonUpdateInput'] | null; // FilesForPersonUpdateInput
+    gender?: string | null; // String
     name?: string | null; // String
+    notes?: string | null; // String
     parentId?: string | null; // String
     villages?: NexusGenInputs['PersonInVillageRelationUpdateInput'] | null; // PersonInVillageRelationUpdateInput
   }
@@ -122,9 +156,14 @@ export interface NexusGenInputs {
     AND?: NexusGenInputs['PersonWhereInput'][] | null; // [PersonWhereInput!]
     NOT?: NexusGenInputs['PersonWhereInput'][] | null; // [PersonWhereInput!]
     OR?: NexusGenInputs['PersonWhereInput'][] | null; // [PersonWhereInput!]
+    birthdate?: NexusGenInputs['DateNullableFilterInput'] | null; // DateNullableFilterInput
+    caste?: NexusGenInputs['StringNullableFilterInput'] | null; // StringNullableFilterInput
     children?: NexusGenInputs['PersonWhereManyInput'] | null; // PersonWhereManyInput
+    education?: NexusGenInputs['StringNullableFilterInput'] | null; // StringNullableFilterInput
+    gender?: NexusGenInputs['StringNullableFilterInput'] | null; // StringNullableFilterInput
     id?: NexusGenInputs['IdNullableFilterInput'] | null; // IdNullableFilterInput
     name?: NexusGenInputs['StringNullableFilterInput'] | null; // StringNullableFilterInput
+    notes?: NexusGenInputs['StringNullableFilterInput'] | null; // StringNullableFilterInput
     parent?: NexusGenInputs['PersonWhereInput'] | null; // PersonWhereInput
     parentId?: NexusGenInputs['IdNullableFilterInput'] | null; // IdNullableFilterInput
     villages?: NexusGenInputs['PersonInVillageWhereManyInput'] | null; // PersonInVillageWhereManyInput
@@ -177,6 +216,7 @@ export interface NexusGenScalars {
   Float: number
   Boolean: boolean
   ID: string
+  Date: any
 }
 
 export interface NexusGenObjects {
@@ -239,10 +279,15 @@ export interface NexusGenFieldTypes {
   }
   Person: { // field return type
     avatarUrl: string | null; // String
+    birthdate: NexusGenScalars['Date'] | null; // Date
+    caste: string | null; // String
     children: NexusGenRootTypes['Person'][]; // [Person!]!
+    education: string | null; // String
     files: NexusGenRootTypes['FileEntry'][]; // [FileEntry!]!
+    gender: string | null; // String
     id: string; // ID!
     name: string; // String!
+    notes: string | null; // String
     parent: NexusGenRootTypes['Person'] | null; // Person
     parentId: string | null; // String
     villages: NexusGenRootTypes['PersonInVillage'][]; // [PersonInVillage!]!
@@ -255,8 +300,10 @@ export interface NexusGenFieldTypes {
     villageId: string; // ID!
   }
   Query: { // field return type
+    castes: string[]; // [String!]!
     fileEntries: NexusGenRootTypes['FileEntry'][]; // [FileEntry!]!
     fileEntry: NexusGenRootTypes['FileEntry'] | null; // FileEntry
+    genders: string[]; // [String!]!
     people: NexusGenRootTypes['Person'][]; // [Person!]!
     person: NexusGenRootTypes['Person'] | null; // Person
     rootFileEntry: NexusGenRootTypes['FileEntry']; // FileEntry!
@@ -312,10 +359,15 @@ export interface NexusGenFieldTypeNames {
   }
   Person: { // field return type name
     avatarUrl: 'String'
+    birthdate: 'Date'
+    caste: 'String'
     children: 'Person'
+    education: 'String'
     files: 'FileEntry'
+    gender: 'String'
     id: 'ID'
     name: 'String'
+    notes: 'String'
     parent: 'Person'
     parentId: 'String'
     villages: 'PersonInVillage'
@@ -328,8 +380,10 @@ export interface NexusGenFieldTypeNames {
     villageId: 'ID'
   }
   Query: { // field return type name
+    castes: 'String'
     fileEntries: 'FileEntry'
     fileEntry: 'FileEntry'
+    genders: 'String'
     people: 'Person'
     person: 'Person'
     rootFileEntry: 'FileEntry'

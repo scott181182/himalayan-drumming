@@ -12,11 +12,31 @@ datasource db {
 
 
 
+///////////////
+//   Enums   //
+///////////////
+
 model FileType {
     name String @id
 
     entries FileEntry[]
 }
+model Caste {
+    name String @id
+
+    members Person[]
+}
+model Gender {
+    name String @id
+
+    people Person[]
+}
+
+
+
+/////////////////////
+//   File Models   //
+/////////////////////
 
 model FileEntry {
     id String @id @default(cuid())
@@ -44,6 +64,7 @@ model FileEntry {
     @@index([parentId])
 }
 
+/// JOIN Table for file entries.
 model FileAssociations {
     file1Id String
     file1 FileEntry @relation("File1Associations", fields: [file1Id], references: [id])
@@ -88,13 +109,26 @@ model LatLng {
 
 
 
+///////////////////////
+//   Person Models   //
+///////////////////////
+
 model Person {
     id String @id @default(cuid())
     name String
     avatarUrl String?
 
+    birthdate DateTime?
+    education String?
+    notes String?
+
     parent Person? @relation("ParentChild", fields: [parentId], references: [id])
     parentId String?
+
+    gender String?
+    genderRef Gender? @relation(fields: [gender], references: [name])
+    caste String?
+    casteRef Caste? @relation(fields: [caste], references: [name])
 
     children Person[] @relation("ParentChild")
     villages PersonInVillage[]
