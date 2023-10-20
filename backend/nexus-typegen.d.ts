@@ -226,10 +226,11 @@ export interface NexusGenFieldTypes {
     longitude: number; // Float!
   }
   Mutation: { // field return type
-    associateFiles: boolean; // Boolean!
+    associateFiles: NexusGenRootTypes['FileEntry'][] | null; // [FileEntry!]
     createDirectory: NexusGenRootTypes['FileEntry'] | null; // FileEntry
     createPerson: NexusGenRootTypes['Person']; // Person!
     createVillage: NexusGenRootTypes['Village']; // Village!
+    disassociateFiles: NexusGenRootTypes['FileEntry'][] | null; // [FileEntry!]
     fullscan: NexusGenRootTypes['FileEntry'] | null; // FileEntry
     tagFile: NexusGenRootTypes['FileEntry']; // FileEntry!
     untagFile: NexusGenRootTypes['FileEntry']; // FileEntry!
@@ -298,10 +299,11 @@ export interface NexusGenFieldTypeNames {
     longitude: 'Float'
   }
   Mutation: { // field return type name
-    associateFiles: 'Boolean'
+    associateFiles: 'FileEntry'
     createDirectory: 'FileEntry'
     createPerson: 'Person'
     createVillage: 'Village'
+    disassociateFiles: 'FileEntry'
     fullscan: 'FileEntry'
     tagFile: 'FileEntry'
     untagFile: 'FileEntry'
@@ -359,6 +361,10 @@ export interface NexusGenArgTypes {
     }
     createVillage: { // args
       data: NexusGenInputs['VillageCreateInput']; // VillageCreateInput!
+    }
+    disassociateFiles: { // args
+      file1Id: string; // ID!
+      file2Id: string; // ID!
     }
     tagFile: { // args
       fileId: string; // ID!

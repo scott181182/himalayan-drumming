@@ -73,10 +73,11 @@ input LatLngCreateInput {
 }
 
 type Mutation {
-  associateFiles(file1Id: ID!, file2Id: ID!): Boolean!
+  associateFiles(file1Id: ID!, file2Id: ID!): [FileEntry!]
   createDirectory(name: String!, parentId: ID!): FileEntry
   createPerson(data: PersonCreateInput!): Person!
   createVillage(data: VillageCreateInput!): Village!
+  disassociateFiles(file1Id: ID!, file2Id: ID!): [FileEntry!]
 
   """
   Perform a full scan of OneDrive and other file sources. Creates, updates, and deletes entries as necessary.
