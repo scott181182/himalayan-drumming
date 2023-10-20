@@ -12,8 +12,14 @@ const config: CodegenConfig = {
                 "typescript",
                 "typescript-operations",
                 "typed-document-node"
-            ]
+            ],
+            config: {
+                strictScalars: true,
+                scalars: {
+                    Date: "string"
+                }
+            }
         }
-    }
+    },
 };
 export default config;

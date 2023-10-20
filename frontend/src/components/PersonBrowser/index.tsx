@@ -6,8 +6,8 @@ import type { ColumnsType } from "antd/es/table";
 import { useCallback, useMemo, useState } from "react";
 
 import { PersonDetails } from "./PersonDetails";
-import { AddPersonButton } from "../AddPersonButton";
 import { useDashboardDispatch, useDashboardState } from "../../contexts/DashboardContext";
+import { AddPersonButton } from "../AddPersonButton";
 import type { PersonInContextFragment } from "@/generated/graphql";
 
 
@@ -29,12 +29,12 @@ export function PersonBrowser() {
     const selectedPerson = useMemo(() => {
         if(!selectedPersonId) { return undefined; }
         return people.find((p) => p.id === selectedPersonId);
-    }, [people, selectedPersonId])
+    }, [people, selectedPersonId]);
 
     const onPersonUpdate = useCallback(() => {
         if(!selectedPersonId) { return; }
         refetchPerson(selectedPersonId);
-    }, [refetchPerson, selectedPersonId])
+    }, [refetchPerson, selectedPersonId]);
 
 
 
