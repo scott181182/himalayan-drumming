@@ -9,8 +9,16 @@
 	"customizations": {
 		"vscode": {
 			"extensions": [
+				"vivaxy.vscode-conventional-commits",
+				"graphql.vscode-graphql",
+				"bradlc.vscode-tailwindcss",
+				"britesnow.vscode-toggle-quotes",
+				"streetsidesoftware.code-spell-checker",
+				"sleistner.vscode-fileutils",
 				"ms-azuretools.vscode-docker",
-				"ahmadalli.vscode-nginx-conf"
+				"ahmadalli.vscode-nginx-conf",
+				"prisma.prisma",
+				"dbaeumer.vscode-eslint"
 			]
 		}
 	}

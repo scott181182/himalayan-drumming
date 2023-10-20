@@ -3,6 +3,7 @@
 
 
 type FileEntry {
+  associatedFiles: [FileEntry!]!
   children: [FileEntry!]
   id: ID!
   metadata: FileMetadata
@@ -72,9 +73,11 @@ input LatLngCreateInput {
 }
 
 type Mutation {
+  associateFiles(file1Id: ID!, file2Id: ID!): [FileEntry!]
   createDirectory(name: String!, parentId: ID!): FileEntry
   createPerson(data: PersonCreateInput!): Person!
   createVillage(data: VillageCreateInput!): Village!
+  disassociateFiles(file1Id: ID!, file2Id: ID!): [FileEntry!]
 
   """
   Perform a full scan of OneDrive and other file sources. Creates, updates, and deletes entries as necessary.
@@ -210,7 +213,7 @@ input PersonWhereManyInput {
 }
 
 type Query {
-  fileEntries(where: FileEntryWhereInput): [FileEntry!]!
+  fileEntries(skip: Int! = 0, take: Int, where: FileEntryWhereInput): [FileEntry!]!
   fileEntry(id: ID!): FileEntry
   people(orderBy: PersonOrderByInput, skip: Int! = 0, take: Int! = 20, where: PersonWhereInput): [Person!]!
   person(id: ID!): Person

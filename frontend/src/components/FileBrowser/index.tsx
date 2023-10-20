@@ -2,13 +2,15 @@
 
 import { CompassOutlined } from "@ant-design/icons";
 import { useApolloClient } from "@apollo/client";
-import { Button, Descriptions, Table, Space, Input, App } from "antd";
+import { Button, Descriptions, Table, Space, Input } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import Link from "next/link";
 import type { MouseEvent} from "react";
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 
 import { useFilePreview } from "./FilePreview";
+import { FileSelector } from "./FileSelector";
+import { useCreateFolderModal, useUploadFileModal } from "./hooks";
 import { TagSelector } from "./TagSelector";
 import { MultiCase } from "../MultiCase";
 import { useDashboardDispatch, useDashboardState } from "@/contexts/DashboardContext";
@@ -17,7 +19,6 @@ import { AssignFileMetadataDocument } from "@/generated/graphql";
 import { usePromiseMessage } from "@/utils/antd";
 import { isDefined } from "@/utils/array";
 import type { AntDTreeNode } from "@/utils/tree";
-import { useCreateFolderModal, useUploadFileModal } from "./hooks";
 
 
 
@@ -37,12 +38,13 @@ const fileBrowserColumns: ColumnsType<AntDTreeNode<FileEntryBasicFragment>> = [
 
 
 export function FileBrowser() {
-    const { modal } = App.useApp();
     const apolloClient = useApolloClient();
     const promiseMsg = usePromiseMessage();
 
     const { fileTree, selectedFiles, selectedLocation, filePredicate } = useDashboardState();
     const { setSelectedFiles, updateFile, filterFiles } = useDashboardDispatch();
+
+    const tableRef = useRef<HTMLDivElement>(null);
 
 
 
@@ -133,15 +135,31 @@ export function FileBrowser() {
     }, [fileTree, onSelect, selectedFiles]);
 
 
-    return <div className="flex flex-col h-full gap-1 p-4">
+
+    useEffect(() => {
+        if(!tableRef.current || selectedFiles.length === 0) { return; }
+        const firstFile = selectedFiles[0];
+        const rows = [ ...tableRef.current.getElementsByTagName("tr") ];
+        const firstRow = rows.find((r) => r.textContent?.includes(firstFile.name));
+        if(!firstRow) {
+            console.warn(`Could not find row with text '${firstFile.name}'`);
+            return;
+        }
+
+        firstRow.scrollIntoView({ behavior: "smooth", block: "center" });
+    }, [selectedFiles]);
+
+
+    return <div className="flex flex-col h-full gap-1">
         <Input.Search
             placeholder="Search Files"
             onSearch={onSearch}
-            className="mb-4"
+            className="p-4"
         />
         <Table
             dataSource={files}
-            className="flex-1 overflow-y-auto striped"
+            ref={tableRef}
+            className="flex-1 overflow-y-auto striped px-4"
             rowClassName={(row) => selectedFiles.some((sf) => sf.id === row.key) ? "selected cursor-pointer" : " cursor-pointer"}
             onRow={(row) => ({
                 onClick: onRowClick(row),
@@ -152,76 +170,76 @@ export function FileBrowser() {
                 defaultExpandAllRows: true
             }}
         />
-        <MultiCase
-            value={selectedFiles}
-            multiple={<>
-                <Descriptions
-                    title={`${selectedFiles.length} files selected`}
-                    className="p-4 border-t-2 border-t-black wrap-title"
-                ></Descriptions>
-                <Space>
-                    <Link
-                        href={`/compare?files=${selectedFiles.map((f) => f.id).join(",")}`}
-                        target="_blank"
+        <div className="border-solid border-l-0 border-r-0 border-b-0 border-t-2">
+            <MultiCase
+                value={selectedFiles}
+                multiple={<>
+                    <Descriptions
+                        title={`${selectedFiles.length} files selected`}
+                        className="p-4 border-t-2 border-t-black wrap-title"
+                    ></Descriptions>
+                    <Space>
+                        <Link
+                            href={`/compare?files=${selectedFiles.map((f) => f.id).join(",")}`}
+                            target="_blank"
+                        >
+                            Preview Files
+                        </Link>
+                    </Space>
+                </>}
+                single={(selectedFile) => <>
+                    <Descriptions
+                        title={selectedFile.name}
+                        className="p-4 border-t-2 border-t-black wrap-title"
+                        bordered
+                        size="small"
                     >
-                        Preview Files
-                    </Link>
-                </Space>
-            </>}
-            single={(selectedFile) => <>
-                <Descriptions
-                    title={selectedFile.name}
-                    className="p-4 border-t-2 border-t-black wrap-title"
-                    bordered
-                    size="small"
-                >
-                    <Descriptions.Item label="Tags">
-                        <TagSelector file={selectedFile}/>
-                    </Descriptions.Item>
-                </Descriptions>
-                <Space>
-                    <Button
-                        disabled={!selectedLocation}
-                        onClick={assignLocation}
-                        className="mx-8"
-                    >
-                        Assign Location
-                    </Button>
-                    {
-                        selectedFile.type === "file" &&
+                        <Descriptions.Item label="Tags" span={24}>
+                            <TagSelector file={selectedFile}/>
+                        </Descriptions.Item>
+                        <Descriptions.Item label="Associated Files" span={24}>
+                            <FileSelector file={selectedFile}/>
+                        </Descriptions.Item>
+                    </Descriptions>
+                    <Space>
                         <Button
-                            onClick={() => previewFile(selectedFile)}
+                            disabled={!selectedLocation}
+                            onClick={assignLocation}
                             className="mx-8"
                         >
-                            Preview File
+                            Assign Location
                         </Button>
-                    }
-                    {
-                        selectedFile.type === "directory" && <>
+                        {
+                            selectedFile.type === "file" &&
                             <Button
-                                onClick={() => openCreateFolderModal(selectedFile.id)}
+                                onClick={() => previewFile(selectedFile)}
                                 className="mx-8"
                             >
-                                Create Folder
+                                Preview File
                             </Button>
-                            {createFolderModalContent}
-                            <Button
-                                onClick={() => openUploadFileModal(selectedFile.id)}
-                                className="mx-8"
-                            >
-                                Upload File
-                            </Button>
-                            {uploadFileModalContent}
-                        </>
-                    }
-                </Space>
-            </>}
-        />
-        {/* <Modal
-
-        >
-
-        </Modal> */}
+                        }
+                        {
+                            selectedFile.type === "directory" && <>
+                                <Button
+                                    onClick={() => openCreateFolderModal(selectedFile.id)}
+                                    className="mx-8"
+                                >
+                                    Create Folder
+                                </Button>
+                                {createFolderModalContent}
+                                <Button
+                                    onClick={() => openUploadFileModal(selectedFile.id)}
+                                    className="mx-8"
+                                >
+                                    Upload File
+                                </Button>
+                                {uploadFileModalContent}
+                            </>
+                        }
+                    </Space>
+                </>}
+            />
+        </div>
     </div>;
 
 }

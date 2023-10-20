@@ -1,0 +1,12 @@
+
+
+
+.fileTag {
+    cursor: pointer !important;
+    
+    border: 1px solid #ccc;
+
+    &:hover {
+        background-color: #ccc;
+    }
+}

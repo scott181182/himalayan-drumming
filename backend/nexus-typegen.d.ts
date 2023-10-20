@@ -202,6 +202,7 @@ export type NexusGenAllTypes = NexusGenRootTypes & NexusGenScalars & NexusGenEnu
 
 export interface NexusGenFieldTypes {
   FileEntry: { // field return type
+    associatedFiles: NexusGenRootTypes['FileEntry'][]; // [FileEntry!]!
     children: NexusGenRootTypes['FileEntry'][] | null; // [FileEntry!]
     id: string; // ID!
     metadata: NexusGenRootTypes['FileMetadata'] | null; // FileMetadata
@@ -225,9 +226,11 @@ export interface NexusGenFieldTypes {
     longitude: number; // Float!
   }
   Mutation: { // field return type
+    associateFiles: NexusGenRootTypes['FileEntry'][] | null; // [FileEntry!]
     createDirectory: NexusGenRootTypes['FileEntry'] | null; // FileEntry
     createPerson: NexusGenRootTypes['Person']; // Person!
     createVillage: NexusGenRootTypes['Village']; // Village!
+    disassociateFiles: NexusGenRootTypes['FileEntry'][] | null; // [FileEntry!]
     fullscan: NexusGenRootTypes['FileEntry'] | null; // FileEntry
     tagFile: NexusGenRootTypes['FileEntry']; // FileEntry!
     untagFile: NexusGenRootTypes['FileEntry']; // FileEntry!
@@ -272,6 +275,7 @@ export interface NexusGenFieldTypes {
 
 export interface NexusGenFieldTypeNames {
   FileEntry: { // field return type name
+    associatedFiles: 'FileEntry'
     children: 'FileEntry'
     id: 'ID'
     metadata: 'FileMetadata'
@@ -295,9 +299,11 @@ export interface NexusGenFieldTypeNames {
     longitude: 'Float'
   }
   Mutation: { // field return type name
+    associateFiles: 'FileEntry'
     createDirectory: 'FileEntry'
     createPerson: 'Person'
     createVillage: 'Village'
+    disassociateFiles: 'FileEntry'
     fullscan: 'FileEntry'
     tagFile: 'FileEntry'
     untagFile: 'FileEntry'
@@ -342,6 +348,10 @@ export interface NexusGenFieldTypeNames {
 
 export interface NexusGenArgTypes {
   Mutation: {
+    associateFiles: { // args
+      file1Id: string; // ID!
+      file2Id: string; // ID!
+    }
     createDirectory: { // args
       name: string; // String!
       parentId: string; // ID!
@@ -351,6 +361,10 @@ export interface NexusGenArgTypes {
     }
     createVillage: { // args
       data: NexusGenInputs['VillageCreateInput']; // VillageCreateInput!
+    }
+    disassociateFiles: { // args
+      file1Id: string; // ID!
+      file2Id: string; // ID!
     }
     tagFile: { // args
       fileId: string; // ID!
@@ -371,6 +385,8 @@ export interface NexusGenArgTypes {
   }
   Query: {
     fileEntries: { // args
+      skip: number; // Int!
+      take?: number | null; // Int
       where?: NexusGenInputs['FileEntryWhereInput'] | null; // FileEntryWhereInput
     }
     fileEntry: { // args

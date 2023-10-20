@@ -1,10 +1,11 @@
-import { extendType, idArg, inputObjectType, nonNull, objectType, stringArg } from "nexus";
+import { mkdir } from "node:fs/promises";
+import path from "node:path";
+
+import { extendType, idArg, inputObjectType, intArg, nonNull, objectType, stringArg } from "nexus";
 
 import { IdNullableFilterInput, StringNullableArrayFilterInput, StringNullableFilterInput } from "./filters";
 import { unnullifyObject } from "./utils";
 import { executeFullScan } from "@/lib/scan";
-import { mkdir } from "node:fs/promises";
-import path from "node:path";
 
 
 
@@ -65,6 +66,31 @@ export const FileEntry = objectType({
                 });
             }
         });
+        
+
+
+        t.nonNull.list.nonNull.field("associatedFiles", {
+            type: "FileEntry",
+            resolve(src, _, ctx) {
+                return ctx.prisma.$transaction(async (tx) => {
+                    const fileAssociations = await tx.fileAssociations.findMany({
+                        where: {
+                            OR: [
+                                { file1Id: { equals: src.id } },
+                                { file2Id: { equals: src.id } },
+                            ]
+                        }
+                    });
+    
+                    const associatedFileIds = fileAssociations.map((fa) => fa.file1Id === src.id ? fa.file2Id : fa.file1Id);
+                    return tx.fileEntry.findMany({
+                        where: {
+                            id: { in: associatedFileIds }
+                        }
+                    });
+                });
+            }
+        });
     },
 });
 
@@ -111,11 +137,15 @@ export const FileEntryQuery = extendType({
         t.nonNull.list.nonNull.field("fileEntries", {
             type: FileEntry,
             args: {
-                where: FileEntryWhereInput
+                skip: nonNull(intArg({ default: 0 })),
+                take: intArg(),
+                where: FileEntryWhereInput,
             },
-            resolve(_, args, ctx) {
+            resolve(_, { skip, take, where }, ctx) {
                 return ctx.prisma.fileEntry.findMany({
-                    where: unnullifyObject(args.where)
+                    skip,
+                    take: take ?? undefined,
+                    where: unnullifyObject(where)
                 });
             }
         });
@@ -128,6 +158,10 @@ export const FileEntryQuery = extendType({
         });
     },
 });
+
+
+
+
 
 export const FileEntryMutation = extendType({
     type: "Mutation",
@@ -164,7 +198,7 @@ export const FileEntryMutation = extendType({
                     }
                 });
             }
-        })
+        });
 
 
 
@@ -214,6 +248,51 @@ export const FileEntryMutation = extendType({
                         file: true
                     }
                 }).then((res) => res.file);
+            }
+        });
+
+        t.list.nonNull.field("associateFiles", {
+            type: "FileEntry",
+            args: {
+                file1Id: nonNull(idArg()),
+                file2Id: nonNull(idArg())
+            },
+            resolve(_, { file1Id, file2Id }, ctx) {
+                if(file1Id === file2Id) { return []; }
+
+                return ctx.prisma.fileAssociations.create({
+                    data: {
+                        file1Id,
+                        file2Id
+                    },
+                    include: {
+                        file1: true,
+                        file2: true,
+                    }
+                }).then((res) => [ res.file1, res.file2 ]);
+            }
+        });
+        t.list.nonNull.field("disassociateFiles", {
+            type: "FileEntry",
+            args: {
+                file1Id: nonNull(idArg()),
+                file2Id: nonNull(idArg())
+            },
+            resolve(_, { file1Id, file2Id }, ctx) {
+                if(file1Id === file2Id) { return []; }
+
+                return ctx.prisma.fileAssociations.deleteMany({
+                    where: {
+                        OR: [
+                            { file1Id: { equals: file1Id }, file2Id: { equals: file2Id } },
+                            { file1Id: { equals: file2Id }, file2Id: { equals: file1Id } },
+                        ]
+                    },
+                }).then(() => ctx.prisma.fileEntry.findMany({
+                    where: {
+                        id: { in: [ file1Id, file2Id ] }
+                    }
+                }));
             }
         });
     }

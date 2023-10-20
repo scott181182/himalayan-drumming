@@ -11,8 +11,8 @@
         "frontend",
         "backend",
         "cicd",
-        "docs",
-        "docker"
+        "vscode",
+        "build",
     ],
     "conventionalCommits.promptFooter": false,
     "conventionalCommits.gitmoji": false,

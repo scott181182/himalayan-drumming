@@ -21,6 +21,12 @@ fragment FileEntryBasic on FileEntry {
     metadata {
         ...MetadataBasic
     }
+
+    associatedFiles {
+        id
+        name
+    }
+
     tags
 }
 fragment FileEntryWithChildren on FileEntry {
@@ -49,8 +55,8 @@ query GetAllFileEntries {
         ...FileEntryBasic
     }
 }
-query GetFileEntries($where: FileEntryWhereInput) {
-    fileEntries(where: $where) {
+query GetFileEntries($where: FileEntryWhereInput, $skip: Int, $take: Int) {
+    fileEntries(where: $where, skip: $skip, take: $take) {
         ...FileEntryBasic
     }
 }
@@ -77,6 +83,17 @@ mutation UntagFile($fileId: ID!, $tag: String!) {
         ...FileEntryBasic
     }
 }
+mutation AssociateFiles($file1Id: ID!, $file2Id: ID!) {
+    associateFiles(file1Id: $file1Id, file2Id: $file2Id) {
+        ...FileEntryBasic
+    }
+}
+mutation DisassociateFiles($file1Id: ID!, $file2Id: ID!) {
+    disassociateFiles(file1Id: $file1Id, file2Id: $file2Id) {
+        ...FileEntryBasic
+    }
+}
+
 
 
 
