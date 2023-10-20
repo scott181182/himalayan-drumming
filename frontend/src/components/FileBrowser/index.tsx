@@ -2,13 +2,14 @@
 
 import { CompassOutlined } from "@ant-design/icons";
 import { useApolloClient } from "@apollo/client";
-import { Button, Descriptions, Table, Space, Input, App } from "antd";
+import { Button, Descriptions, Table, Space, Input } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import Link from "next/link";
 import type { MouseEvent} from "react";
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 
 import { useFilePreview } from "./FilePreview";
+import { useCreateFolderModal, useUploadFileModal } from "./hooks";
 import { TagSelector } from "./TagSelector";
 import { MultiCase } from "../MultiCase";
 import { useDashboardDispatch, useDashboardState } from "@/contexts/DashboardContext";
@@ -17,7 +18,6 @@ import { AssignFileMetadataDocument } from "@/generated/graphql";
 import { usePromiseMessage } from "@/utils/antd";
 import { isDefined } from "@/utils/array";
 import type { AntDTreeNode } from "@/utils/tree";
-import { useCreateFolderModal, useUploadFileModal } from "./hooks";
 
 
 
@@ -37,12 +37,13 @@ const fileBrowserColumns: ColumnsType<AntDTreeNode<FileEntryBasicFragment>> = [
 
 
 export function FileBrowser() {
-    const { modal } = App.useApp();
     const apolloClient = useApolloClient();
     const promiseMsg = usePromiseMessage();
 
     const { fileTree, selectedFiles, selectedLocation, filePredicate } = useDashboardState();
     const { setSelectedFiles, updateFile, filterFiles } = useDashboardDispatch();
+
+    const tableRef = useRef<HTMLDivElement>(null);
 
 
 
@@ -133,6 +134,21 @@ export function FileBrowser() {
     }, [fileTree, onSelect, selectedFiles]);
 
 
+
+    useEffect(() => {
+        if(!tableRef.current || selectedFiles.length === 0) { return; }
+        const firstFile = selectedFiles[0];
+        const rows = [ ...tableRef.current.getElementsByTagName("tr") ];
+        const firstRow = rows.find((r) => r.textContent?.includes(firstFile.name));
+        if(!firstRow) {
+            console.warn(`Could not find row with text '${firstFile.name}'`);
+            return;
+        }
+
+        firstRow.scrollIntoView({ behavior: "smooth", block: "center" });
+    }, [selectedFiles]);
+
+
     return <div className="flex flex-col h-full gap-1">
         <Input.Search
             placeholder="Search Files"
@@ -141,6 +157,7 @@ export function FileBrowser() {
         />
         <Table
             dataSource={files}
+            ref={tableRef}
             className="flex-1 overflow-y-auto striped px-4"
             rowClassName={(row) => selectedFiles.some((sf) => sf.id === row.key) ? "selected cursor-pointer" : " cursor-pointer"}
             onRow={(row) => ({
