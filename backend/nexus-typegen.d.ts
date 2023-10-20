@@ -300,10 +300,10 @@ export interface NexusGenFieldTypes {
     villageId: string; // ID!
   }
   Query: { // field return type
-    castes: Array<string | null>; // [String]!
+    castes: string[]; // [String!]!
     fileEntries: NexusGenRootTypes['FileEntry'][]; // [FileEntry!]!
     fileEntry: NexusGenRootTypes['FileEntry'] | null; // FileEntry
-    genders: Array<string | null>; // [String]!
+    genders: string[]; // [String!]!
     people: NexusGenRootTypes['Person'][]; // [Person!]!
     person: NexusGenRootTypes['Person'] | null; // Person
     rootFileEntry: NexusGenRootTypes['FileEntry']; // FileEntry!

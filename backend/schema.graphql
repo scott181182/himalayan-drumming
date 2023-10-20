@@ -248,10 +248,10 @@ input PersonWhereManyInput {
 }
 
 type Query {
-  castes: [String]!
+  castes: [String!]!
   fileEntries(skip: Int! = 0, take: Int, where: FileEntryWhereInput): [FileEntry!]!
   fileEntry(id: ID!): FileEntry
-  genders: [String]!
+  genders: [String!]!
   people(orderBy: PersonOrderByInput, skip: Int! = 0, take: Int! = 20, where: PersonWhereInput): [Person!]!
   person(id: ID!): Person
   rootFileEntry: FileEntry!
