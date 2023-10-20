@@ -35,3 +35,9 @@ query GetFullContext {
 query GetAllTags {
     tags
 }
+
+query GetAllEnums {
+    tags
+    castes
+    genders
+}

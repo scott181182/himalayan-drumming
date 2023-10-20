@@ -4,7 +4,7 @@ import type { DefaultOptionType } from "antd/es/select";
 import { createContext, useContext, useState } from "react";
 
 import { AsyncData } from "@/components/AsyncData";
-import { GetAllTagsDocument } from "@/generated/graphql";
+import { GetAllEnumsDocument } from "@/generated/graphql";
 import { makeOptions } from "@/utils/antd";
 
 
@@ -12,11 +12,19 @@ import { makeOptions } from "@/utils/antd";
 export interface EnumContextValue {
     tags: string[];
     tagOptions: DefaultOptionType[];
+    castes: string[];
+    casteOptions: DefaultOptionType[];
+    genders: string[];
+    genderOptions: DefaultOptionType[];
 }
 
 export const EnumContext = createContext<EnumContextValue>({
     tags: [],
     tagOptions: [],
+    castes: [],
+    casteOptions: [],
+    genders: [],
+    genderOptions: [],
 });
 export function useEnums() {
     const state = useContext(EnumContext);
@@ -32,13 +40,21 @@ export function EnumProvider({
     const [state, setState] = useState<EnumContextValue>({
         tags: [],
         tagOptions: [],
+        castes: [],
+        casteOptions: [],
+        genders: [],
+        genderOptions: [],
     });
 
-    const { loading, error } = useQuery(GetAllTagsDocument, {
+    const { loading, error } = useQuery(GetAllEnumsDocument, {
         onCompleted(data) {
             setState({
                 tags: data.tags,
-                tagOptions: makeOptions(data.tags)
+                tagOptions: makeOptions(data.tags),
+                castes: data.castes,
+                casteOptions: makeOptions(data.castes),
+                genders: data.genders,
+                genderOptions: makeOptions(data.genders),
             });
         },
     });
