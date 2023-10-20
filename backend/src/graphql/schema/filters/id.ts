@@ -1,4 +1,4 @@
-import { enumType, inputObjectType } from "nexus";
+import { inputObjectType } from "nexus";
 import type { InputDefinitionBlock } from "nexus/dist/core";
 
 

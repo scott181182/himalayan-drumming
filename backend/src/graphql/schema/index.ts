@@ -1,5 +1,7 @@
-import { enumType, inputObjectType } from "nexus";
+import { GraphQLDate } from "graphql-scalars";
+import { asNexusMethod, enumType, inputObjectType } from "nexus";
 
+export * from "./enums";
 export * from "./filters";
 
 export * from "./FileEntry";
@@ -23,3 +25,5 @@ export const OrderDirection = enumType({
     name: "OrderDirection",
     members: [ "asc", "desc" ]
 });
+
+export const Date = asNexusMethod(GraphQLDate, "date");

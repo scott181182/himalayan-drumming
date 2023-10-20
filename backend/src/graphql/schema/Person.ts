@@ -11,6 +11,13 @@ export const  Person = objectType({
         t.nonNull.string("name");
         t.string("avatarUrl");
 
+        t.date("birthdate");
+        t.string("education");
+        t.string("notes");
+
+        t.string("gender");
+        t.string("caste");
+
         t.string("parentId");
         t.field("parent", {
             type: "Person",
@@ -55,6 +62,13 @@ export const PersonWhereInput = inputObjectType({
     definition(t) {
         t.field("id", { type: "IdNullableFilterInput" });
         t.field("name", { type: "StringNullableFilterInput" });
+        
+        t.field("birthdate", { type: "DateNullableFilterInput" });
+        t.field("education", { type: "StringNullableFilterInput" });
+        t.field("notes", { type: "StringNullableFilterInput" });
+
+        t.field("gender", { type: "StringNullableFilterInput" });
+        t.field("caste", { type: "StringNullableFilterInput" });
 
         t.field("parentId", { type: "IdNullableFilterInput" });
         t.field("parent", { type: "PersonWhereInput" });
@@ -112,6 +126,8 @@ export const PersonQuery = extendType({
 
 
 
+
+
 export const FilesForPersonCreateInput = inputObjectType({
     name: "FilesForPersonCreateInput",
     definition(t) {
@@ -139,6 +155,13 @@ export const PersonCreateInput = inputObjectType({
         t.string("parentId");
         t.field("files", { type: FilesForPersonCreateInput });
         t.field("villages", { type: "PersonInVillageRelationCreateInput" });
+        
+        t.date("birthdate");
+        t.string("education");
+        t.string("notes");
+
+        t.string("gender");
+        t.string("caste");
     },
 });
 
@@ -149,6 +172,13 @@ export const PersonUpdateInput = inputObjectType({
         t.string("parentId");
         t.field("files", { type: FilesForPersonUpdateInput });
         t.field("villages", { type: "PersonInVillageRelationUpdateInput" });
+        
+        t.date("birthdate");
+        t.string("education");
+        t.string("notes");
+
+        t.string("gender");
+        t.string("caste");
     },
 });
 
