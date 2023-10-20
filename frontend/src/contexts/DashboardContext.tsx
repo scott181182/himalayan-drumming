@@ -201,17 +201,17 @@ export function DashboardProvider({
                     dispatch({
                         type: "updatePerson",
                         payload: res.data.person
-                    })
+                    });
                 } else {
                     console.error(`Tried to fetch new data for person ${personId} but failed:`);
                     console.error(JSON.stringify(res.errors, null, 4));
                 }
-            })
+            });
         },
         refetchDashboard: () => {
             refetch();
         }
-    }), [dispatch]);
+    }), [apolloClient, refetch]);
 
     return (
         <DashboardContext.Provider value={state}>
