@@ -17,7 +17,8 @@
 				"sleistner.vscode-fileutils",
 				"ms-azuretools.vscode-docker",
 				"ahmadalli.vscode-nginx-conf",
-				"prisma.prisma"
+				"prisma.prisma",
+				"dbaeumer.vscode-eslint"
 			]
 		}
 	}
