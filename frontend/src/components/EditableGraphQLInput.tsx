@@ -49,7 +49,7 @@ export function EditableGraphQLInput<QRes, QVar extends OperationVariables, T = 
 
 
     if(editing) {
-        return <div className="w-full flex gap-x-2">
+        return <div className="w-full flex gap-x-2 items-center">
             {renderInput ?
                 renderInput(inputValue, setInputValue) :
                 <Input
