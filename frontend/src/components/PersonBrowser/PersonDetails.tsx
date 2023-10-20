@@ -1,13 +1,14 @@
 /* eslint-disable @next/next/no-img-element */
 import { EditOutlined, FileImageOutlined } from "@ant-design/icons";
 import { useMutation } from "@apollo/client";
-import { App, Button, DatePicker, Descriptions, Space, Upload } from "antd";
+import { App, Button, DatePicker, Descriptions, Select, Space, Upload } from "antd";
 import dayjs from "dayjs";
 import { useCallback } from "react";
 
 import cls from "./PersonDetail.module.scss";
 import { useDashboardState } from "../../contexts/DashboardContext";
 import { EditableGraphQLInput } from "../EditableGraphQLInput";
+import { useEnums } from "@/contexts/EnumContext";
 import { UpdatePersonDocument, type PersonInContextFragment } from "@/generated/graphql";
 import { usePromiseMessage } from "@/utils/antd";
 
@@ -26,6 +27,7 @@ export function PersonDetails({
     const { modal } = App.useApp();
     const handlePromise = usePromiseMessage();
     const { selectedFiles } = useDashboardState();
+    const { genderOptions, casteOptions } = useEnums();
     const [updatePerson, { loading }] = useMutation(UpdatePersonDocument);
 
     const assignFiles = useCallback(() => {
@@ -89,11 +91,44 @@ export function PersonDetails({
 
                     renderInput={(value, onChange) => <DatePicker
                         picker="date"
+                        className="flex-grow"
                         value={value}
                         onChange={(d) => onChange(d ?? undefined)}
                     />}
                     renderValue={(value) => value ? value.toISOString().slice(0, 10) : ""}
                 />
+            </Descriptions.Item>
+            <Descriptions.Item label="Gender">
+                <EditableGraphQLInput
+                    value={person.gender ?? undefined}
+                    mutationDocument={UpdatePersonDocument}
+                    onMutate={(value) => ({ personId: person.id, data: { gender: value || null } })}
+                    afterUpdate={onUpdate}
+                    
+                    renderInput={(value, onChange) => <Select
+                        className="flex-grow"
+                        value={value}
+                        onChange={(g) => onChange(g)}
+                        options={genderOptions}
+                        allowClear
+                    />}
+                />    
+            </Descriptions.Item>
+            <Descriptions.Item label="Caste">
+                <EditableGraphQLInput
+                    value={person.caste ?? undefined}
+                    mutationDocument={UpdatePersonDocument}
+                    onMutate={(value) => ({ personId: person.id, data: { caste: value || null } })}
+                    afterUpdate={onUpdate}
+                    
+                    renderInput={(value, onChange) => <Select
+                        className="flex-grow"
+                        value={value}
+                        onChange={(c) => onChange(c)}
+                        options={casteOptions}
+                        allowClear
+                    />}
+                />    
             </Descriptions.Item>
             <Descriptions.Item label="Education">
                 <EditableGraphQLInput

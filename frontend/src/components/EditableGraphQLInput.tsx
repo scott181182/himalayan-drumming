@@ -53,6 +53,7 @@ export function EditableGraphQLInput<QRes, QVar extends OperationVariables, T = 
             {renderInput ?
                 renderInput(inputValue, setInputValue) :
                 <Input
+                    className="flex-grow"
                     value={inputValue as string}
                     onChange={(ev) => setInputValue(ev.target.value as T)}
                 />
