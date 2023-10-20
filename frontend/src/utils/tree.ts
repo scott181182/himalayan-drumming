@@ -165,6 +165,7 @@ export class FileTree extends ImmutableTree<FileEntryBasicFragment> {
 
 
     public getLocations() { return this.locations; }
+    public getFileById(id: string) { return this.nodeMap[id]; }
     public getFilesAtLocation(locId: string) { return this.locationMap[locId]; }
 
 

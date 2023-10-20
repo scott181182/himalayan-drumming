@@ -25,6 +25,9 @@ export type DashboardDispatchAction = {
     type: "setSelectedFiles",
     payload: FileEntryBasicFragment[]
 } | {
+    type: "setSelectedFilesById",
+    payload: string[]
+} | {
     type: "setVirtualLocation",
     payload: Pick<LocationCompleteFragment, "latitude" | "longitude">
 } | {
@@ -52,6 +55,7 @@ export type DashboardDispatchAction = {
 
 export type DashboardDispatchFunctions = {
     setSelectedFiles: (files: FileEntryBasicFragment[]) => void;
+    setSelectedFilesById: (fileIds: string[]) => void;
     setVirtualLocation: (location: Pick<LocationCompleteFragment, "latitude" | "longitude">) => void;
     setFileTree: (fileTree: FileTree) => void;
     selectLocation: (location: LocationCompleteFragment) => void;
@@ -71,6 +75,11 @@ export const dashboardReducer: Reducer<DashboardContextValue, DashboardDispatchA
             return {
                 ...state,
                 selectedFiles: action.payload
+            };
+        case "setSelectedFilesById":
+            return {
+                ...state,
+                selectedFiles: action.payload.map((id) => state.fileTree.getFileById(id))
             };
         case "setVirtualLocation":
             return {
@@ -181,6 +190,8 @@ export function DashboardProvider({
     const functions: DashboardDispatchFunctions = useMemo(() => ({
         setSelectedFiles: (files: FileEntryBasicFragment[]) =>
             dispatch({ type: "setSelectedFiles", payload: files }),
+        setSelectedFilesById: (fileIds: string[]) =>
+            dispatch({ type: "setSelectedFilesById", payload: fileIds }),
         setVirtualLocation: (location: Pick<LocationCompleteFragment, "latitude" | "longitude">) =>
             dispatch({ type: "setVirtualLocation", payload: location }),
         setFileTree: (fileTree: FileTree) =>

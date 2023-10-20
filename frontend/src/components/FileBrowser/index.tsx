@@ -9,6 +9,7 @@ import type { MouseEvent} from "react";
 import { useCallback, useEffect, useMemo, useRef } from "react";
 
 import { useFilePreview } from "./FilePreview";
+import { FileSelector } from "./FileSelector";
 import { useCreateFolderModal, useUploadFileModal } from "./hooks";
 import { TagSelector } from "./TagSelector";
 import { MultiCase } from "../MultiCase";
@@ -193,8 +194,11 @@ export function FileBrowser() {
                         bordered
                         size="small"
                     >
-                        <Descriptions.Item label="Tags">
+                        <Descriptions.Item label="Tags" span={24}>
                             <TagSelector file={selectedFile}/>
+                        </Descriptions.Item>
+                        <Descriptions.Item label="Associated Files" span={24}>
+                            <FileSelector file={selectedFile}/>
                         </Descriptions.Item>
                     </Descriptions>
                     <Space>
