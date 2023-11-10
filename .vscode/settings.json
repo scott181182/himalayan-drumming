@@ -25,5 +25,8 @@
             "path": "zsh"
         }
     },
-    "terminal.integrated.defaultProfile.linux": "zsh"
+    "terminal.integrated.defaultProfile.linux": "zsh",
+    "cSpell.words": [
+        "antd"
+    ]
 }

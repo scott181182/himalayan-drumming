@@ -10,7 +10,7 @@ import { useCallback, useEffect, useMemo, useRef } from "react";
 
 import { useFilePreview } from "./FilePreview";
 import { FileSelector } from "./FileSelector";
-import { useCreateFolderModal, useUploadFileModal } from "./hooks";
+import { useAddReferenceModal, useCreateFolderModal, useUploadFileModal } from "./hooks";
 import { TagSelector } from "./TagSelector";
 import { MultiCase } from "../MultiCase";
 import { useDashboardDispatch, useDashboardState } from "@/contexts/DashboardContext";
@@ -100,6 +100,7 @@ export function FileBrowser() {
 
     const { createFolderModalContent, openCreateFolderModal } = useCreateFolderModal();
     const { uploadFileModalContent, openUploadFileModal } = useUploadFileModal();
+    const { addReferenceModalContent, openAddReferenceModal } = useAddReferenceModal();
 
 
 
@@ -201,11 +202,10 @@ export function FileBrowser() {
                             <FileSelector file={selectedFile}/>
                         </Descriptions.Item>
                     </Descriptions>
-                    <Space>
+                    <Space align="center" className="w-full px-4">
                         <Button
                             disabled={!selectedLocation}
                             onClick={assignLocation}
-                            className="mx-8"
                         >
                             Assign Location
                         </Button>
@@ -213,27 +213,39 @@ export function FileBrowser() {
                             selectedFile.type === "file" &&
                             <Button
                                 onClick={() => previewFile(selectedFile)}
-                                className="mx-8"
                             >
                                 Preview File
+                            </Button>
+                        }
+                        {
+                            selectedFile.type === "reference" &&
+                            <Button
+                                href={selectedFile.url || undefined}
+                                target="_blank"
+                            >
+                                Open Referenced File
                             </Button>
                         }
                         {
                             selectedFile.type === "directory" && <>
                                 <Button
                                     onClick={() => openCreateFolderModal(selectedFile.id)}
-                                    className="mx-8"
                                 >
                                     Create Folder
                                 </Button>
                                 {createFolderModalContent}
                                 <Button
                                     onClick={() => openUploadFileModal(selectedFile.id)}
-                                    className="mx-8"
                                 >
                                     Upload File
                                 </Button>
                                 {uploadFileModalContent}
+                                <Button
+                                    onClick={() => openAddReferenceModal(selectedFile.id)}
+                                >
+                                    Add Reference
+                                </Button>
+                                {addReferenceModalContent}
                             </>
                         }
                     </Space>

@@ -68,6 +68,15 @@ mutation CreateFolder($parentId: ID!, $name: String!) {
         ...FileEntryBasic
     }
 }
+mutation CreateFileReference($parentId: ID!, $name: String!, $url: String!) {
+    createFileReference(data: {
+        parentId: $parentId,
+        name: $name,
+        url: $url
+    }) {
+        ...FileEntryBasic
+    }
+}
 mutation AssignFileMetadata($fileId: ID!, $data: FileMetadataUpdateInput!) {
     updateMetadata(fileId: $fileId, data: $data) {
         ...FileEntryBasic
