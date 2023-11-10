@@ -9,8 +9,8 @@ import { useCallback, useMemo } from "react";
 
 import cls from "./FileSelector.module.scss";
 import { useDashboardDispatch } from "@/contexts/DashboardContext";
-import type { FileEntryBasicFragment} from "@/generated/graphql";
-import { AssociateFilesDocument, DisassociateFilesDocument, GetFileEntriesDocument } from "@/generated/graphql";
+import type { FileEntryBasicFragment, PersonInContextFragment} from "@/generated/graphql";
+import { AssociateFilesDocument, DisassociateFilesDocument, GetFileEntriesDocument, UpdatePersonDocument } from "@/generated/graphql";
 import { usePromiseMessage } from "@/utils/antd";
 import { uniqByFilter } from "@/utils/array";
 
@@ -45,13 +45,13 @@ function makeCustomFileTag(setSelectedFilesById: (fileIds: string[]) => void) {
 
 
 export interface FileSelectorProps {
-    file: FileEntryBasicFragment;
+    person: PersonInContextFragment;
 }
 
 export function FileSelector({
-    file,
+    person,
 }: FileSelectorProps) {
-    const { updateFile, setSelectedFilesById } = useDashboardDispatch();
+    const { updatePerson, setSelectedFilesById } = useDashboardDispatch();
     const handlePromise = usePromiseMessage();
     const apollo = useApolloClient();
 
@@ -63,41 +63,54 @@ export function FileSelector({
     });
 
     const fileOptions = useMemo<DefaultOptionType[]>(
-        () => [ ...(fileEntries?.fileEntries ?? []), ...file.associatedFiles].map((f) => ({
+        () => [ ...(fileEntries?.fileEntries ?? []), ...person.files].map((f) => ({
             label: f.name,
             value: f.id
         })).filter(uniqByFilter("value")),
-        [fileEntries?.fileEntries, file.associatedFiles]
+        [fileEntries?.fileEntries, person.files]
     );
 
 
 
-    const onAssociate = useCallback((file2Id: string) => {
+    const onAssociate = useCallback((fileId: string) => {
         apollo.mutate({
-            mutation: AssociateFilesDocument,
+            mutation: UpdatePersonDocument,
             variables: {
-                file1Id: file.id,
-                file2Id
+                personId: person.id,
+                data: {
+                    files: {
+                        connect: [ { id: fileId } ]
+                    }
+                }
             }
         })
             .then((res) => {
-                res.data?.associateFiles?.forEach(updateFile);
+                if(res.data?.updatePerson) {
+                    updatePerson(res.data?.updatePerson);
+                }
             })
-            .then(...handlePromise("Files Associated", "Error associating files"));
-    }, [apollo, file.id, handlePromise, updateFile]);
-    const onDisassociate = useCallback((file2Id: string) => {
+            .then(...handlePromise("File Associated", "Error associating file"));
+    }, [apollo, handlePromise, person.id, updatePerson]);
+
+    const onDisassociate = useCallback((fileId: string) => {
         apollo.mutate({
-            mutation: DisassociateFilesDocument,
+            mutation: UpdatePersonDocument,
             variables: {
-                file1Id: file.id,
-                file2Id,
+                personId: person.id,
+                data: {
+                    files: {
+                        disconnect: [ { id: fileId } ]
+                    }
+                }
             }
         })
             .then((res) => {
-                res.data?.disassociateFiles?.forEach(updateFile);
+                if(res.data?.updatePerson) {
+                    updatePerson(res.data?.updatePerson);
+                }
             })
-            .then(...handlePromise("Files Disassociated", "Error disassociating file"));
-    }, [apollo, file.id, handlePromise, updateFile]);
+            .then(...handlePromise("File Disassociated", "Error disassociating file"));
+    }, [apollo, handlePromise, person.id, updatePerson]);
 
 
     const onSearch = useCallback((text: string) => {
@@ -110,7 +123,7 @@ export function FileSelector({
     return (
         <Select
             className="w-full"
-            value={file.associatedFiles.map((f) => f.id)}
+            value={person.files.map((f) => f.id)}
             options={fileOptions}
             filterOption={false}
             mode="tags"

@@ -3,10 +3,13 @@
 import type { TabsProps } from "antd";
 import { Tabs } from "antd";
 
-import { PersonBrowser } from "./PersonBrowser";
-import { VillageBrowser } from "./VillageBrowser";
+import cls from "./index.module.scss";
+import { PersonBrowser } from "../PersonBrowser";
+import { VillageBrowser } from "../VillageBrowser";
 
 
+
+const tabClassName = `mx-4 h-full ${cls["constrained-tabs"]}`;
 
 export function RelationBrowser() {
     const items: TabsProps["items"] = [
@@ -24,6 +27,6 @@ export function RelationBrowser() {
 
     return <Tabs
         items={items}
-        className="mx-4"
+        className={tabClassName}
     />;
 }
