@@ -39,19 +39,20 @@ export function PersonBrowser() {
 
 
     return selectedPerson ?
-        <Space direction="vertical" className="w-full h-full">
+        <Space direction="vertical" className="w-full h-full overflow-y-auto">
             <Button onClick={() => setSelectedPersonId(undefined)}>
                 <LeftOutlined/>
             </Button>
             <PersonDetails person={selectedPerson} onUpdate={onPersonUpdate}/>
         </Space> :
-        <Space direction="vertical" className="w-full h-full">
+        <Space direction="vertical" className="w-full h-full overflow-y-auto pb-4">
             {/* TODO: add search bar */}
             <Table
                 dataSource={people}
                 rowKey="id"
                 columns={columns}
-                className="striped overflow-y-auto"
+                className="striped"
+                pagination={false}
 
                 rowClassName={(p) => selectedPerson === p.id ? "selected cursor-pointer" : " cursor-pointer"}
                 onRow={(p) => ({

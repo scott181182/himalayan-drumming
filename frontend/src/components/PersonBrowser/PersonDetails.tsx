@@ -5,6 +5,7 @@ import { App, Button, DatePicker, Descriptions, Select, Space, Upload } from "an
 import dayjs from "dayjs";
 import { useCallback } from "react";
 
+import { FileSelector } from "./FileSelector";
 import cls from "./PersonDetail.module.scss";
 import { useDashboardState } from "../../contexts/DashboardContext";
 import { EditableGraphQLInput } from "../EditableGraphQLInput";
@@ -72,7 +73,7 @@ export function PersonDetails({
 
 
     
-    return <Space direction="vertical">
+    return <Space direction="vertical" className="overflow-y-auto">
         <div className={cls["person-picture-container"]}>
             <img src={person.avatarUrl ?? "/empty_person.webp"} alt={person.name + " profile picture"}/>
             <Button
@@ -146,17 +147,9 @@ export function PersonDetails({
                     afterUpdate={onUpdate}
                 />    
             </Descriptions.Item>
-            <Descriptions.Item label="Associated Files">{person.files.length}</Descriptions.Item>
+            <Descriptions.Item label="Associated Files">
+                <FileSelector person={person}/>
+            </Descriptions.Item>
         </Descriptions>
-        <Space>
-            <Button
-                disabled={selectedFiles.length === 0}
-                onClick={assignFiles}
-                className="mx-8"
-                loading={loading}
-            >
-                Associate File
-            </Button>
-        </Space>
     </Space>;
 }

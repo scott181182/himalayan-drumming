@@ -59,6 +59,7 @@ export type DashboardDispatchFunctions = {
     setVirtualLocation: (location: Pick<LocationCompleteFragment, "latitude" | "longitude">) => void;
     setFileTree: (fileTree: FileTree) => void;
     selectLocation: (location: LocationCompleteFragment) => void;
+    updatePerson: (person: PersonInContextFragment) => void;
     updateFile: (file: FileEntryBasicFragment) => void;
     filterFiles: (filterFn?: (file: FileEntryBasicFragment) => boolean) => void;
 
@@ -111,12 +112,9 @@ export const dashboardReducer: Reducer<DashboardContextValue, DashboardDispatchA
                 people: action.payload
             };
         case "updatePerson": {
-            const personIndex = state.people.findIndex((p) => p.id === action.payload.id);
-            const newPeople = [ ...state.people ];
-            newPeople.splice(personIndex, 1, action.payload);
             return {
                 ...state,
-                people: newPeople
+                people: state.people.map((p) => p.id === action.payload.id ? action.payload : p)
             };
         }
 
@@ -198,6 +196,8 @@ export function DashboardProvider({
             dispatch({ type: "setFileTree", payload: fileTree }),
         selectLocation: (location: LocationCompleteFragment) =>
             dispatch({ type: "selectLocation", payload: location }),
+        updatePerson: (person: PersonInContextFragment) =>
+            dispatch({ type: "updatePerson", payload: person }),
         updateFile: (file: FileEntryBasicFragment) =>
             dispatch({ type: "updateFile", payload: file }),
         filterFiles: (filterFn?: (file: FileEntryBasicFragment) => boolean) =>

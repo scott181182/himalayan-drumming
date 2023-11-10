@@ -12,10 +12,11 @@ fragment PersonInContext on Person {
     gender
     caste
 
-    files { id }
+    files {
+        id name
+    }
     parent {
-        id
-        name
+        id name
     }
 }
 
