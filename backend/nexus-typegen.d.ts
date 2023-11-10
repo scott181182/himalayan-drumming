@@ -29,6 +29,11 @@ declare global {
 }
 
 export interface NexusGenInputs {
+  CreateFileReferenceInput: { // input type
+    name: string; // String!
+    parentId: string; // ID!
+    url: string; // String!
+  }
   DateNullableFilterInput: { // input type
     equals?: NexusGenScalars['Date'] | null; // Date
     gt?: NexusGenScalars['Date'] | null; // Date
@@ -268,6 +273,7 @@ export interface NexusGenFieldTypes {
   Mutation: { // field return type
     associateFiles: NexusGenRootTypes['FileEntry'][] | null; // [FileEntry!]
     createDirectory: NexusGenRootTypes['FileEntry'] | null; // FileEntry
+    createFileReference: NexusGenRootTypes['FileEntry'] | null; // FileEntry
     createPerson: NexusGenRootTypes['Person']; // Person!
     createVillage: NexusGenRootTypes['Village']; // Village!
     disassociateFiles: NexusGenRootTypes['FileEntry'][] | null; // [FileEntry!]
@@ -348,6 +354,7 @@ export interface NexusGenFieldTypeNames {
   Mutation: { // field return type name
     associateFiles: 'FileEntry'
     createDirectory: 'FileEntry'
+    createFileReference: 'FileEntry'
     createPerson: 'Person'
     createVillage: 'Village'
     disassociateFiles: 'FileEntry'
@@ -409,6 +416,9 @@ export interface NexusGenArgTypes {
     createDirectory: { // args
       name: string; // String!
       parentId: string; // ID!
+    }
+    createFileReference: { // args
+      data: NexusGenInputs['CreateFileReferenceInput']; // CreateFileReferenceInput!
     }
     createPerson: { // args
       data: NexusGenInputs['PersonCreateInput']; // PersonCreateInput!

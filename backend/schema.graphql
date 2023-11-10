@@ -2,6 +2,12 @@
 ### Do not make changes to this file directly
 
 
+input CreateFileReferenceInput {
+  name: String!
+  parentId: ID!
+  url: String!
+}
+
 """
 A date string, such as 2007-12-03, compliant with the `full-date` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
 """
@@ -90,6 +96,7 @@ input LatLngCreateInput {
 type Mutation {
   associateFiles(file1Id: ID!, file2Id: ID!): [FileEntry!]
   createDirectory(name: String!, parentId: ID!): FileEntry
+  createFileReference(data: CreateFileReferenceInput!): FileEntry
   createPerson(data: PersonCreateInput!): Person!
   createVillage(data: VillageCreateInput!): Village!
   disassociateFiles(file1Id: ID!, file2Id: ID!): [FileEntry!]

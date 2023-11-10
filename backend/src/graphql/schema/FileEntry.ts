@@ -163,6 +163,14 @@ export const FileEntryQuery = extendType({
 
 
 
+export const CreateFileReferenceInput = inputObjectType({
+    name: "CreateFileReferenceInput",
+    definition(t) {
+        t.nonNull.id("parentId");
+        t.nonNull.string("name");
+        t.nonNull.string("url");
+    },
+});
 export const FileEntryMutation = extendType({
     type: "Mutation",
     definition(t) {
@@ -195,6 +203,28 @@ export const FileEntryMutation = extendType({
                         path: vPath,
                         url: `/blob/files/${vPath}`,
                         type: "directory"
+                    }
+                });
+            }
+        });
+
+        t.field("createFileReference", {
+            type: "FileEntry",
+            args: {
+                data: nonNull(CreateFileReferenceInput)
+            },
+            async resolve(_, { data }, ctx) {
+                const parent = await ctx.prisma.fileEntry.findUniqueOrThrow({
+                    where: { id: data.parentId }
+                });
+
+                const vPath = parent.path === "/" ? data.name : path.join(parent.path, data.name);
+
+                return ctx.prisma.fileEntry.create({
+                    data: {
+                        ...data,
+                        path: vPath,
+                        type: "reference"
                     }
                 });
             }
