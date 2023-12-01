@@ -5778,10 +5778,10 @@ watchpack@2.4.0:
     glob-to-regexp "^0.4.1"
     graceful-fs "^4.1.2"
 
-wavesurfer.js@^7.1.2:
-  version "7.1.2"
-  resolved "https://registry.yarnpkg.com/wavesurfer.js/-/wavesurfer.js-7.1.2.tgz#be7c824658dfb3de9d5c95dcaf6480096d127596"
-  integrity sha512-ghBw5SmiQAhqOIAUl9bUpyB6ZSGeTTBNYJRGKS1gCrr0VAx1Xrl3O3FnUkI53I8tKtuNufi/h0mk0Kf0SItz4w==
+wavesurfer.js@^7.4:
+  version "7.4.5"
+  resolved "https://registry.yarnpkg.com/wavesurfer.js/-/wavesurfer.js-7.4.5.tgz#a66db31fb062ec87c77e2aa01b4f00a6f4ae73fd"
+  integrity sha512-Vwvui02yNlpe8NYCEcPH6KMlLm+0SELyAUsTbqLOdECLamS8iJI3LU8dyAhL7q1XhYHVhmK1i3jD4QtnnpajPQ==
 
 wcwidth@^1.0.1:
   version "1.0.1"

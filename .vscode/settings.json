@@ -27,6 +27,7 @@
     },
     "terminal.integrated.defaultProfile.linux": "zsh",
     "cSpell.words": [
-        "antd"
+        "antd",
+        "wavesurfer"
     ]
 }
