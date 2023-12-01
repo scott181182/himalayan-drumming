@@ -11,6 +11,10 @@ export const  Village = objectType({
     definition(t) {
         t.nonNull.id("id");
         t.nonNull.string("name");
+        t.string("temples");
+        t.string("divinities");
+        t.string("rituals");
+        t.string("notes");
 
         t.nonNull.string("locationId");
         t.nonNull.field("location", {
@@ -38,6 +42,11 @@ export const VillageWhereInput = inputObjectType({
     definition(t) {
         t.field("id", { type: "IdNullableFilterInput" });
         t.field("name", { type: "StringNullableFilterInput" });
+        
+        t.field("temples", { type: "StringNullableFilterInput" });
+        t.field("divinities", { type: "StringNullableFilterInput" });
+        t.field("rituals", { type: "StringNullableFilterInput" });
+        t.field("notes", { type: "StringNullableFilterInput" });
     },
 });
 export const VillageQuery = extendType({
@@ -73,6 +82,12 @@ export const VillageCreateInput = inputObjectType({
     name: "VillageCreateInput",
     definition(t) {
         t.nonNull.string("name");
+        
+        t.string("temples");
+        t.string("divinities");
+        t.string("rituals");
+        t.string("notes");
+        
         t.nonNull.field({name: "location", type: VillageCreateLocationInput});
     },
 });

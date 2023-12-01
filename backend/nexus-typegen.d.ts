@@ -197,16 +197,24 @@ export interface NexusGenInputs {
     startsWith?: string | null; // String
   }
   VillageCreateInput: { // input type
+    divinities?: string | null; // String
     location: NexusGenInputs['VillageCreateLocationInput']; // VillageCreateLocationInput!
     name: string; // String!
+    notes?: string | null; // String
+    rituals?: string | null; // String
+    temples?: string | null; // String
   }
   VillageCreateLocationInput: { // input type
     connect?: NexusGenInputs['IdWhereUniqueInput'] | null; // IdWhereUniqueInput
     create?: NexusGenInputs['LatLngCreateInput'] | null; // LatLngCreateInput
   }
   VillageWhereInput: { // input type
+    divinities?: NexusGenInputs['StringNullableFilterInput'] | null; // StringNullableFilterInput
     id?: NexusGenInputs['IdNullableFilterInput'] | null; // IdNullableFilterInput
     name?: NexusGenInputs['StringNullableFilterInput'] | null; // StringNullableFilterInput
+    notes?: NexusGenInputs['StringNullableFilterInput'] | null; // StringNullableFilterInput
+    rituals?: NexusGenInputs['StringNullableFilterInput'] | null; // StringNullableFilterInput
+    temples?: NexusGenInputs['StringNullableFilterInput'] | null; // StringNullableFilterInput
   }
 }
 
@@ -318,11 +326,15 @@ export interface NexusGenFieldTypes {
     villages: NexusGenRootTypes['Village'][]; // [Village!]!
   }
   Village: { // field return type
+    divinities: string | null; // String
     id: string; // ID!
     location: NexusGenRootTypes['LatLng']; // LatLng!
     locationId: string; // String!
     name: string; // String!
+    notes: string | null; // String
     people: NexusGenRootTypes['PersonInVillage'][]; // [PersonInVillage!]!
+    rituals: string | null; // String
+    temples: string | null; // String
   }
 }
 
@@ -399,11 +411,15 @@ export interface NexusGenFieldTypeNames {
     villages: 'Village'
   }
   Village: { // field return type name
+    divinities: 'String'
     id: 'ID'
     location: 'LatLng'
     locationId: 'String'
     name: 'String'
+    notes: 'String'
     people: 'PersonInVillage'
+    rituals: 'String'
+    temples: 'String'
   }
 }
 

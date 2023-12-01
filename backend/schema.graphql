@@ -293,16 +293,24 @@ enum StringQueryModeEnum {
 }
 
 type Village {
+  divinities: String
   id: ID!
   location: LatLng!
   locationId: String!
   name: String!
+  notes: String
   people: [PersonInVillage!]!
+  rituals: String
+  temples: String
 }
 
 input VillageCreateInput {
+  divinities: String
   location: VillageCreateLocationInput!
   name: String!
+  notes: String
+  rituals: String
+  temples: String
 }
 
 input VillageCreateLocationInput {
@@ -311,6 +319,10 @@ input VillageCreateLocationInput {
 }
 
 input VillageWhereInput {
+  divinities: StringNullableFilterInput
   id: IdNullableFilterInput
   name: StringNullableFilterInput
+  notes: StringNullableFilterInput
+  rituals: StringNullableFilterInput
+  temples: StringNullableFilterInput
 }
