@@ -137,6 +137,10 @@ model Person {
 model Village {
     id String @id @default(cuid())
     name String
+    temples String?
+    divinities String?
+    rituals String?
+    notes String?
 
     location LatLng @relation(fields: [locationId], references: [id])
     locationId String
