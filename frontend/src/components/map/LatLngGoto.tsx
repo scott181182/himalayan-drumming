@@ -23,6 +23,7 @@ export function LatLngGoto({ className }: LatLngGotoProps) {
     const [latLngStr, setLatLngStr ] = useState<string | undefined>();
     const onGoto = useCallback<MouseEventHandler>(() => {
         if(latLngStr) {
+            // TODO: more robust LatLng string parsing (e.g. w/ and w/out parens)
             const latlng = latLngStr.split(/\s*,\s*/).map((l) => parseFloat(l)) as [number, number];
             map.setView(latlng);
             setVirtualLocation({
