@@ -3,7 +3,7 @@
 import { LeftOutlined } from "@ant-design/icons";
 import { Button, Space, Table } from "antd";
 import type { ColumnsType } from "antd/es/table";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { VillageDetails } from "./VillageDetails";
 import { AddVillageButton } from "../AddVillageButton";
@@ -22,11 +22,11 @@ const columns: ColumnsType<VillageInContextFragment> = [
 
 
 export function VillageBrowser() {
-    const { villages } = useDashboardState();
+    const { villages, selectedVillage } = useDashboardState();
     const { refetchVillage } = useDashboardDispatch();
     const [ selectedVillageId, setSelectedVillageId ] = useState<string | undefined>();
 
-    const selectedVillage = useMemo(() => {
+    const currentVillage = useMemo(() => {
         if(!selectedVillageId) { return undefined; }
         return villages.find((v) => v.id === selectedVillageId);
     }, [villages, selectedVillageId]);
@@ -38,12 +38,20 @@ export function VillageBrowser() {
 
 
     
-    return selectedVillage ?
+    useEffect(() => {
+        if(selectedVillage) {
+            setSelectedVillageId(selectedVillage.id);
+        }
+    }, [selectedVillage]);
+
+
+
+    return currentVillage ?
         <Space direction="vertical" className="w-full h-full overflow-y-auto">
             <Button onClick={() => setSelectedVillageId(undefined)}>
                 <LeftOutlined/>
             </Button>
-            <VillageDetails village={selectedVillage} onUpdate={onVillageUpdate}/>
+            <VillageDetails village={currentVillage} onUpdate={onVillageUpdate}/>
         </Space> :
         <Space direction="vertical" className="w-full h-full overflow-y-auto pb-4">
             {/* TODO: add search bar */}
@@ -54,7 +62,7 @@ export function VillageBrowser() {
                 className="striped"
                 pagination={false}
 
-                rowClassName={(p) => selectedVillage === p.id ? "selected cursor-pointer" : " cursor-pointer"}
+                rowClassName={(p) => currentVillage === p.id ? "selected cursor-pointer" : " cursor-pointer"}
                 onRow={(p) => ({
                     onClick: () => setSelectedVillageId(p.id)
                 })}
