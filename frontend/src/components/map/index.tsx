@@ -57,11 +57,11 @@ export function Map() {
             <Marker
                 key={v.id}
                 position={[v.location.latitude, v.location.longitude]}
-                // eventHandlers={makeMarkerHandler(v)}
+                eventHandlers={makeMarkerHandler(v.location)}
                 icon={villageMarkerIcon}
             />
         ) ?? [])
-    ), [villages]);
+    ), [makeMarkerHandler, villages]);
     const fileMarkers = useMemo(() => (
         locations?.filter((l) => !villages.some((v) => v.location.id === l.id)).map((l) => (
             <Marker

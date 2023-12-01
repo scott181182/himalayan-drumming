@@ -17,6 +17,7 @@ export interface DashboardContextValue {
     filePredicate?: (file: FileEntryBasicFragment) => boolean;
     selectedFiles: FileEntryBasicFragment[];
     selectedLocation?: LocationCompleteFragment;
+    selectedVillage?: VillageInContextFragment;
 
     people: PersonInContextFragment[];
     villages: VillageInContextFragment[];
@@ -92,13 +93,15 @@ export const dashboardReducer: Reducer<DashboardContextValue, DashboardDispatchA
                 selectedLocation: {
                     ...action.payload,
                     id: ""
-                }
+                },
+                selectedVillage: undefined,
             };
         case "selectLocation":
             return {
                 ...state,
                 selectedLocation: action.payload,
-                selectedFiles: state.fileTree.getFilesAtLocation(action.payload.id)
+                selectedFiles: state.fileTree.getFilesAtLocation(action.payload.id),
+                selectedVillage: state.villages.find((v) => v.location.id === action.payload.id)
             };
         case "setFileTree":
             return {
