@@ -87,8 +87,21 @@ export const VillageCreateInput = inputObjectType({
         t.string("divinities");
         t.string("rituals");
         t.string("notes");
-        
+
         t.nonNull.field({name: "location", type: VillageCreateLocationInput});
+    },
+});
+
+export const VillageUpdateInput = inputObjectType({
+    name: "VillageUpdateInput",
+    definition(t) {
+        t.string("name");
+        t.string("temples");
+        t.string("divinities");
+        t.string("rituals");
+        t.string("notes");
+        
+        t.field("location", { type: VillageCreateLocationInput });
     },
 });
 
@@ -102,6 +115,20 @@ export const VillageMutation = extendType({
             },
             resolve(_, args, ctx) {
                 return ctx.prisma.village.create({
+                    data: unnullifyObject(args.data)
+                });
+            }
+        });
+        
+        t.nonNull.field("updateVillage", {
+            type: Village,
+            args: {
+                id: nonNull(idArg()),
+                data: nonNull(VillageUpdateInput)
+            },
+            resolve(_, args, ctx) {
+                return ctx.prisma.village.update({
+                    where: { id: args.id },
                     data: unnullifyObject(args.data)
                 });
             }

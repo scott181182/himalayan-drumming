@@ -109,6 +109,7 @@ type Mutation {
   untagFile(fileId: ID!, tag: String!): FileEntry!
   updateMetadata(data: FileMetadataUpdateInput!, fileId: ID!): FileEntry!
   updatePerson(data: PersonUpdateInput!, id: ID!): Person!
+  updateVillage(data: VillageUpdateInput!, id: ID!): Village!
 }
 
 input NestedIdNullableFilterInput {
@@ -316,6 +317,15 @@ input VillageCreateInput {
 input VillageCreateLocationInput {
   connect: IdWhereUniqueInput
   create: LatLngCreateInput
+}
+
+input VillageUpdateInput {
+  divinities: String
+  location: VillageCreateLocationInput
+  name: String
+  notes: String
+  rituals: String
+  temples: String
 }
 
 input VillageWhereInput {

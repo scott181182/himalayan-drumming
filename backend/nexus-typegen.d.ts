@@ -208,6 +208,14 @@ export interface NexusGenInputs {
     connect?: NexusGenInputs['IdWhereUniqueInput'] | null; // IdWhereUniqueInput
     create?: NexusGenInputs['LatLngCreateInput'] | null; // LatLngCreateInput
   }
+  VillageUpdateInput: { // input type
+    divinities?: string | null; // String
+    location?: NexusGenInputs['VillageCreateLocationInput'] | null; // VillageCreateLocationInput
+    name?: string | null; // String
+    notes?: string | null; // String
+    rituals?: string | null; // String
+    temples?: string | null; // String
+  }
   VillageWhereInput: { // input type
     divinities?: NexusGenInputs['StringNullableFilterInput'] | null; // StringNullableFilterInput
     id?: NexusGenInputs['IdNullableFilterInput'] | null; // IdNullableFilterInput
@@ -290,6 +298,7 @@ export interface NexusGenFieldTypes {
     untagFile: NexusGenRootTypes['FileEntry']; // FileEntry!
     updateMetadata: NexusGenRootTypes['FileEntry']; // FileEntry!
     updatePerson: NexusGenRootTypes['Person']; // Person!
+    updateVillage: NexusGenRootTypes['Village']; // Village!
   }
   Person: { // field return type
     avatarUrl: string | null; // String
@@ -375,6 +384,7 @@ export interface NexusGenFieldTypeNames {
     untagFile: 'FileEntry'
     updateMetadata: 'FileEntry'
     updatePerson: 'Person'
+    updateVillage: 'Village'
   }
   Person: { // field return type name
     avatarUrl: 'String'
@@ -460,6 +470,10 @@ export interface NexusGenArgTypes {
     }
     updatePerson: { // args
       data: NexusGenInputs['PersonUpdateInput']; // PersonUpdateInput!
+      id: string; // ID!
+    }
+    updateVillage: { // args
+      data: NexusGenInputs['VillageUpdateInput']; // VillageUpdateInput!
       id: string; // ID!
     }
   }
