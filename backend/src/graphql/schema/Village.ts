@@ -2,7 +2,7 @@
 import { extendType, idArg, inputObjectType, nonNull, objectType } from "nexus";
 
 import { LatLng } from "./LatLng";
-import { makeRelationCreateInput, unnullifyObject } from "./utils";
+import { combinationOperators, makeRelationCreateInput, unnullifyObject } from "./utils";
 
 
 
@@ -47,6 +47,10 @@ export const VillageWhereInput = inputObjectType({
         t.field("divinities", { type: "StringNullableFilterInput" });
         t.field("rituals", { type: "StringNullableFilterInput" });
         t.field("notes", { type: "StringNullableFilterInput" });
+        
+        t.field("people", { type: "PersonInVillageWhereManyInput" });
+
+        combinationOperators(t, "VillageWhereInput");
     },
 });
 export const VillageQuery = extendType({
@@ -89,6 +93,7 @@ export const VillageCreateInput = inputObjectType({
         t.string("notes");
 
         t.nonNull.field({name: "location", type: VillageCreateLocationInput});
+        t.field("people", { type: "PersonInVillageVillageRelationCreateInput" });
     },
 });
 
@@ -102,6 +107,7 @@ export const VillageUpdateInput = inputObjectType({
         t.string("notes");
         
         t.field("location", { type: VillageCreateLocationInput });
+        t.field("people", { type: "PersonInVillageVillageRelationUpdateInput" });
     },
 });
 

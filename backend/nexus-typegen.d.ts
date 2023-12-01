@@ -106,27 +106,40 @@ export interface NexusGenInputs {
     name: string; // String!
     notes?: string | null; // String
     parentId?: string | null; // String
-    villages?: NexusGenInputs['PersonInVillageRelationCreateInput'] | null; // PersonInVillageRelationCreateInput
+    villages?: NexusGenInputs['PersonInVillagePersonRelationCreateInput'] | null; // PersonInVillagePersonRelationCreateInput
   }
   PersonIdVillageIdInput: { // input type
     personId: string; // ID!
     villageId: string; // ID!
   }
-  PersonInVillageCreateInput: { // input type
+  PersonInVillagePersonCreateInput: { // input type
     description?: string | null; // String
     villageId: string; // ID!
   }
-  PersonInVillageRelationCreateInput: { // input type
+  PersonInVillagePersonRelationCreateInput: { // input type
     connect?: NexusGenInputs['PersonInVillageUniqueWhereInput'] | null; // PersonInVillageUniqueWhereInput
-    create?: NexusGenInputs['PersonInVillageCreateInput'] | null; // PersonInVillageCreateInput
+    create?: NexusGenInputs['PersonInVillagePersonCreateInput'] | null; // PersonInVillagePersonCreateInput
   }
-  PersonInVillageRelationUpdateInput: { // input type
+  PersonInVillagePersonRelationUpdateInput: { // input type
     connect?: NexusGenInputs['PersonInVillageUniqueWhereInput'] | null; // PersonInVillageUniqueWhereInput
-    create?: NexusGenInputs['PersonInVillageCreateInput'] | null; // PersonInVillageCreateInput
+    create?: NexusGenInputs['PersonInVillagePersonCreateInput'] | null; // PersonInVillagePersonCreateInput
     delete?: NexusGenInputs['PersonInVillageUniqueWhereInput'] | null; // PersonInVillageUniqueWhereInput
   }
   PersonInVillageUniqueWhereInput: { // input type
     personId_villageId: NexusGenInputs['PersonIdVillageIdInput']; // PersonIdVillageIdInput!
+  }
+  PersonInVillageVillageCreateInput: { // input type
+    description?: string | null; // String
+    personId: string; // ID!
+  }
+  PersonInVillageVillageRelationCreateInput: { // input type
+    connect?: NexusGenInputs['PersonInVillageUniqueWhereInput'] | null; // PersonInVillageUniqueWhereInput
+    create?: NexusGenInputs['PersonInVillageVillageCreateInput'] | null; // PersonInVillageVillageCreateInput
+  }
+  PersonInVillageVillageRelationUpdateInput: { // input type
+    connect?: NexusGenInputs['PersonInVillageUniqueWhereInput'] | null; // PersonInVillageUniqueWhereInput
+    create?: NexusGenInputs['PersonInVillageVillageCreateInput'] | null; // PersonInVillageVillageCreateInput
+    delete?: NexusGenInputs['PersonInVillageUniqueWhereInput'] | null; // PersonInVillageUniqueWhereInput
   }
   PersonInVillageWhereInput: { // input type
     AND?: NexusGenInputs['PersonInVillageWhereInput'][] | null; // [PersonInVillageWhereInput!]
@@ -155,7 +168,7 @@ export interface NexusGenInputs {
     name?: string | null; // String
     notes?: string | null; // String
     parentId?: string | null; // String
-    villages?: NexusGenInputs['PersonInVillageRelationUpdateInput'] | null; // PersonInVillageRelationUpdateInput
+    villages?: NexusGenInputs['PersonInVillagePersonRelationUpdateInput'] | null; // PersonInVillagePersonRelationUpdateInput
   }
   PersonWhereInput: { // input type
     AND?: NexusGenInputs['PersonWhereInput'][] | null; // [PersonWhereInput!]
@@ -201,6 +214,7 @@ export interface NexusGenInputs {
     location: NexusGenInputs['VillageCreateLocationInput']; // VillageCreateLocationInput!
     name: string; // String!
     notes?: string | null; // String
+    people?: NexusGenInputs['PersonInVillageVillageRelationCreateInput'] | null; // PersonInVillageVillageRelationCreateInput
     rituals?: string | null; // String
     temples?: string | null; // String
   }
@@ -213,14 +227,19 @@ export interface NexusGenInputs {
     location?: NexusGenInputs['VillageCreateLocationInput'] | null; // VillageCreateLocationInput
     name?: string | null; // String
     notes?: string | null; // String
+    people?: NexusGenInputs['PersonInVillageVillageRelationUpdateInput'] | null; // PersonInVillageVillageRelationUpdateInput
     rituals?: string | null; // String
     temples?: string | null; // String
   }
   VillageWhereInput: { // input type
+    AND?: NexusGenInputs['VillageWhereInput'][] | null; // [VillageWhereInput!]
+    NOT?: NexusGenInputs['VillageWhereInput'][] | null; // [VillageWhereInput!]
+    OR?: NexusGenInputs['VillageWhereInput'][] | null; // [VillageWhereInput!]
     divinities?: NexusGenInputs['StringNullableFilterInput'] | null; // StringNullableFilterInput
     id?: NexusGenInputs['IdNullableFilterInput'] | null; // IdNullableFilterInput
     name?: NexusGenInputs['StringNullableFilterInput'] | null; // StringNullableFilterInput
     notes?: NexusGenInputs['StringNullableFilterInput'] | null; // StringNullableFilterInput
+    people?: NexusGenInputs['PersonInVillageWhereManyInput'] | null; // PersonInVillageWhereManyInput
     rituals?: NexusGenInputs['StringNullableFilterInput'] | null; // StringNullableFilterInput
     temples?: NexusGenInputs['StringNullableFilterInput'] | null; // StringNullableFilterInput
   }

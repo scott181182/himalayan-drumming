@@ -163,7 +163,7 @@ input PersonCreateInput {
   name: String!
   notes: String
   parentId: String
-  villages: PersonInVillageRelationCreateInput
+  villages: PersonInVillagePersonRelationCreateInput
 }
 
 input PersonIdVillageIdInput {
@@ -179,24 +179,40 @@ type PersonInVillage {
   villageId: ID!
 }
 
-input PersonInVillageCreateInput {
+input PersonInVillagePersonCreateInput {
   description: String
   villageId: ID!
 }
 
-input PersonInVillageRelationCreateInput {
+input PersonInVillagePersonRelationCreateInput {
   connect: PersonInVillageUniqueWhereInput
-  create: PersonInVillageCreateInput
+  create: PersonInVillagePersonCreateInput
 }
 
-input PersonInVillageRelationUpdateInput {
+input PersonInVillagePersonRelationUpdateInput {
   connect: PersonInVillageUniqueWhereInput
-  create: PersonInVillageCreateInput
+  create: PersonInVillagePersonCreateInput
   delete: PersonInVillageUniqueWhereInput
 }
 
 input PersonInVillageUniqueWhereInput {
   personId_villageId: PersonIdVillageIdInput!
+}
+
+input PersonInVillageVillageCreateInput {
+  description: String
+  personId: ID!
+}
+
+input PersonInVillageVillageRelationCreateInput {
+  connect: PersonInVillageUniqueWhereInput
+  create: PersonInVillageVillageCreateInput
+}
+
+input PersonInVillageVillageRelationUpdateInput {
+  connect: PersonInVillageUniqueWhereInput
+  create: PersonInVillageVillageCreateInput
+  delete: PersonInVillageUniqueWhereInput
 }
 
 input PersonInVillageWhereInput {
@@ -229,7 +245,7 @@ input PersonUpdateInput {
   name: String
   notes: String
   parentId: String
-  villages: PersonInVillageRelationUpdateInput
+  villages: PersonInVillagePersonRelationUpdateInput
 }
 
 input PersonWhereInput {
@@ -310,6 +326,7 @@ input VillageCreateInput {
   location: VillageCreateLocationInput!
   name: String!
   notes: String
+  people: PersonInVillageVillageRelationCreateInput
   rituals: String
   temples: String
 }
@@ -324,15 +341,20 @@ input VillageUpdateInput {
   location: VillageCreateLocationInput
   name: String
   notes: String
+  people: PersonInVillageVillageRelationUpdateInput
   rituals: String
   temples: String
 }
 
 input VillageWhereInput {
+  AND: [VillageWhereInput!]
+  NOT: [VillageWhereInput!]
+  OR: [VillageWhereInput!]
   divinities: StringNullableFilterInput
   id: IdNullableFilterInput
   name: StringNullableFilterInput
   notes: StringNullableFilterInput
+  people: PersonInVillageWhereManyInput
   rituals: StringNullableFilterInput
   temples: StringNullableFilterInput
 }
