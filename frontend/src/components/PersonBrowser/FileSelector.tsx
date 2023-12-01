@@ -7,10 +7,10 @@ import type { CustomTagProps } from "rc-select/lib/BaseSelect";
 import type { ReactElement} from "react";
 import { useCallback, useMemo } from "react";
 
-import cls from "./FileSelector.module.scss";
+import cls from "../CustomTag.module.scss";
 import { useDashboardDispatch } from "@/contexts/DashboardContext";
-import type { FileEntryBasicFragment, PersonInContextFragment} from "@/generated/graphql";
-import { AssociateFilesDocument, DisassociateFilesDocument, GetFileEntriesDocument, UpdatePersonDocument } from "@/generated/graphql";
+import type { PersonInContextFragment} from "@/generated/graphql";
+import { GetFileEntriesDocument, UpdatePersonDocument } from "@/generated/graphql";
 import { usePromiseMessage } from "@/utils/antd";
 import { uniqByFilter } from "@/utils/array";
 
@@ -18,9 +18,9 @@ import { uniqByFilter } from "@/utils/array";
 
 
 function makeCustomFileTag(setSelectedFilesById: (fileIds: string[]) => void) {
-    return function CustomFileTage({ label, onClose, value }: CustomTagProps): ReactElement {
+    return function CustomFileTag({ label, onClose, value }: CustomTagProps): ReactElement {
         return <span
-            className={`ant-select-selection-item ${cls.fileTag}`}
+            className={`ant-select-selection-item ${cls.customTag}`}
             title={label?.toString()}
         >
             <span
