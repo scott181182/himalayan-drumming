@@ -7,6 +7,7 @@ import { useCallback, useMemo } from "react";
 
 import { useDashboardState } from "../../contexts/DashboardContext";
 import { EditableGraphQLInput } from "../EditableGraphQLInput";
+import { PersonInVillageTable } from "../PersonInVillageTable";
 import { useEnums } from "@/contexts/EnumContext";
 import { UpdateVillageDocument, type VillageInContextFragment } from "@/generated/graphql";
 import { usePromiseMessage } from "@/utils/antd";
@@ -45,6 +46,8 @@ export function VillageDetails({
             />
         </Descriptions.Item>
     )), [onUpdate, village]);
+
+
     
     return <Space direction="vertical" className="overflow-y-auto">
         <Descriptions title={village.name} column={1}>
@@ -57,5 +60,9 @@ export function VillageDetails({
                 {formatLatLng(village.location.latitude, village.location.longitude)}
             </Descriptions.Item>
         </Descriptions>
+        <PersonInVillageTable
+            peopleInVillage={village.people}
+            village={village}
+        />
     </Space>;
 }

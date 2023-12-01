@@ -64,6 +64,7 @@ export type DashboardDispatchFunctions = {
     setFileTree: (fileTree: FileTree) => void;
     selectLocation: (location: LocationCompleteFragment) => void;
     updatePerson: (person: PersonInContextFragment) => void;
+    updateVillage: (village: VillageInContextFragment) => void;
     updateFile: (file: FileEntryBasicFragment) => void;
     filterFiles: (filterFn?: (file: FileEntryBasicFragment) => boolean) => void;
 
@@ -211,6 +212,8 @@ export function DashboardProvider({
             dispatch({ type: "selectLocation", payload: location }),
         updatePerson: (person: PersonInContextFragment) =>
             dispatch({ type: "updatePerson", payload: person }),
+        updateVillage: (village: VillageInContextFragment) =>
+            dispatch({ type: "updateVillage", payload: village }),
         updateFile: (file: FileEntryBasicFragment) =>
             dispatch({ type: "updateFile", payload: file }),
         filterFiles: (filterFn?: (file: FileEntryBasicFragment) => boolean) =>
