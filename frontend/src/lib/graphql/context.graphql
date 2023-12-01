@@ -23,6 +23,11 @@ fragment PersonInContext on Person {
 fragment VillageInContext on Village {
     id
     name
+    temples
+    divinities
+    rituals
+    notes
+
     location { ...LocationComplete }
 }
 

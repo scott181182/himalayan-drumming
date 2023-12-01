@@ -1,3 +1,5 @@
+#import VillageInContext from "./context.graphql"
+
 fragment SimpleVillage on Village {
     id
     name
@@ -9,6 +11,11 @@ fragment SimpleVillage on Village {
     }
 }
 
+query GetVillage($villageId: ID!) {
+    village(id: $villageId) {
+        ...VillageInContext
+    }
+}
 query GetAllVillages {
     villages {
         ...SimpleVillage
@@ -18,5 +25,11 @@ query GetAllVillages {
 mutation CreateVillage($data: VillageCreateInput!) {
     createVillage(data: $data) {
         ...SimpleVillage
+    }
+}
+
+mutation UpdateVillage($villageId: ID!, $data: VillageUpdateInput!) {
+    updateVillage(id: $villageId, data: $data) {
+        ...VillageInContext
     }
 }

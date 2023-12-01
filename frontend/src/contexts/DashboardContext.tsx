@@ -7,7 +7,7 @@ import { createContext, useContext, useMemo, useReducer } from "react";
 
 import { AsyncData } from "@/components/AsyncData";
 import type { FileEntryBasicFragment, LocationCompleteFragment, VillageInContextFragment, PersonInContextFragment } from "@/generated/graphql";
-import { GetFullContextDocument, GetPersonDocument} from "@/generated/graphql";
+import { GetFullContextDocument, GetPersonDocument, GetVillageDocument} from "@/generated/graphql";
 import { FileTree } from "@/utils/tree";
 
 
@@ -40,6 +40,9 @@ export type DashboardDispatchAction = {
     type: "setVillages",
     payload: VillageInContextFragment[]
 } | {
+    type: "updateVillage",
+    payload: VillageInContextFragment
+} | {
     type: "setPeople",
     payload: PersonInContextFragment[]
 } | {
@@ -65,6 +68,7 @@ export type DashboardDispatchFunctions = {
 
     // Async Operators
     refetchPerson: (personId: string) => Promise<void>;
+    refetchVillage: (villageId: string) => Promise<void>;
     refetchDashboard: () => void;
 }
 
@@ -106,6 +110,12 @@ export const dashboardReducer: Reducer<DashboardContextValue, DashboardDispatchA
                 ...state,
                 villages: action.payload
             };
+        case "updateVillage": {
+            return {
+                ...state,
+                villages: state.villages.map((p) => p.id === action.payload.id ? action.payload : p)
+            };
+        }
         case "setPeople":
             return {
                 ...state,
@@ -215,6 +225,22 @@ export function DashboardProvider({
                     });
                 } else {
                     console.error(`Tried to fetch new data for person ${personId} but failed:`);
+                    console.error(JSON.stringify(res.errors, null, 4));
+                }
+            });
+        },
+        refetchVillage: (villageId) => {
+            return apolloClient.query({
+                query: GetVillageDocument,
+                variables: { villageId }
+            }).then((res) => {
+                if(res.data.village) {
+                    dispatch({
+                        type: "updateVillage",
+                        payload: res.data.village
+                    });
+                } else {
+                    console.error(`Tried to fetch new data for village ${villageId} but failed:`);
                     console.error(JSON.stringify(res.errors, null, 4));
                 }
             });
