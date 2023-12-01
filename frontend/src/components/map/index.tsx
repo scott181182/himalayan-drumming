@@ -78,8 +78,8 @@ export function Map() {
     return (
         <MapContainer center={UTTARAKHAND_CENTER} zoom={9} scrollWheelZoom={true} className="h-full">
             <TileLayer
-                attribution={FreeTileLayers.TOPO.attribution}
-                url={FreeTileLayers.TOPO.url}
+                attribution={FreeTileLayers.ESRI.attribution}
+                url={FreeTileLayers.ESRI.url}
             />
             <GeoJSON
                 data={uttarakhandGeo as GeoJSONProps["data"]}
