@@ -1,9 +1,9 @@
 "use client";
 
 import { LeftOutlined } from "@ant-design/icons";
-import { Button, Space, Table } from "antd";
+import { Button, Input, Space, Table } from "antd";
 import type { ColumnsType } from "antd/es/table";
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useState } from "react";
 
 import { PersonDetails } from "./PersonDetails";
 import { useDashboardDispatch, useDashboardState } from "../../contexts/DashboardContext";
@@ -30,6 +30,8 @@ export function PersonBrowser({
     const { people } = useDashboardState();
     const { refetchPerson, setSelectedRelation } = useDashboardDispatch();
 
+    const [filteredPeople, setFilteredPeople] = useState(people);
+
     const selectedPerson = useMemo(() => {
         if(!selectedPersonId) { return undefined; }
         return people.find((p) => p.id === selectedPersonId);
@@ -50,9 +52,27 @@ export function PersonBrowser({
             <PersonDetails person={selectedPerson} onUpdate={onPersonUpdate}/>
         </Space> :
         <Space direction="vertical" className="w-full h-full overflow-y-auto pb-4">
-            {/* TODO: add search bar */}
+            <Input.Search
+                placeholder="Search People"
+                allowClear
+                onSearch={(value) => {
+                    if(!value) {
+                        setFilteredPeople(people);
+                    } else {
+                        const search = value.toLowerCase();
+                        setFilteredPeople(people.filter((p) =>
+                            p.name.toLowerCase().includes(search) ||
+                            p.caste?.toLowerCase()?.includes(search) ||
+                            p.education?.toLowerCase()?.includes(search) ||
+                            p.gender?.toLowerCase()?.includes(search) ||
+                            p.notes?.toLowerCase()?.includes(search) ||
+                            p.villages.some((p) => p.village.name.toLowerCase().includes(search))
+                        ));
+                    }
+                }}
+            />
             <Table
-                dataSource={people}
+                dataSource={filteredPeople}
                 rowKey="id"
                 columns={columns}
                 className="striped"
