@@ -28,7 +28,9 @@
     "terminal.integrated.defaultProfile.linux": "zsh",
     "cSpell.words": [
         "antd",
+        "birthdate",
         "unnullify",
-        "wavesurfer"
+        "wavesurfer",
+        "webp"
     ]
 }

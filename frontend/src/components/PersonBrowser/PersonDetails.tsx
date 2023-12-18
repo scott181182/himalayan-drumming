@@ -7,6 +7,7 @@ import { useCallback } from "react";
 import { FileSelector } from "./FileSelector";
 import cls from "./PersonDetail.module.scss";
 import { EditableGraphQLInput } from "../EditableGraphQLInput";
+import { PersonInVillageTable } from "../PersonInVillageTable";
 import { useEnums } from "@/contexts/EnumContext";
 import { UpdatePersonDocument, type PersonInContextFragment } from "@/generated/graphql";
 
@@ -130,5 +131,9 @@ export function PersonDetails({
                 <FileSelector person={person}/>
             </Descriptions.Item>
         </Descriptions>
+        <PersonInVillageTable
+            peopleInVillage={person.villages}
+            person={person}
+        />
     </Space>;
 }
