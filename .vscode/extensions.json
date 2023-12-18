@@ -9,6 +9,7 @@
         "ahmadalli.vscode-nginx-conf",
         "graphql.vscode-graphql",
         "prisma.prisma",
-        "dbaeumer.vscode-eslint"
+        "dbaeumer.vscode-eslint",
+        "mhutchie.git-graph"
     ]
 }

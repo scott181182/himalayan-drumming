@@ -3,7 +3,7 @@
 import { LeftOutlined } from "@ant-design/icons";
 import { Button, Space, Table } from "antd";
 import type { ColumnsType } from "antd/es/table";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo } from "react";
 
 import { PersonDetails } from "./PersonDetails";
 import { useDashboardDispatch, useDashboardState } from "../../contexts/DashboardContext";
@@ -21,10 +21,14 @@ const columns: ColumnsType<PersonInContextFragment> = [
 
 
 
-export function PersonBrowser() {
+export interface PersonBrowserProps {
+    selectedPersonId?: string;
+}
+export function PersonBrowser({
+    selectedPersonId
+}: PersonBrowserProps) {
     const { people } = useDashboardState();
-    const { refetchPerson } = useDashboardDispatch();
-    const [ selectedPersonId, setSelectedPersonId ] = useState<string | undefined>();
+    const { refetchPerson, setSelectedRelation } = useDashboardDispatch();
 
     const selectedPerson = useMemo(() => {
         if(!selectedPersonId) { return undefined; }
@@ -40,7 +44,7 @@ export function PersonBrowser() {
 
     return selectedPerson ?
         <Space direction="vertical" className="w-full h-full overflow-y-auto">
-            <Button onClick={() => setSelectedPersonId(undefined)}>
+            <Button onClick={() => setSelectedRelation({ type: "person" })}>
                 <LeftOutlined/>
             </Button>
             <PersonDetails person={selectedPerson} onUpdate={onPersonUpdate}/>
@@ -56,7 +60,7 @@ export function PersonBrowser() {
 
                 rowClassName={(p) => selectedPerson === p.id ? "selected cursor-pointer" : " cursor-pointer"}
                 onRow={(p) => ({
-                    onClick: () => setSelectedPersonId(p.id)
+                    onClick: () => setSelectedRelation({ type: "person", personId: p.id })
                 })}
             />
             <AddPersonButton/>

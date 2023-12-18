@@ -43,6 +43,7 @@ export class ImmutableTree<T extends IdObject> {
     public getNode(id: string): T { return this.nodeMap[id]; }
 
     public getNodeParent(id: string): T | undefined {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const parentEntry = Object.entries(this.parentMap).find(([_, children]) => children.includes(id));
         return parentEntry && this.nodeMap[parentEntry[0]];
     }
@@ -166,7 +167,7 @@ export class FileTree extends ImmutableTree<FileEntryBasicFragment> {
 
     public getLocations() { return this.locations; }
     public getFileById(id: string) { return this.nodeMap[id]; }
-    public getFilesAtLocation(locId: string) { return this.locationMap[locId]; }
+    public getFilesAtLocation(locId: string) { return this.locationMap[locId] ?? []; }
 
 
 

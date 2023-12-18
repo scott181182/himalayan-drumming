@@ -1,17 +1,15 @@
 /* eslint-disable @next/next/no-img-element */
 import { EditOutlined, FileImageOutlined } from "@ant-design/icons";
-import { useMutation } from "@apollo/client";
 import { App, Button, DatePicker, Descriptions, Select, Space, Upload } from "antd";
 import dayjs from "dayjs";
 import { useCallback } from "react";
 
 import { FileSelector } from "./FileSelector";
 import cls from "./PersonDetail.module.scss";
-import { useDashboardState } from "../../contexts/DashboardContext";
 import { EditableGraphQLInput } from "../EditableGraphQLInput";
+import { PersonInVillageTable } from "../PersonInVillageTable";
 import { useEnums } from "@/contexts/EnumContext";
 import { UpdatePersonDocument, type PersonInContextFragment } from "@/generated/graphql";
-import { usePromiseMessage } from "@/utils/antd";
 
 
 
@@ -26,25 +24,7 @@ export function PersonDetails({
     onUpdate,
 }: PersonDetailsProps) {
     const { modal } = App.useApp();
-    const handlePromise = usePromiseMessage();
-    const { selectedFiles } = useDashboardState();
     const { genderOptions, casteOptions } = useEnums();
-    const [updatePerson, { loading }] = useMutation(UpdatePersonDocument);
-
-    const assignFiles = useCallback(() => {
-        if(selectedFiles.length === 0) { return; }
-
-        updatePerson({
-            variables: {
-                personId: person.id,
-                data: {
-                    files: {
-                        connect: selectedFiles.map((f) => ({ id: f.id }))
-                    }
-                }
-            }
-        }).then(...handlePromise("Associated file(s)!", "Error associating files with person"));
-    }, [handlePromise, person.id, selectedFiles, updatePerson]);
 
 
 
@@ -151,5 +131,9 @@ export function PersonDetails({
                 <FileSelector person={person}/>
             </Descriptions.Item>
         </Descriptions>
+        <PersonInVillageTable
+            peopleInVillage={person.villages}
+            person={person}
+        />
     </Space>;
 }

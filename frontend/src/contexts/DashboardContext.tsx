@@ -7,10 +7,25 @@ import { createContext, useContext, useMemo, useReducer } from "react";
 
 import { AsyncData } from "@/components/AsyncData";
 import type { FileEntryBasicFragment, LocationCompleteFragment, VillageInContextFragment, PersonInContextFragment } from "@/generated/graphql";
-import { GetFullContextDocument, GetPersonDocument} from "@/generated/graphql";
+import { GetFullContextDocument, GetPartialContextDocument, GetPersonDocument, GetVillageDocument} from "@/generated/graphql";
 import { FileTree } from "@/utils/tree";
 
 
+
+export interface RefetchOptions {
+    personIds?: string[];
+    villageIds?: string[];
+    fileIds?: string[];
+}
+export interface VillageBrowserSelection {
+    type: "village";
+    villageId?: string;
+}
+export interface PersonBrowserSelection {
+    type: "person";
+    personId?: string;
+}
+export type RelationBrowserSelection = VillageBrowserSelection | PersonBrowserSelection;
 
 export interface DashboardContextValue {
     fileTree: FileTree;
@@ -20,6 +35,7 @@ export interface DashboardContextValue {
 
     people: PersonInContextFragment[];
     villages: VillageInContextFragment[];
+    selectedRelation?: RelationBrowserSelection;
 }
 export type DashboardDispatchAction = {
     type: "setSelectedFiles",
@@ -27,6 +43,9 @@ export type DashboardDispatchAction = {
 } | {
     type: "setSelectedFilesById",
     payload: string[]
+} | {
+    type: "setSelectedRelation",
+    payload: RelationBrowserSelection | undefined
 } | {
     type: "setVirtualLocation",
     payload: Pick<LocationCompleteFragment, "latitude" | "longitude">
@@ -39,6 +58,9 @@ export type DashboardDispatchAction = {
 } | {
     type: "setVillages",
     payload: VillageInContextFragment[]
+} | {
+    type: "updateVillage",
+    payload: VillageInContextFragment
 } | {
     type: "setPeople",
     payload: PersonInContextFragment[]
@@ -56,15 +78,19 @@ export type DashboardDispatchAction = {
 export type DashboardDispatchFunctions = {
     setSelectedFiles: (files: FileEntryBasicFragment[]) => void;
     setSelectedFilesById: (fileIds: string[]) => void;
+    setSelectedRelation: (selection: RelationBrowserSelection | undefined) => void;
     setVirtualLocation: (location: Pick<LocationCompleteFragment, "latitude" | "longitude">) => void;
     setFileTree: (fileTree: FileTree) => void;
     selectLocation: (location: LocationCompleteFragment) => void;
     updatePerson: (person: PersonInContextFragment) => void;
+    updateVillage: (village: VillageInContextFragment) => void;
     updateFile: (file: FileEntryBasicFragment) => void;
     filterFiles: (filterFn?: (file: FileEntryBasicFragment) => boolean) => void;
 
     // Async Operators
+    refetchResources: (options: RefetchOptions) => Promise<void>;
     refetchPerson: (personId: string) => Promise<void>;
+    refetchVillage: (villageId: string) => Promise<void>;
     refetchDashboard: () => void;
 }
 
@@ -82,20 +108,30 @@ export const dashboardReducer: Reducer<DashboardContextValue, DashboardDispatchA
                 ...state,
                 selectedFiles: action.payload.map((id) => state.fileTree.getFileById(id))
             };
+        case "setSelectedRelation":
+            return {
+                ...state,
+                selectedRelation: action.payload
+            };
         case "setVirtualLocation":
             return {
                 ...state,
                 selectedLocation: {
                     ...action.payload,
                     id: ""
-                }
+                },
             };
-        case "selectLocation":
+        case "selectLocation": {
+            const village = state.villages.find((v) => v.location.id === action.payload.id);
             return {
                 ...state,
                 selectedLocation: action.payload,
-                selectedFiles: state.fileTree.getFilesAtLocation(action.payload.id)
+                selectedFiles: state.fileTree.getFilesAtLocation(action.payload.id),
+                selectedRelation: village ?
+                    { type: "village", villageId: village.id } :
+                    state.selectedRelation
             };
+        }
         case "setFileTree":
             return {
                 ...state,
@@ -106,6 +142,12 @@ export const dashboardReducer: Reducer<DashboardContextValue, DashboardDispatchA
                 ...state,
                 villages: action.payload
             };
+        case "updateVillage": {
+            return {
+                ...state,
+                villages: state.villages.map((p) => p.id === action.payload.id ? action.payload : p)
+            };
+        }
         case "setPeople":
             return {
                 ...state,
@@ -190,6 +232,8 @@ export function DashboardProvider({
             dispatch({ type: "setSelectedFiles", payload: files }),
         setSelectedFilesById: (fileIds: string[]) =>
             dispatch({ type: "setSelectedFilesById", payload: fileIds }),
+        setSelectedRelation: (selection: RelationBrowserSelection | undefined) =>
+            dispatch({ type: "setSelectedRelation", payload: selection }),
         setVirtualLocation: (location: Pick<LocationCompleteFragment, "latitude" | "longitude">) =>
             dispatch({ type: "setVirtualLocation", payload: location }),
         setFileTree: (fileTree: FileTree) =>
@@ -198,11 +242,49 @@ export function DashboardProvider({
             dispatch({ type: "selectLocation", payload: location }),
         updatePerson: (person: PersonInContextFragment) =>
             dispatch({ type: "updatePerson", payload: person }),
+        updateVillage: (village: VillageInContextFragment) =>
+            dispatch({ type: "updateVillage", payload: village }),
         updateFile: (file: FileEntryBasicFragment) =>
             dispatch({ type: "updateFile", payload: file }),
         filterFiles: (filterFn?: (file: FileEntryBasicFragment) => boolean) =>
             dispatch({ type: "filterFiles", payload: filterFn }),
 
+        refetchResources: (options) => {
+            return apolloClient.query({
+                query: GetPartialContextDocument,
+                variables: {
+                    fileIds: [],
+                    villageIds: [],
+                    personIds: [],
+                    ...options
+                }
+            }).then((res) => {
+                if(options.fileIds) {
+                    for(const file of res.data.fileEntries) {
+                        dispatch({
+                            type: "updateFile",
+                            payload: file
+                        });
+                    }
+                }
+                if(options.villageIds) {
+                    for(const village of res.data.villages) {
+                        dispatch({
+                            type: "updateVillage",
+                            payload: village
+                        });
+                    }
+                }
+                if(options.personIds) {
+                    for(const person of res.data.people) {
+                        dispatch({
+                            type: "updatePerson",
+                            payload: person
+                        });
+                    }
+                }
+            });
+        },
         refetchPerson: (personId) => {
             return apolloClient.query({
                 query: GetPersonDocument,
@@ -215,6 +297,22 @@ export function DashboardProvider({
                     });
                 } else {
                     console.error(`Tried to fetch new data for person ${personId} but failed:`);
+                    console.error(JSON.stringify(res.errors, null, 4));
+                }
+            });
+        },
+        refetchVillage: (villageId) => {
+            return apolloClient.query({
+                query: GetVillageDocument,
+                variables: { villageId }
+            }).then((res) => {
+                if(res.data.village) {
+                    dispatch({
+                        type: "updateVillage",
+                        payload: res.data.village
+                    });
+                } else {
+                    console.error(`Tried to fetch new data for village ${villageId} but failed:`);
                     console.error(JSON.stringify(res.errors, null, 4));
                 }
             });

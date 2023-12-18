@@ -2,7 +2,7 @@
 import { extendType, idArg, inputObjectType, nonNull, objectType } from "nexus";
 
 import { LatLng } from "./LatLng";
-import { makeRelationCreateInput, unnullifyObject } from "./utils";
+import { combinationOperators, makeRelationCreateInput, unnullifyObject } from "./utils";
 
 
 
@@ -11,6 +11,10 @@ export const  Village = objectType({
     definition(t) {
         t.nonNull.id("id");
         t.nonNull.string("name");
+        t.string("temples");
+        t.string("divinities");
+        t.string("rituals");
+        t.string("notes");
 
         t.nonNull.string("locationId");
         t.nonNull.field("location", {
@@ -38,6 +42,15 @@ export const VillageWhereInput = inputObjectType({
     definition(t) {
         t.field("id", { type: "IdNullableFilterInput" });
         t.field("name", { type: "StringNullableFilterInput" });
+        
+        t.field("temples", { type: "StringNullableFilterInput" });
+        t.field("divinities", { type: "StringNullableFilterInput" });
+        t.field("rituals", { type: "StringNullableFilterInput" });
+        t.field("notes", { type: "StringNullableFilterInput" });
+        
+        t.field("people", { type: "PersonInVillageWhereManyInput" });
+
+        combinationOperators(t, "VillageWhereInput");
     },
 });
 export const VillageQuery = extendType({
@@ -57,8 +70,13 @@ export const VillageQuery = extendType({
 
         t.nonNull.list.nonNull.field("villages", {
             type: Village,
-            resolve(_, _args, ctx) {
-                return ctx.prisma.village.findMany();
+            args: {
+                where: VillageWhereInput
+            },
+            resolve(_, { where }, ctx) {
+                return ctx.prisma.village.findMany({
+                    where: unnullifyObject(where)
+                });
             }
         });
 
@@ -73,7 +91,28 @@ export const VillageCreateInput = inputObjectType({
     name: "VillageCreateInput",
     definition(t) {
         t.nonNull.string("name");
+        
+        t.string("temples");
+        t.string("divinities");
+        t.string("rituals");
+        t.string("notes");
+
         t.nonNull.field({name: "location", type: VillageCreateLocationInput});
+        t.field("people", { type: "PersonInVillageVillageRelationCreateInput" });
+    },
+});
+
+export const VillageUpdateInput = inputObjectType({
+    name: "VillageUpdateInput",
+    definition(t) {
+        t.string("name");
+        t.string("temples");
+        t.string("divinities");
+        t.string("rituals");
+        t.string("notes");
+        
+        t.field("location", { type: VillageCreateLocationInput });
+        t.field("people", { type: "PersonInVillageVillageRelationUpdateInput" });
     },
 });
 
@@ -87,6 +126,20 @@ export const VillageMutation = extendType({
             },
             resolve(_, args, ctx) {
                 return ctx.prisma.village.create({
+                    data: unnullifyObject(args.data)
+                });
+            }
+        });
+        
+        t.nonNull.field("updateVillage", {
+            type: Village,
+            args: {
+                id: nonNull(idArg()),
+                data: nonNull(VillageUpdateInput)
+            },
+            resolve(_, args, ctx) {
+                return ctx.prisma.village.update({
+                    where: { id: args.id },
                     data: unnullifyObject(args.data)
                 });
             }

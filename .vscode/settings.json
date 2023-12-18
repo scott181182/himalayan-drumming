@@ -1,6 +1,6 @@
 {
     "editor.codeActionsOnSave": {
-        "source.fixAll.eslint": true
+        "source.fixAll.eslint": "explicit"
     },
     "eslint.workingDirectories": [
         "./backend",
@@ -28,6 +28,9 @@
     "terminal.integrated.defaultProfile.linux": "zsh",
     "cSpell.words": [
         "antd",
-        "wavesurfer"
+        "birthdate",
+        "unnullify",
+        "wavesurfer",
+        "webp"
     ]
 }

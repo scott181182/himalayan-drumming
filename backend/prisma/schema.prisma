@@ -2,15 +2,13 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider = "prisma-client-js"
+    provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = "file:./dev.db"
+    provider = "sqlite"
+    url      = "file:./dev.db"
 }
-
-
 
 ///////////////
 //   Enums   //
@@ -21,42 +19,42 @@ model FileType {
 
     entries FileEntry[]
 }
+
 model Caste {
     name String @id
 
     members Person[]
 }
+
 model Gender {
     name String @id
 
     people Person[]
 }
 
-
-
 /////////////////////
 //   File Models   //
 /////////////////////
 
 model FileEntry {
-    id String @id @default(cuid())
+    id   String  @id @default(cuid())
     /// Virtual path, in the application.
-    path String @unique
+    path String  @unique
     name String
     /// Endpoint the file can be retrieved at.
-    url String?
+    url  String?
 
-    type String
+    type     String
     parentId String?
 
-    typeRef FileType @relation(fields: [type], references: [name])
-    parent FileEntry? @relation("ParentChildren", fields: [parentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    typeRef FileType   @relation(fields: [type], references: [name])
+    parent  FileEntry? @relation("ParentChildren", fields: [parentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
     children FileEntry[] @relation("ParentChildren")
 
     metadata FileMetadata?
     withTags TagOnFile[]
-    people Person[]
+    people   Person[]
 
     associatedFiles1 FileAssociations[] @relation("File1Associations")
     associatedFiles2 FileAssociations[] @relation("File2Associations")
@@ -67,31 +65,32 @@ model FileEntry {
 /// JOIN Table for file entries.
 model FileAssociations {
     file1Id String
-    file1 FileEntry @relation("File1Associations", fields: [file1Id], references: [id])
+    file1   FileEntry @relation("File1Associations", fields: [file1Id], references: [id])
     file2Id String
-    file2 FileEntry @relation("File2Associations", fields: [file2Id], references: [id])
+    file2   FileEntry @relation("File2Associations", fields: [file2Id], references: [id])
 
     @@id([file1Id, file2Id])
 }
 
 model FileMetadata {
-    fileId String @id
-    file FileEntry @relation(fields: [fileId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    fileId String    @id
+    file   FileEntry @relation(fields: [fileId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
     locationId String?
-    location LatLng? @relation(fields: [locationId], references: [id], onDelete: SetNull, onUpdate: Cascade)
+    location   LatLng? @relation(fields: [locationId], references: [id], onDelete: SetNull, onUpdate: Cascade)
 }
 
 /// Manual Join table to avoid automatic cascades
 model TagOnFile {
     tagName String
-    fileId String
+    fileId  String
 
-    tag Tag @relation(fields: [tagName], references: [name], onDelete: Cascade, onUpdate: Cascade)
+    tag  Tag       @relation(fields: [tagName], references: [name], onDelete: Cascade, onUpdate: Cascade)
     file FileEntry @relation(fields: [fileId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
     @@id([tagName, fileId])
 }
+
 model Tag {
     name String @id
 
@@ -99,46 +98,49 @@ model Tag {
 }
 
 model LatLng {
-    id String @id @default(cuid())
-    latitude Float
+    id        String @id @default(cuid())
+    latitude  Float
     longitude Float
 
     metadata FileMetadata[]
     villages Village[]
 }
 
-
-
 ///////////////////////
 //   Person Models   //
 ///////////////////////
 
 model Person {
-    id String @id @default(cuid())
-    name String
+    id        String  @id @default(cuid())
+    name      String
     avatarUrl String?
 
     birthdate DateTime?
     education String?
-    notes String?
+    notes     String?
 
-    parent Person? @relation("ParentChild", fields: [parentId], references: [id])
+    parent   Person? @relation("ParentChild", fields: [parentId], references: [id])
     parentId String?
 
-    gender String?
+    gender    String?
     genderRef Gender? @relation(fields: [gender], references: [name])
-    caste String?
-    casteRef Caste? @relation(fields: [caste], references: [name])
+    caste     String?
+    casteRef  Caste?  @relation(fields: [caste], references: [name])
 
-    children Person[] @relation("ParentChild")
+    children Person[]          @relation("ParentChild")
     villages PersonInVillage[]
-    files FileEntry[]
+    files    FileEntry[]
 }
-model Village {
-    id String @id @default(cuid())
-    name String
 
-    location LatLng @relation(fields: [locationId], references: [id])
+model Village {
+    id         String  @id @default(cuid())
+    name       String
+    temples    String?
+    divinities String?
+    rituals    String?
+    notes      String?
+
+    location   LatLng @relation(fields: [locationId], references: [id])
     locationId String
 
     people PersonInVillage[]
@@ -148,9 +150,9 @@ model PersonInVillage {
     /// The person's relation to the village
     description String?
 
-    person Person @relation(fields: [personId], references: [id])
-    personId String
-    village Village @relation(fields: [villageId], references: [id])
+    person    Person  @relation(fields: [personId], references: [id])
+    personId  String
+    village   Village @relation(fields: [villageId], references: [id])
     villageId String
 
     @@id([personId, villageId])

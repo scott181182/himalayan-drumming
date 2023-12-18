@@ -17,16 +17,21 @@ const Map = dynamic(() => import("@/components/map").then((mod) => mod.Map), {
 
 
 export function HomeView() {
-    const { selectedFiles } = useDashboardState();
+    const { selectedFiles, selectedRelation: currentRelation } = useDashboardState();
 
     const [fileBrowserCollapsed, setFileBrowserCollapsed] = useState(true);
-    const [relationBrowserCollapsed, setRelationBrowserCollapsed] = useState(true);
+    const [relationBrowserCollapsed, setRelationBrowserCollapsed] = useState(currentRelation === undefined);
 
     useEffect(() => {
         if(selectedFiles.length > 0) {
             setFileBrowserCollapsed(false);
         }
     }, [selectedFiles]);
+    useEffect(() => {
+        if(currentRelation) {
+            setRelationBrowserCollapsed(false);
+        }
+    }, [currentRelation]);
 
 
     return (

@@ -1,5 +1,12 @@
 #import FileEntryBasic, LocationComplete from "./files.graphql"
 
+fragment PersonInVillageInContext on PersonInVillage {
+    person { id name }
+    village { id name }
+
+    description
+}
+
 fragment PersonInContext on Person {
     id
     name
@@ -18,12 +25,19 @@ fragment PersonInContext on Person {
     parent {
         id name
     }
+    villages { ...PersonInVillageInContext }
 }
 
 fragment VillageInContext on Village {
     id
     name
+    temples
+    divinities
+    rituals
+    notes
+
     location { ...LocationComplete }
+    people { ...PersonInVillageInContext }
 }
 
 
@@ -31,6 +45,28 @@ query GetFullContext {
     fileEntries { ...FileEntryBasic }
     people { ...PersonInContext }
     villages { ...VillageInContext }
+}
+
+query GetPartialContext(
+    $fileIds: [ID!]!,
+    $personIds: [ID!]!,
+    $villageIds: [ID!]!,
+) {
+    fileEntries(where: {
+        id: { in: $fileIds }
+    }) {
+        ...FileEntryBasic
+    }
+    people(where: {
+        id: { in: $personIds }
+    }) {
+        ...PersonInContext
+    }
+    villages(where: {
+        id: { in: $villageIds }
+    }) {
+        ...VillageInContext
+    }
 }
 
 query GetAllTags {

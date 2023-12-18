@@ -154,7 +154,7 @@ export const PersonCreateInput = inputObjectType({
         t.nonNull.string("name");
         t.string("parentId");
         t.field("files", { type: FilesForPersonCreateInput });
-        t.field("villages", { type: "PersonInVillageRelationCreateInput" });
+        t.field("villages", { type: "PersonInVillagePersonRelationCreateInput" });
         
         t.date("birthdate");
         t.string("education");
@@ -171,7 +171,7 @@ export const PersonUpdateInput = inputObjectType({
         t.string("name");
         t.string("parentId");
         t.field("files", { type: FilesForPersonUpdateInput });
-        t.field("villages", { type: "PersonInVillageRelationUpdateInput" });
+        t.field("villages", { type: "PersonInVillagePersonRelationUpdateInput" });
         
         t.date("birthdate");
         t.string("education");

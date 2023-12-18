@@ -1,4 +1,4 @@
-import { inputObjectType, objectType } from "nexus";
+import { extendType, idArg, inputObjectType, nonNull, objectType } from "nexus";
 
 import { combinationOperators, makeListRelationWhereInput, makeRelationCreateInput, makeRelationUpdateInput } from "./utils";
 
@@ -64,12 +64,49 @@ export const PersonInVillageWhereManyInput = makeListRelationWhereInput("PersonI
 
 
 
-export const PersonInVillageCreateInput = inputObjectType({
-    name: "PersonInVillageCreateInput",
+// Inputs for relationships from Person to PersonInVillage.
+export const PersonInVillagePersonCreateInput = inputObjectType({
+    name: "PersonInVillagePersonCreateInput",
     definition(t) {
         t.nonNull.id("villageId");
         t.string("description");
     },
 });
-export const PersonInVillageRelationCreateInput = makeRelationCreateInput("PersonInVillageRelationCreateInput", "PersonInVillageUniqueWhereInput", "PersonInVillageCreateInput");
-export const PersonInVillageRelationUpdateInput = makeRelationUpdateInput("PersonInVillageRelationUpdateInput", "PersonInVillageUniqueWhereInput", "PersonInVillageCreateInput");
+export const PersonInVillagePersonRelationCreateInput = makeRelationCreateInput("PersonInVillagePersonRelationCreateInput", "PersonInVillageUniqueWhereInput", "PersonInVillagePersonCreateInput");
+export const PersonInVillagePersonRelationUpdateInput = makeRelationUpdateInput("PersonInVillagePersonRelationUpdateInput", "PersonInVillageUniqueWhereInput", "PersonInVillagePersonCreateInput");
+
+
+
+// Inputs for relationships from Village to PersonInVillage.
+export const PersonInVillageVillageCreateInput = inputObjectType({
+    name: "PersonInVillageVillageCreateInput",
+    definition(t) {
+        t.nonNull.id("personId");
+        t.string("description");
+    },
+});
+export const PersonInVillageVillageRelationCreateInput = makeRelationCreateInput("PersonInVillageVillageRelationCreateInput", "PersonInVillageUniqueWhereInput", "PersonInVillageVillageCreateInput");
+export const PersonInVillageVillageRelationUpdateInput = makeRelationUpdateInput("PersonInVillageVillageRelationUpdateInput", "PersonInVillageUniqueWhereInput", "PersonInVillageVillageCreateInput");
+
+
+
+export const PersonInVillageMutation = extendType({
+    type: "Mutation",
+    definition(t) {
+        t.nonNull.boolean("removePersonFromVillage", {
+            args: {
+                villageId: nonNull(idArg()),
+                personId: nonNull(idArg()),
+            },
+            resolve(_, { villageId, personId }, ctx) {
+                return ctx.prisma.personInVillage.delete({
+                    where: {
+                        personId_villageId: {
+                            personId, villageId
+                        }
+                    }
+                }).then(() => true).catch(() => false);
+            }
+        });
+    },
+});
