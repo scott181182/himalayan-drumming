@@ -72,10 +72,10 @@ input FilesForPersonUpdateInput {
 }
 
 input IdNullableFilterInput {
-  equals: String
-  in: [String!]
+  equals: ID
+  in: [ID!]
   not: NestedIdNullableFilterInput
-  notIn: [String!]
+  notIn: [ID!]
 }
 
 input IdWhereUniqueInput {
@@ -105,6 +105,7 @@ type Mutation {
   Perform a full scan of OneDrive and other file sources. Creates, updates, and deletes entries as necessary.
   """
   fullscan: FileEntry
+  removePersonFromVillage(personId: ID!, villageId: ID!): Boolean!
   tagFile(fileId: ID!, tag: String!): FileEntry!
   untagFile(fileId: ID!, tag: String!): FileEntry!
   updateMetadata(data: FileMetadataUpdateInput!, fileId: ID!): FileEntry!
@@ -113,10 +114,10 @@ type Mutation {
 }
 
 input NestedIdNullableFilterInput {
-  equals: String
-  in: [String!]
+  equals: ID
+  in: [ID!]
   not: NestedIdNullableFilterInput
-  notIn: [String!]
+  notIn: [ID!]
 }
 
 input NestedStringNullableFilterInput {
@@ -281,7 +282,7 @@ type Query {
   rootFileEntry: FileEntry!
   tags: [String!]!
   village(id: ID!): Village
-  villages: [Village!]!
+  villages(where: VillageWhereInput): [Village!]!
 }
 
 input StringNullableArrayFilterInput {

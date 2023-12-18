@@ -70,8 +70,13 @@ export const VillageQuery = extendType({
 
         t.nonNull.list.nonNull.field("villages", {
             type: Village,
-            resolve(_, _args, ctx) {
-                return ctx.prisma.village.findMany();
+            args: {
+                where: VillageWhereInput
+            },
+            resolve(_, { where }, ctx) {
+                return ctx.prisma.village.findMany({
+                    where: unnullifyObject(where)
+                });
             }
         });
 

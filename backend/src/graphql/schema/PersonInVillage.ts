@@ -1,4 +1,4 @@
-import { inputObjectType, objectType } from "nexus";
+import { extendType, idArg, inputObjectType, nonNull, objectType } from "nexus";
 
 import { combinationOperators, makeListRelationWhereInput, makeRelationCreateInput, makeRelationUpdateInput } from "./utils";
 
@@ -87,3 +87,26 @@ export const PersonInVillageVillageCreateInput = inputObjectType({
 });
 export const PersonInVillageVillageRelationCreateInput = makeRelationCreateInput("PersonInVillageVillageRelationCreateInput", "PersonInVillageUniqueWhereInput", "PersonInVillageVillageCreateInput");
 export const PersonInVillageVillageRelationUpdateInput = makeRelationUpdateInput("PersonInVillageVillageRelationUpdateInput", "PersonInVillageUniqueWhereInput", "PersonInVillageVillageCreateInput");
+
+
+
+export const PersonInVillageMutation = extendType({
+    type: "Mutation",
+    definition(t) {
+        t.nonNull.boolean("removePersonFromVillage", {
+            args: {
+                villageId: nonNull(idArg()),
+                personId: nonNull(idArg()),
+            },
+            resolve(_, { villageId, personId }, ctx) {
+                return ctx.prisma.personInVillage.delete({
+                    where: {
+                        personId_villageId: {
+                            personId, villageId
+                        }
+                    }
+                }).then(() => true).catch(() => false);
+            }
+        });
+    },
+});

@@ -66,10 +66,10 @@ export interface NexusGenInputs {
     disconnect?: NexusGenInputs['IdWhereUniqueInput'][] | null; // [IdWhereUniqueInput!]
   }
   IdNullableFilterInput: { // input type
-    equals?: string | null; // String
-    in?: string[] | null; // [String!]
+    equals?: string | null; // ID
+    in?: string[] | null; // [ID!]
     not?: NexusGenInputs['NestedIdNullableFilterInput'] | null; // NestedIdNullableFilterInput
-    notIn?: string[] | null; // [String!]
+    notIn?: string[] | null; // [ID!]
   }
   IdWhereUniqueInput: { // input type
     id: string; // ID!
@@ -79,10 +79,10 @@ export interface NexusGenInputs {
     longitude: number; // Float!
   }
   NestedIdNullableFilterInput: { // input type
-    equals?: string | null; // String
-    in?: string[] | null; // [String!]
+    equals?: string | null; // ID
+    in?: string[] | null; // [ID!]
     not?: NexusGenInputs['NestedIdNullableFilterInput'] | null; // NestedIdNullableFilterInput
-    notIn?: string[] | null; // [String!]
+    notIn?: string[] | null; // [ID!]
   }
   NestedStringNullableFilterInput: { // input type
     contains?: string | null; // String
@@ -313,6 +313,7 @@ export interface NexusGenFieldTypes {
     createVillage: NexusGenRootTypes['Village']; // Village!
     disassociateFiles: NexusGenRootTypes['FileEntry'][] | null; // [FileEntry!]
     fullscan: NexusGenRootTypes['FileEntry'] | null; // FileEntry
+    removePersonFromVillage: boolean; // Boolean!
     tagFile: NexusGenRootTypes['FileEntry']; // FileEntry!
     untagFile: NexusGenRootTypes['FileEntry']; // FileEntry!
     updateMetadata: NexusGenRootTypes['FileEntry']; // FileEntry!
@@ -399,6 +400,7 @@ export interface NexusGenFieldTypeNames {
     createVillage: 'Village'
     disassociateFiles: 'FileEntry'
     fullscan: 'FileEntry'
+    removePersonFromVillage: 'Boolean'
     tagFile: 'FileEntry'
     untagFile: 'FileEntry'
     updateMetadata: 'FileEntry'
@@ -475,6 +477,10 @@ export interface NexusGenArgTypes {
       file1Id: string; // ID!
       file2Id: string; // ID!
     }
+    removePersonFromVillage: { // args
+      personId: string; // ID!
+      villageId: string; // ID!
+    }
     tagFile: { // args
       fileId: string; // ID!
       tag: string; // String!
@@ -516,6 +522,9 @@ export interface NexusGenArgTypes {
     }
     village: { // args
       id: string; // ID!
+    }
+    villages: { // args
+      where?: NexusGenInputs['VillageWhereInput'] | null; // VillageWhereInput
     }
   }
 }

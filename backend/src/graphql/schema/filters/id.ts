@@ -4,9 +4,9 @@ import type { InputDefinitionBlock } from "nexus/dist/core";
 
 
 function definedIdFilterInput(t: InputDefinitionBlock<"IdNullableFilterInput" | "NestedIdNullableFilterInput">) {
-    t.string("equals");
-    t.list.nonNull.string("in");
-    t.list.nonNull.string("notIn");
+    t.id("equals");
+    t.list.nonNull.id("in");
+    t.list.nonNull.id("notIn");
     t.field("not", { type: "NestedIdNullableFilterInput" });
 }
 
