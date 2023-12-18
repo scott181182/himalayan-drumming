@@ -22,7 +22,7 @@ export function PersonInVillageTable({
     person,
     village
 }: PersonInVillageTableProps) {
-    const { refetchResources } = useDashboardDispatch();
+    const { refetchResources, setSelectedRelation } = useDashboardDispatch();
 
     const [removeMutation] = useMutation(RemovePersonFromVillageDocument);
 
@@ -44,14 +44,26 @@ export function PersonInVillageTable({
             cols.push({
                 title: "Person",
                 dataIndex: "person",
-                render: (_, rec) => rec.person.name
+                render: (_, rec) => <Button
+                    type="link"
+                    size="small"
+                    onClick={() => setSelectedRelation({ type: "person", personId: rec.person.id })}
+                >
+                    {rec.person.name}
+                </Button>
             });
         }
         if(!village) {
             cols.push({
                 title: "Village",
                 dataIndex: "village",
-                render: (_, rec) => rec.village.name
+                render: (_, rec) => <Button
+                    type="link"
+                    size="small"
+                    onClick={() => setSelectedRelation({ type: "village", villageId: rec.village.id })}
+                >
+                    {rec.village.name}
+                </Button>
             });
         }
         cols.push({
@@ -68,7 +80,7 @@ export function PersonInVillageTable({
         });
 
         return cols;
-    }, [person, removeRelation, village]);
+    }, [person, removeRelation, setSelectedRelation, village]);
 
     const footer = useMemo(() => {
         if(person && village) { return; }

@@ -16,7 +16,7 @@ export interface LatLngGotoProps {
 
 export function LatLngGoto({ className }: LatLngGotoProps) {
     const map = useMap();
-    const { selectedLocation, selectedFiles, selectedVillage } = useDashboardState();
+    const { selectedLocation, selectedFiles, villages } = useDashboardState();
     const { setVirtualLocation } = useDashboardDispatch();
 
     const cardRef = useRef<HTMLDivElement>(null);
@@ -42,14 +42,14 @@ export function LatLngGoto({ className }: LatLngGotoProps) {
     const markerImage = useMemo(() => {
         if(selectedLocation?.id === "") {
             return <Image src="/assets/empty_marker.png" alt="empty marker" width={32} height={35}/>;
-        } else if(selectedVillage) {
+        } else if(villages.some((v) => v.location.id === selectedLocation?.id)) {
             return <Image src="/assets/village_marker.png" alt="village marker" width={32} height={35}/>;
         } else if(selectedFiles.length > 0) {
             return <Image src="/assets/recording_marker.png" alt="village marker" width={32} height={35}/>;
         } else {
             return <></>;
         }
-    }, [selectedFiles.length, selectedLocation, selectedVillage]);
+    }, [selectedLocation?.id, villages, selectedFiles.length]);
 
     return (
         <Card className={className} ref={cardRef} bodyStyle={{ padding: "0.5rem" }}>

@@ -17,10 +17,10 @@ const Map = dynamic(() => import("@/components/map").then((mod) => mod.Map), {
 
 
 export function HomeView() {
-    const { selectedFiles, selectedVillage } = useDashboardState();
+    const { selectedFiles, selectedRelation: currentRelation } = useDashboardState();
 
     const [fileBrowserCollapsed, setFileBrowserCollapsed] = useState(true);
-    const [relationBrowserCollapsed, setRelationBrowserCollapsed] = useState(true);
+    const [relationBrowserCollapsed, setRelationBrowserCollapsed] = useState(currentRelation === undefined);
 
     useEffect(() => {
         if(selectedFiles.length > 0) {
@@ -28,10 +28,10 @@ export function HomeView() {
         }
     }, [selectedFiles]);
     useEffect(() => {
-        if(selectedVillage) {
+        if(currentRelation) {
             setRelationBrowserCollapsed(false);
         }
-    }, [selectedVillage]);
+    }, [currentRelation]);
 
 
     return (

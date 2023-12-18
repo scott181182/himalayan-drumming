@@ -2,41 +2,42 @@
 
 import type { TabsProps } from "antd";
 import { Tabs } from "antd";
-import { useEffect, useState } from "react";
+import { useCallback, useMemo } from "react";
 
 import cls from "./index.module.scss";
 import { PersonBrowser } from "../PersonBrowser";
 import { VillageBrowser } from "../VillageBrowser";
-import { useDashboardState } from "@/contexts/DashboardContext";
+import { useDashboardDispatch, useDashboardState } from "@/contexts/DashboardContext";
 
 
 
 const tabClassName = `mx-4 h-full ${cls["constrained-tabs"]}`;
 
-const items: TabsProps["items"] = [
-    {
-        key: "People",
-        label: "People",
-        children: <PersonBrowser/>
-    },
-    {
-        key: "Villages",
-        label: "Villages",
-        children: <VillageBrowser/>
-    }
-];
 
 
 
 export function RelationBrowser() {
-    const { selectedVillage } = useDashboardState();
-    const [activeKey, setActiveKey] = useState("People");
+    const { selectedRelation } = useDashboardState();
+    const { setSelectedRelation } = useDashboardDispatch();
+
+    const activeKey = useMemo(() => selectedRelation?.type ?? "person", [selectedRelation?.type]);
+    const setActiveKey = useCallback((key: string) => {
+        setSelectedRelation({ type: key as "person" | "village" });
+    }, [setSelectedRelation]);
+
     
-    useEffect(() => {
-        if(selectedVillage) {
-            setActiveKey("Villages");
+    const items = useMemo<TabsProps["items"]>(() => [
+        {
+            key: "person",
+            label: "People",
+            children: <PersonBrowser selectedPersonId={selectedRelation?.type === "person" ? selectedRelation.personId : undefined}/>
+        },
+        {
+            key: "village",
+            label: "Villages",
+            children: <VillageBrowser selectedVillageId={selectedRelation?.type === "village" ? selectedRelation.villageId : undefined}/>
         }
-    }, [selectedVillage]);
+    ], [selectedRelation]);
 
     return <Tabs
         items={items}

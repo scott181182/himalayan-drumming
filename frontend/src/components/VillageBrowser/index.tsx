@@ -3,7 +3,7 @@
 import { LeftOutlined } from "@ant-design/icons";
 import { Button, Space, Table } from "antd";
 import type { ColumnsType } from "antd/es/table";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo } from "react";
 
 import { VillageDetails } from "./VillageDetails";
 import { AddVillageButton } from "../AddVillageButton";
@@ -20,11 +20,14 @@ const columns: ColumnsType<VillageInContextFragment> = [
 ];
 
 
-
-export function VillageBrowser() {
-    const { villages, selectedVillage } = useDashboardState();
-    const { refetchVillage } = useDashboardDispatch();
-    const [ selectedVillageId, setSelectedVillageId ] = useState<string | undefined>();
+export interface VillageBrowserProps {
+    selectedVillageId?: string;
+}
+export function VillageBrowser({
+    selectedVillageId
+}: VillageBrowserProps) {
+    const { villages } = useDashboardState();
+    const { refetchVillage, setSelectedRelation } = useDashboardDispatch();
 
     const currentVillage = useMemo(() => {
         if(!selectedVillageId) { return undefined; }
@@ -37,18 +40,10 @@ export function VillageBrowser() {
     }, [refetchVillage, selectedVillageId]);
 
 
-    
-    useEffect(() => {
-        if(selectedVillage) {
-            setSelectedVillageId(selectedVillage.id);
-        }
-    }, [selectedVillage]);
-
-
 
     return currentVillage ?
         <Space direction="vertical" className="w-full h-full overflow-y-auto">
-            <Button onClick={() => setSelectedVillageId(undefined)}>
+            <Button onClick={() => setSelectedRelation({ type: "village" })}>
                 <LeftOutlined/>
             </Button>
             <VillageDetails village={currentVillage} onUpdate={onVillageUpdate}/>
@@ -64,7 +59,7 @@ export function VillageBrowser() {
 
                 rowClassName={(p) => currentVillage === p.id ? "selected cursor-pointer" : " cursor-pointer"}
                 onRow={(p) => ({
-                    onClick: () => setSelectedVillageId(p.id)
+                    onClick: () => setSelectedRelation({ type: "village", villageId: p.id })
                 })}
             />
             <AddVillageButton/>

@@ -12,15 +12,30 @@ import { FileTree } from "@/utils/tree";
 
 
 
+export interface RefetchOptions {
+    personIds?: string[];
+    villageIds?: string[];
+    fileIds?: string[];
+}
+export interface VillageBrowserSelection {
+    type: "village";
+    villageId?: string;
+}
+export interface PersonBrowserSelection {
+    type: "person";
+    personId?: string;
+}
+export type RelationBrowserSelection = VillageBrowserSelection | PersonBrowserSelection;
+
 export interface DashboardContextValue {
     fileTree: FileTree;
     filePredicate?: (file: FileEntryBasicFragment) => boolean;
     selectedFiles: FileEntryBasicFragment[];
     selectedLocation?: LocationCompleteFragment;
-    selectedVillage?: VillageInContextFragment;
 
     people: PersonInContextFragment[];
     villages: VillageInContextFragment[];
+    selectedRelation?: RelationBrowserSelection;
 }
 export type DashboardDispatchAction = {
     type: "setSelectedFiles",
@@ -28,6 +43,9 @@ export type DashboardDispatchAction = {
 } | {
     type: "setSelectedFilesById",
     payload: string[]
+} | {
+    type: "setSelectedRelation",
+    payload: RelationBrowserSelection | undefined
 } | {
     type: "setVirtualLocation",
     payload: Pick<LocationCompleteFragment, "latitude" | "longitude">
@@ -57,15 +75,10 @@ export type DashboardDispatchAction = {
     payload?: (file: FileEntryBasicFragment) => boolean
 }
 
-export interface RefetchOptions {
-    personIds?: string[];
-    villageIds?: string[];
-    fileIds?: string[];
-}
-
 export type DashboardDispatchFunctions = {
     setSelectedFiles: (files: FileEntryBasicFragment[]) => void;
     setSelectedFilesById: (fileIds: string[]) => void;
+    setSelectedRelation: (selection: RelationBrowserSelection | undefined) => void;
     setVirtualLocation: (location: Pick<LocationCompleteFragment, "latitude" | "longitude">) => void;
     setFileTree: (fileTree: FileTree) => void;
     selectLocation: (location: LocationCompleteFragment) => void;
@@ -95,6 +108,11 @@ export const dashboardReducer: Reducer<DashboardContextValue, DashboardDispatchA
                 ...state,
                 selectedFiles: action.payload.map((id) => state.fileTree.getFileById(id))
             };
+        case "setSelectedRelation":
+            return {
+                ...state,
+                selectedRelation: action.payload
+            };
         case "setVirtualLocation":
             return {
                 ...state,
@@ -102,15 +120,18 @@ export const dashboardReducer: Reducer<DashboardContextValue, DashboardDispatchA
                     ...action.payload,
                     id: ""
                 },
-                selectedVillage: undefined,
             };
-        case "selectLocation":
+        case "selectLocation": {
+            const village = state.villages.find((v) => v.location.id === action.payload.id);
             return {
                 ...state,
                 selectedLocation: action.payload,
                 selectedFiles: state.fileTree.getFilesAtLocation(action.payload.id),
-                selectedVillage: state.villages.find((v) => v.location.id === action.payload.id)
+                selectedRelation: village ?
+                    { type: "village", villageId: village.id } :
+                    state.selectedRelation
             };
+        }
         case "setFileTree":
             return {
                 ...state,
@@ -211,6 +232,8 @@ export function DashboardProvider({
             dispatch({ type: "setSelectedFiles", payload: files }),
         setSelectedFilesById: (fileIds: string[]) =>
             dispatch({ type: "setSelectedFilesById", payload: fileIds }),
+        setSelectedRelation: (selection: RelationBrowserSelection | undefined) =>
+            dispatch({ type: "setSelectedRelation", payload: selection }),
         setVirtualLocation: (location: Pick<LocationCompleteFragment, "latitude" | "longitude">) =>
             dispatch({ type: "setVirtualLocation", payload: location }),
         setFileTree: (fileTree: FileTree) =>
