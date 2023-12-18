@@ -33,3 +33,7 @@ mutation UpdateVillage($villageId: ID!, $data: VillageUpdateInput!) {
         ...VillageInContext
     }
 }
+
+mutation RemovePersonFromVillage($villageId: ID!, $personId: ID!) {
+    removePersonFromVillage(villageId: $villageId, personId: $personId)
+}

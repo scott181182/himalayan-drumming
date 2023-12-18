@@ -23,23 +23,19 @@ export function AddPersonToVillageButton({
     village,
     onSubmit
 }: AddPersonToVillageButtonProps) {
-    const { updateVillage } = useDashboardDispatch();
+    const { refetchResources } = useDashboardDispatch();
     const { message } = App.useApp();
     const [form] = Form.useForm<AddPersonToVillageFormValues>();
     const [open, setOpen] = useState(false);
     
-    const [updateVillageMutation] = useMutation(UpdateVillageDocument, {
-        onCompleted(data) {
-            updateVillage(data.updateVillage);
-        },
-    });
+    const [updateVillageMutation] = useMutation(UpdateVillageDocument);
 
     const openModal = useCallback(() => setOpen(true), [setOpen]);
     const closeModal = useCallback(() => setOpen(false), [setOpen]);
     
     const addPerson = useCallback(() => {
         const data = form.getFieldsValue();
-        console.log(data);
+        
         updateVillageMutation({
             variables: {
                 villageId: village.id,
@@ -53,6 +49,10 @@ export function AddPersonToVillageButton({
                 }
             }
         })
+            .then(() => refetchResources({
+                villageIds: [ village.id ],
+                personIds: [ data.person.id ]
+            }))
             .then(() => {
                 message.success(`Added ${data.person.name} to village!`);
                 onSubmit?.();
@@ -62,7 +62,7 @@ export function AddPersonToVillageButton({
                 console.error(err);
             })
             .then(() => setOpen(false));
-    }, [form, message, onSubmit, updateVillageMutation, village.id]);
+    }, [form, message, onSubmit, refetchResources, updateVillageMutation, village.id]);
 
     return <>
         <Button onClick={openModal}>

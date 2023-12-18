@@ -1,16 +1,10 @@
 /* eslint-disable @next/next/no-img-element */
-import { EditOutlined, FileImageOutlined } from "@ant-design/icons";
-import { useMutation } from "@apollo/client";
-import { App, Button, DatePicker, Descriptions, Select, Space, Upload } from "antd";
-import dayjs from "dayjs";
-import { useCallback, useMemo } from "react";
+import { Descriptions, Space } from "antd";
+import { useMemo } from "react";
 
-import { useDashboardState } from "../../contexts/DashboardContext";
 import { EditableGraphQLInput } from "../EditableGraphQLInput";
 import { PersonInVillageTable } from "../PersonInVillageTable";
-import { useEnums } from "@/contexts/EnumContext";
 import { UpdateVillageDocument, type VillageInContextFragment } from "@/generated/graphql";
-import { usePromiseMessage } from "@/utils/antd";
 import { formatLatLng } from "@/utils/location";
 
 
@@ -52,7 +46,7 @@ export function VillageDetails({
     return <Space direction="vertical" className="overflow-y-auto">
         <Descriptions title={village.name} column={1}>
             {villageItems}
-            {/* TODO: person selector */}
+            {/* TODO: file selector */}
             {/* <Descriptions.Item label="Associated Files">
                 <FileSelector village={village}/>
             </Descriptions.Item> */}

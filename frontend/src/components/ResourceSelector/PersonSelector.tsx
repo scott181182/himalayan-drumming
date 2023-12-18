@@ -56,6 +56,7 @@ export function PersonSelector({
 
         filterOption={false}
         loading={loading}
+        showSearch
         onSearch={onSearch}
     />;
 }

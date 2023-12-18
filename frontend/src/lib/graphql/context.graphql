@@ -47,6 +47,28 @@ query GetFullContext {
     villages { ...VillageInContext }
 }
 
+query GetPartialContext(
+    $fileIds: [ID!]!,
+    $personIds: [ID!]!,
+    $villageIds: [ID!]!,
+) {
+    fileEntries(where: {
+        id: { in: $fileIds }
+    }) {
+        ...FileEntryBasic
+    }
+    people(where: {
+        id: { in: $personIds }
+    }) {
+        ...PersonInContext
+    }
+    villages(where: {
+        id: { in: $villageIds }
+    }) {
+        ...VillageInContext
+    }
+}
+
 query GetAllTags {
     tags
 }

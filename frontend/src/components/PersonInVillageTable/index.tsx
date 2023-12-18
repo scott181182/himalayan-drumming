@@ -1,18 +1,14 @@
-import { PlusOutlined } from "@ant-design/icons";
+import { DeleteOutlined } from "@ant-design/icons";
+import { useMutation } from "@apollo/client";
 import type { TableColumnsType } from "antd";
 import { Button, Table } from "antd";
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 
 import { AddPersonToVillageButton } from "./AddPersonToVillageButton";
-import type { PersonInContextFragment, PersonInVillageInContextFragment, VillageInContextFragment } from "@/generated/graphql";
+import { useDashboardDispatch } from "@/contexts/DashboardContext";
+import { RemovePersonFromVillageDocument, type PersonInContextFragment, type PersonInVillageInContextFragment, type VillageInContextFragment } from "@/generated/graphql";
 
 
-
-export type VillageOrPerson = "Village" | "Person";
-function getTo(from: VillageOrPerson): VillageOrPerson {
-    if(from === "Village") { return "Person"; }
-    return "Village";
-}
 
 export interface PersonInVillageTableProps {
     peopleInVillage: PersonInVillageInContextFragment[]
@@ -26,7 +22,21 @@ export function PersonInVillageTable({
     person,
     village
 }: PersonInVillageTableProps) {
-    // const to = useMemo(() => from && getTo(from), [from]);
+    const { refetchResources } = useDashboardDispatch();
+
+    const [removeMutation] = useMutation(RemovePersonFromVillageDocument);
+
+    const removeRelation = useCallback((rec: PersonInVillageInContextFragment) => {
+        removeMutation({
+            variables: {
+                villageId: rec.village.id,
+                personId: rec.person.id
+            }
+        }).then(() => refetchResources({
+            villageIds: [ rec.village.id ],
+            personIds: [ rec.person.id ]
+        }));
+    }, [refetchResources, removeMutation]);
 
     const columns = useMemo(() => {
         const cols: TableColumnsType<PersonInVillageInContextFragment> = [];
@@ -49,9 +59,16 @@ export function PersonInVillageTable({
             dataIndex: "description",
             render: (_, rec) => rec.description
         });
+        cols.push({
+            key: "remove",
+            render: (_, rec) => <Button
+                icon={<DeleteOutlined/>}
+                onClick={() => removeRelation(rec)}
+            />
+        });
 
         return cols;
-    }, []);
+    }, [person, removeRelation, village]);
 
     const footer = useMemo(() => {
         if(person && village) { return; }

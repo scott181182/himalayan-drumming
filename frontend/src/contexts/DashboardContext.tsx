@@ -7,7 +7,7 @@ import { createContext, useContext, useMemo, useReducer } from "react";
 
 import { AsyncData } from "@/components/AsyncData";
 import type { FileEntryBasicFragment, LocationCompleteFragment, VillageInContextFragment, PersonInContextFragment } from "@/generated/graphql";
-import { GetFullContextDocument, GetPersonDocument, GetVillageDocument} from "@/generated/graphql";
+import { GetFullContextDocument, GetPartialContextDocument, GetPersonDocument, GetVillageDocument} from "@/generated/graphql";
 import { FileTree } from "@/utils/tree";
 
 
@@ -57,6 +57,12 @@ export type DashboardDispatchAction = {
     payload?: (file: FileEntryBasicFragment) => boolean
 }
 
+export interface RefetchOptions {
+    personIds?: string[];
+    villageIds?: string[];
+    fileIds?: string[];
+}
+
 export type DashboardDispatchFunctions = {
     setSelectedFiles: (files: FileEntryBasicFragment[]) => void;
     setSelectedFilesById: (fileIds: string[]) => void;
@@ -69,6 +75,7 @@ export type DashboardDispatchFunctions = {
     filterFiles: (filterFn?: (file: FileEntryBasicFragment) => boolean) => void;
 
     // Async Operators
+    refetchResources: (options: RefetchOptions) => Promise<void>;
     refetchPerson: (personId: string) => Promise<void>;
     refetchVillage: (villageId: string) => Promise<void>;
     refetchDashboard: () => void;
@@ -219,6 +226,42 @@ export function DashboardProvider({
         filterFiles: (filterFn?: (file: FileEntryBasicFragment) => boolean) =>
             dispatch({ type: "filterFiles", payload: filterFn }),
 
+        refetchResources: (options) => {
+            return apolloClient.query({
+                query: GetPartialContextDocument,
+                variables: {
+                    fileIds: [],
+                    villageIds: [],
+                    personIds: [],
+                    ...options
+                }
+            }).then((res) => {
+                if(options.fileIds) {
+                    for(const file of res.data.fileEntries) {
+                        dispatch({
+                            type: "updateFile",
+                            payload: file
+                        });
+                    }
+                }
+                if(options.villageIds) {
+                    for(const village of res.data.villages) {
+                        dispatch({
+                            type: "updateVillage",
+                            payload: village
+                        });
+                    }
+                }
+                if(options.personIds) {
+                    for(const person of res.data.people) {
+                        dispatch({
+                            type: "updatePerson",
+                            payload: person
+                        });
+                    }
+                }
+            });
+        },
         refetchPerson: (personId) => {
             return apolloClient.query({
                 query: GetPersonDocument,
