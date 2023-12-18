@@ -39,7 +39,7 @@ export function Map() {
 
     const locations = useMemo(() => (
         fileTree.getNodes()
-            .map((node) => node.metadata?.location)
+            .map((node) => node.location)
             .filter(isDefined)
             // Deduplicate on Location ID
             .filter((loc, idx, arr) => arr.findIndex((l) => l.id === loc.id) === idx)

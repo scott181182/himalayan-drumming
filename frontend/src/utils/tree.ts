@@ -1,6 +1,6 @@
 import type { TreeDataNode } from "antd";
 
-import type { FileEntryBasicFragment, LocationCompleteFragment} from "@/generated/graphql";
+import type { FileEntryInContextFragment, LocationCompleteFragment} from "@/generated/graphql";
 
 
 
@@ -109,24 +109,24 @@ export class ImmutableTree<T extends IdObject> {
     }
 }
 
-export class FileTree extends ImmutableTree<FileEntryBasicFragment> {
+export class FileTree extends ImmutableTree<FileEntryInContextFragment> {
     protected constructor(
-        root: FileEntryBasicFragment,
-        nodeMap: Record<string, FileEntryBasicFragment>,
+        root: FileEntryInContextFragment,
+        nodeMap: Record<string, FileEntryInContextFragment>,
         parentMap: Record<string, string[]>,
         protected readonly locations: LocationCompleteFragment[],
         /** Map from locationId to FileEntry */
-        protected readonly locationMap: Record<string, FileEntryBasicFragment[]>,
+        protected readonly locationMap: Record<string, FileEntryInContextFragment[]>,
     ) {
         super(root, nodeMap, parentMap);
     }
 
-    public static fromEntries(entries: FileEntryBasicFragment[]): FileTree {
+    public static fromEntries(entries: FileEntryInContextFragment[]): FileTree {
         let rootIndex = -1;
-        const nodeMap: Record<string, FileEntryBasicFragment> = {};
+        const nodeMap: Record<string, FileEntryInContextFragment> = {};
         const parentMap: Record<string, string[]> = {};
         const locations: LocationCompleteFragment[] = [];
-        const locationMap: Record<string, FileEntryBasicFragment[]> = {};
+        const locationMap: Record<string, FileEntryInContextFragment[]> = {};
 
         for(let i = 0; i < entries.length; i++) {
             const entry = entries[i];
@@ -145,7 +145,7 @@ export class FileTree extends ImmutableTree<FileEntryBasicFragment> {
                 parentMap[entry.parentId].push(entry.id);
             }
 
-            const loc = entry.metadata?.location;
+            const loc = entry.location;
             if(!loc) { continue; }
 
             if(!(loc.id in locationMap)) {
@@ -171,7 +171,7 @@ export class FileTree extends ImmutableTree<FileEntryBasicFragment> {
 
 
 
-    public updateNode(file: FileEntryBasicFragment): FileTree {
+    public updateNode(file: FileEntryInContextFragment): FileTree {
         const oldFile = this.nodeMap[file.id];
 
         const locations = [ ...this.locations ];
@@ -201,18 +201,18 @@ export class FileTree extends ImmutableTree<FileEntryBasicFragment> {
         };
 
         // Check if locations need to be updated.
-        if(file.metadata?.location && !oldFile.metadata?.location) {
+        if(file.location && !oldFile.location) {
             // Location is first assigned.
-            addFileToLocation(file.metadata.location);
-        } else if(file.metadata?.location && oldFile.metadata?.location) {
+            addFileToLocation(file.location);
+        } else if(file.location && oldFile.location) {
             // Files present in both. Check if it changed.
-            if(file.metadata.location.id !== oldFile.metadata.location.id) {
-                removeFileFromLocation(oldFile.metadata.location.id);
-                addFileToLocation(file.metadata.location);
+            if(file.location.id !== oldFile.location.id) {
+                removeFileFromLocation(oldFile.location.id);
+                addFileToLocation(file.location);
             }
-        } else if(!file.metadata?.location && oldFile.metadata?.location) {
+        } else if(!file.location && oldFile.location) {
             // Location removed
-            removeFileFromLocation(oldFile.metadata.location.id);
+            removeFileFromLocation(oldFile.location.id);
         }
 
         return new FileTree(

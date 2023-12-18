@@ -1,11 +1,11 @@
 import { App } from "antd";
 
 import { MediaPlayerRow } from "../MediaPlayerRow";
-import type { FileEntryBasicFragment } from "@/generated/graphql";
+import type { FileEntryInContextFragment } from "@/generated/graphql";
 
 
 
-export type FilePreviewFn = (file: FileEntryBasicFragment) => void;
+export type FilePreviewFn = (file: FileEntryInContextFragment) => void;
 
 export function useFilePreview(): FilePreviewFn {
     const { modal, message } = App.useApp();
@@ -36,7 +36,7 @@ const imageExts = new Set([
 ]);
 const videoExts = new Set([ "mov", "mp4" ]);
 
-function getFilePreviewContent(file: FileEntryBasicFragment) {
+function getFilePreviewContent(file: FileEntryInContextFragment) {
     const ext = file.name.substring(file.name.lastIndexOf(".") + 1);
 
     if(imageExts.has(ext)) { return imageFilePreview(file.url); }

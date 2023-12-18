@@ -14,15 +14,15 @@ import { useAddReferenceModal, useCreateFolderModal, useUploadFileModal } from "
 import { TagSelector } from "./TagSelector";
 import { MultiCase } from "../MultiCase";
 import { useDashboardDispatch, useDashboardState } from "@/contexts/DashboardContext";
-import type { FileEntryBasicFragment} from "@/generated/graphql";
-import { AssignFileMetadataDocument } from "@/generated/graphql";
+import type { FileEntryInContextFragment } from "@/generated/graphql";
+import { UpdateFileDocument } from "@/generated/graphql";
 import { usePromiseMessage } from "@/utils/antd";
 import { isDefined } from "@/utils/array";
 import type { AntDTreeNode } from "@/utils/tree";
 
 
 
-const fileBrowserColumns: ColumnsType<AntDTreeNode<FileEntryBasicFragment>> = [
+const fileBrowserColumns: ColumnsType<AntDTreeNode<FileEntryInContextFragment>> = [
     {
         title: <h3 className="ml-4 text-lg font-bold">Files</h3>,
         dataIndex: "title",
@@ -30,7 +30,7 @@ const fileBrowserColumns: ColumnsType<AntDTreeNode<FileEntryBasicFragment>> = [
     {
         key: "icons",
         render: (_, record) => <Space>
-            {record.data.metadata?.location && <CompassOutlined/>}
+            {record.data.location && <CompassOutlined/>}
         </Space>
     }
 ];
@@ -62,7 +62,7 @@ export function FileBrowser() {
         if(!selectedFile || !selectedLocation) { return; }
 
         apolloClient.mutate({
-            mutation: AssignFileMetadataDocument,
+            mutation: UpdateFileDocument,
             variables: {
                 fileId: selectedFile.id,
                 data: {
@@ -78,7 +78,7 @@ export function FileBrowser() {
             }
         })
             .then((res) => {
-                if(res.data?.updateMetadata) { updateFile(res.data.updateMetadata); }
+                if(res.data?.updateFile) { updateFile(res.data.updateFile); }
             })
             .then(...promiseMsg(
                 "Successfully assigned location to file!",
@@ -87,7 +87,7 @@ export function FileBrowser() {
     }, [apolloClient, promiseMsg, selectedFiles, selectedLocation, updateFile]);
 
 
-    const files = useMemo<AntDTreeNode<FileEntryBasicFragment>[]>(
+    const files = useMemo<AntDTreeNode<FileEntryInContextFragment>[]>(
         () => fileTree.toAntdTree({
             titleFn: (t) => t.name,
             isLeafFn: (t) => t.type !== "directory",
@@ -113,7 +113,7 @@ export function FileBrowser() {
         }
     }, [filterFiles]);
 
-    const onRowClick = useCallback((row: AntDTreeNode<FileEntryBasicFragment>) => {
+    const onRowClick = useCallback((row: AntDTreeNode<FileEntryInContextFragment>) => {
         return (ev: MouseEvent) => {
             if(ev.ctrlKey) {
                 // Individual multi-select

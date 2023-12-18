@@ -9,7 +9,7 @@ import { useCallback, useMemo } from "react";
 
 import cls from "./FileSelector.module.scss";
 import { useDashboardDispatch } from "@/contexts/DashboardContext";
-import type { FileEntryBasicFragment} from "@/generated/graphql";
+import type { FileEntryInContextFragment } from "@/generated/graphql";
 import { AssociateFilesDocument, DisassociateFilesDocument, GetFileEntriesDocument } from "@/generated/graphql";
 import { usePromiseMessage } from "@/utils/antd";
 import { uniqByFilter } from "@/utils/array";
@@ -45,7 +45,7 @@ function makeCustomFileTag(setSelectedFilesById: (fileIds: string[]) => void) {
 
 
 export interface FileSelectorProps {
-    file: FileEntryBasicFragment;
+    file: FileEntryInContextFragment;
 }
 
 export function FileSelector({

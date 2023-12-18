@@ -7,14 +7,14 @@ import { useCallback, useRef, useState } from "react";
 
 import { useDashboardDispatch } from "@/contexts/DashboardContext";
 import { useEnums } from "@/contexts/EnumContext";
-import type { FileEntryBasicFragment} from "@/generated/graphql";
+import type { FileEntryInContextFragment } from "@/generated/graphql";
 import { GetAllTagsDocument, GetFullContextDocument, TagFileDocument, UntagFileDocument } from "@/generated/graphql";
 import { usePromiseMessage } from "@/utils/antd";
 
 
 
 export interface TagSelectorProps {
-    file: FileEntryBasicFragment;
+    file: FileEntryInContextFragment;
 }
 
 export function TagSelector({

@@ -4,10 +4,10 @@ import { App, Button, DatePicker, Descriptions, Select, Space, Upload } from "an
 import dayjs from "dayjs";
 import { useCallback } from "react";
 
-import { FileSelector } from "./FileSelector";
 import cls from "./PersonDetail.module.scss";
 import { EditableGraphQLInput } from "../EditableGraphQLInput";
 import { PersonInVillageTable } from "../PersonInVillageTable";
+import { PersonOnFileTable } from "../PersonOnFileTable";
 import { useEnums } from "@/contexts/EnumContext";
 import { UpdatePersonDocument, type PersonInContextFragment } from "@/generated/graphql";
 
@@ -53,7 +53,7 @@ export function PersonDetails({
 
 
     
-    return <Space direction="vertical" className="overflow-y-auto">
+    return <Space direction="vertical" className="overflow-y-auto max-w-full">
         <div className={cls["person-picture-container"]}>
             <img src={person.avatarUrl ?? "/empty_person.webp"} alt={person.name + " profile picture"}/>
             <Button
@@ -127,12 +127,16 @@ export function PersonDetails({
                     afterUpdate={onUpdate}
                 />    
             </Descriptions.Item>
-            <Descriptions.Item label="Associated Files">
+            {/* <Descriptions.Item label="Associated Files">
                 <FileSelector person={person}/>
-            </Descriptions.Item>
+            </Descriptions.Item> */}
         </Descriptions>
         <PersonInVillageTable
             peopleInVillage={person.villages}
+            person={person}
+        />
+        <PersonOnFileTable
+            personOnFile={person.files}
             person={person}
         />
     </Space>;

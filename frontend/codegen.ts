@@ -16,7 +16,8 @@ const config: CodegenConfig = {
             config: {
                 strictScalars: true,
                 scalars: {
-                    Date: "string"
+                    Date: "string",
+                    DateTime: "string"
                 }
             }
         }

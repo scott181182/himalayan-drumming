@@ -4,42 +4,42 @@ import type { TableColumnsType } from "antd";
 import { Button, Table } from "antd";
 import { useCallback, useMemo } from "react";
 
-import { AddPersonToVillageButton } from "./AddPersonToVillageButton";
 import { useDashboardDispatch } from "@/contexts/DashboardContext";
-import { RemovePersonFromVillageDocument, type PersonInContextFragment, type PersonInVillageInContextFragment, type VillageInContextFragment } from "@/generated/graphql";
+import type { PersonInContextFragment, PersonOnFileInContextFragment, FileEntryInContextFragment } from "@/generated/graphql";
+import { RemovePersonFromFileDocument } from "@/generated/graphql";
 
 
 
-export interface PersonInVillageTableProps {
-    peopleInVillage: PersonInVillageInContextFragment[]
+export interface PersonOnFileTableProps {
+    personOnFile: PersonOnFileInContextFragment[]
 
     person?: PersonInContextFragment;
-    village?: VillageInContextFragment;
+    file?: FileEntryInContextFragment;
 }
 
-export function PersonInVillageTable({
-    peopleInVillage,
+export function PersonOnFileTable({
+    personOnFile,
     person,
-    village
-}: PersonInVillageTableProps) {
-    const { refetchResources, setSelectedRelation } = useDashboardDispatch();
+    file
+}: PersonOnFileTableProps) {
+    const { refetchResources, setSelectedRelation, setSelectedFilesById } = useDashboardDispatch();
 
-    const [removeMutation] = useMutation(RemovePersonFromVillageDocument);
+    const [removeMutation] = useMutation(RemovePersonFromFileDocument);
 
-    const removeRelation = useCallback((rec: PersonInVillageInContextFragment) => {
+    const removeRelation = useCallback((rec: PersonOnFileInContextFragment) => {
         removeMutation({
             variables: {
-                villageId: rec.village.id,
+                fileId: rec.file.id,
                 personId: rec.person.id
             }
         }).then(() => refetchResources({
-            villageIds: [ rec.village.id ],
+            fileIds: [ rec.file.id ],
             personIds: [ rec.person.id ]
         }));
     }, [refetchResources, removeMutation]);
 
     const columns = useMemo(() => {
-        const cols: TableColumnsType<PersonInVillageInContextFragment> = [];
+        const cols: TableColumnsType<PersonOnFileInContextFragment> = [];
         if(!person) {
             cols.push({
                 title: "Person",
@@ -53,23 +53,28 @@ export function PersonInVillageTable({
                 </Button>
             });
         }
-        if(!village) {
+        if(!file) {
             cols.push({
-                title: "Village",
-                dataIndex: "village",
+                title: "File",
+                dataIndex: "file",
                 render: (_, rec) => <Button
                     type="link"
                     size="small"
-                    onClick={() => setSelectedRelation({ type: "village", villageId: rec.village.id })}
+                    onClick={() => setSelectedFilesById([ rec.file.id ])}
                 >
-                    {rec.village.name}
+                    {rec.file.name}
                 </Button>
             });
         }
         cols.push({
-            title: "Relation",
-            dataIndex: "description",
-            render: (_, rec) => rec.description
+            title: "Instrument",
+            dataIndex: "instrument",
+            render: (_, rec) => rec.instrument
+        });
+        cols.push({
+            title: "Notes",
+            dataIndex: "notes",
+            render: (_, rec) => rec.notes
         });
         cols.push({
             key: "remove",
@@ -80,22 +85,23 @@ export function PersonInVillageTable({
         });
 
         return cols;
-    }, [person, removeRelation, setSelectedRelation, village]);
+    }, [person, file, setSelectedRelation, setSelectedFilesById, removeRelation]);
 
-    const footer = useMemo(() => {
-        if(person && village) { return; }
+    const footer = useMemo<JSX.Element | undefined>(() => {
+        if(person && file) { return undefined; }
         if(person) {
             // return;
         }
-        if(village) {
-            return <AddPersonToVillageButton village={village}/>;
+        if(file) {
+            // return <AddPersonToVillageButton file={file}/>;
         }
-    }, [person, village]);
+    }, [person, file]);
 
     return <Table
-        dataSource={peopleInVillage}
+        dataSource={personOnFile}
         columns={columns}
         size="small"
+        className="overflow-x-auto"
 
         footer={() => footer}
         pagination={false}

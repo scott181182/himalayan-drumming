@@ -6,7 +6,7 @@ import type { Reducer} from "react";
 import { createContext, useContext, useMemo, useReducer } from "react";
 
 import { AsyncData } from "@/components/AsyncData";
-import type { FileEntryBasicFragment, LocationCompleteFragment, VillageInContextFragment, PersonInContextFragment } from "@/generated/graphql";
+import type { FileEntryInContextFragment, LocationCompleteFragment, VillageInContextFragment, PersonInContextFragment } from "@/generated/graphql";
 import { GetFullContextDocument, GetPartialContextDocument, GetPersonDocument, GetVillageDocument} from "@/generated/graphql";
 import { FileTree } from "@/utils/tree";
 
@@ -29,8 +29,8 @@ export type RelationBrowserSelection = VillageBrowserSelection | PersonBrowserSe
 
 export interface DashboardContextValue {
     fileTree: FileTree;
-    filePredicate?: (file: FileEntryBasicFragment) => boolean;
-    selectedFiles: FileEntryBasicFragment[];
+    filePredicate?: (file: FileEntryInContextFragment) => boolean;
+    selectedFiles: FileEntryInContextFragment[];
     selectedLocation?: LocationCompleteFragment;
 
     people: PersonInContextFragment[];
@@ -39,7 +39,7 @@ export interface DashboardContextValue {
 }
 export type DashboardDispatchAction = {
     type: "setSelectedFiles",
-    payload: FileEntryBasicFragment[]
+    payload: FileEntryInContextFragment[]
 } | {
     type: "setSelectedFilesById",
     payload: string[]
@@ -69,14 +69,14 @@ export type DashboardDispatchAction = {
     payload: PersonInContextFragment
 } | {
     type: "updateFile",
-    payload: FileEntryBasicFragment
+    payload: FileEntryInContextFragment
 } | {
     type: "filterFiles",
-    payload?: (file: FileEntryBasicFragment) => boolean
+    payload?: (file: FileEntryInContextFragment) => boolean
 }
 
 export type DashboardDispatchFunctions = {
-    setSelectedFiles: (files: FileEntryBasicFragment[]) => void;
+    setSelectedFiles: (files: FileEntryInContextFragment[]) => void;
     setSelectedFilesById: (fileIds: string[]) => void;
     setSelectedRelation: (selection: RelationBrowserSelection | undefined) => void;
     setVirtualLocation: (location: Pick<LocationCompleteFragment, "latitude" | "longitude">) => void;
@@ -84,8 +84,8 @@ export type DashboardDispatchFunctions = {
     selectLocation: (location: LocationCompleteFragment) => void;
     updatePerson: (person: PersonInContextFragment) => void;
     updateVillage: (village: VillageInContextFragment) => void;
-    updateFile: (file: FileEntryBasicFragment) => void;
-    filterFiles: (filterFn?: (file: FileEntryBasicFragment) => boolean) => void;
+    updateFile: (file: FileEntryInContextFragment) => void;
+    filterFiles: (filterFn?: (file: FileEntryInContextFragment) => boolean) => void;
 
     // Async Operators
     refetchResources: (options: RefetchOptions) => Promise<void>;
@@ -228,7 +228,7 @@ export function DashboardProvider({
     });
 
     const functions: DashboardDispatchFunctions = useMemo(() => ({
-        setSelectedFiles: (files: FileEntryBasicFragment[]) =>
+        setSelectedFiles: (files: FileEntryInContextFragment[]) =>
             dispatch({ type: "setSelectedFiles", payload: files }),
         setSelectedFilesById: (fileIds: string[]) =>
             dispatch({ type: "setSelectedFilesById", payload: fileIds }),
@@ -244,9 +244,9 @@ export function DashboardProvider({
             dispatch({ type: "updatePerson", payload: person }),
         updateVillage: (village: VillageInContextFragment) =>
             dispatch({ type: "updateVillage", payload: village }),
-        updateFile: (file: FileEntryBasicFragment) =>
+        updateFile: (file: FileEntryInContextFragment) =>
             dispatch({ type: "updateFile", payload: file }),
-        filterFiles: (filterFn?: (file: FileEntryBasicFragment) => boolean) =>
+        filterFiles: (filterFn?: (file: FileEntryInContextFragment) => boolean) =>
             dispatch({ type: "filterFiles", payload: filterFn }),
 
         refetchResources: (options) => {

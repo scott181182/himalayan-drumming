@@ -1,12 +1,36 @@
-#import FileEntryBasic, LocationComplete from "./files.graphql"
-
+fragment LocationComplete on LatLng {
+    id
+    latitude
+    longitude
+}
 fragment PersonInVillageInContext on PersonInVillage {
     person { id name }
     village { id name }
 
     description
 }
+fragment PersonOnFileInContext on PersonOnFile {
+    notes
+    instrument
 
+    person { id name }
+    file { id name }
+}
+
+fragment FileEntryInContext on FileEntry {
+    id
+    name
+    url
+
+    type
+    parentId
+
+    location { ...LocationComplete }
+
+    associatedFiles { id name }
+    people { ...PersonOnFileInContext }
+    tags
+}
 fragment PersonInContext on Person {
     id
     name
@@ -19,9 +43,7 @@ fragment PersonInContext on Person {
     gender
     caste
 
-    files {
-        id name
-    }
+    files { ...PersonOnFileInContext }
     parent {
         id name
     }
@@ -42,7 +64,7 @@ fragment VillageInContext on Village {
 
 
 query GetFullContext {
-    fileEntries { ...FileEntryBasic }
+    fileEntries { ...FileEntryInContext }
     people { ...PersonInContext }
     villages { ...VillageInContext }
 }
@@ -55,7 +77,7 @@ query GetPartialContext(
     fileEntries(where: {
         id: { in: $fileIds }
     }) {
-        ...FileEntryBasic
+        ...FileEntryInContext
     }
     people(where: {
         id: { in: $personIds }

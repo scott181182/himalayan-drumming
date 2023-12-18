@@ -1,39 +1,11 @@
-fragment LocationComplete on LatLng {
-    id
-    latitude
-    longitude
-}
+#import FileEntryInContext from "./context.graphql"
 
-fragment MetadataBasic on FileMetadata {
-    location {
-        ...LocationComplete
-    }
-}
 
-fragment FileEntryBasic on FileEntry {
-    id
-    name
-    url
-
-    type
-    parentId
-
-    metadata {
-        ...MetadataBasic
-    }
-
-    associatedFiles {
-        id
-        name
-    }
-
-    tags
-}
 fragment FileEntryWithChildren on FileEntry {
-    ...FileEntryBasic
+    ...FileEntryInContext
 
     children {
-        ...FileEntryBasic
+        ...FileEntryInContext
     }
 }
 
@@ -52,12 +24,12 @@ query GetFileEntry($id: ID!) {
 
 query GetAllFileEntries {
     fileEntries {
-        ...FileEntryBasic
+        ...FileEntryInContext
     }
 }
 query GetFileEntries($where: FileEntryWhereInput, $skip: Int, $take: Int) {
     fileEntries(where: $where, skip: $skip, take: $take) {
-        ...FileEntryBasic
+        ...FileEntryInContext
     }
 }
 
@@ -65,7 +37,7 @@ query GetFileEntries($where: FileEntryWhereInput, $skip: Int, $take: Int) {
 
 mutation CreateFolder($parentId: ID!, $name: String!) {
     createDirectory(parentId: $parentId, name: $name) {
-        ...FileEntryBasic
+        ...FileEntryInContext
     }
 }
 mutation CreateFileReference($parentId: ID!, $name: String!, $url: String!) {
@@ -74,32 +46,32 @@ mutation CreateFileReference($parentId: ID!, $name: String!, $url: String!) {
         name: $name,
         url: $url
     }) {
-        ...FileEntryBasic
+        ...FileEntryInContext
     }
 }
-mutation AssignFileMetadata($fileId: ID!, $data: FileMetadataUpdateInput!) {
-    updateMetadata(fileId: $fileId, data: $data) {
-        ...FileEntryBasic
+mutation UpdateFile($fileId: ID!, $data: FileEntryUpdateInput!) {
+    updateFile(fileId: $fileId, data: $data) {
+        ...FileEntryInContext
     }
 }
 mutation TagFile($fileId: ID!, $tag: String!) {
     tagFile(fileId: $fileId, tag: $tag) {
-        ...FileEntryBasic
+        ...FileEntryInContext
     }
 }
 mutation UntagFile($fileId: ID!, $tag: String!) {
     untagFile(fileId: $fileId, tag: $tag) {
-        ...FileEntryBasic
+        ...FileEntryInContext
     }
 }
 mutation AssociateFiles($file1Id: ID!, $file2Id: ID!) {
     associateFiles(file1Id: $file1Id, file2Id: $file2Id) {
-        ...FileEntryBasic
+        ...FileEntryInContext
     }
 }
 mutation DisassociateFiles($file1Id: ID!, $file2Id: ID!) {
     disassociateFiles(file1Id: $file1Id, file2Id: $file2Id) {
-        ...FileEntryBasic
+        ...FileEntryInContext
     }
 }
 
