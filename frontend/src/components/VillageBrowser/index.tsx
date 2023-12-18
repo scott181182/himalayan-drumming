@@ -1,9 +1,9 @@
 "use client";
 
 import { LeftOutlined } from "@ant-design/icons";
-import { Button, Space, Table } from "antd";
+import { Button, Input, Space, Table } from "antd";
 import type { ColumnsType } from "antd/es/table";
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useState } from "react";
 
 import { VillageDetails } from "./VillageDetails";
 import { AddVillageButton } from "../AddVillageButton";
@@ -29,6 +29,8 @@ export function VillageBrowser({
     const { villages } = useDashboardState();
     const { refetchVillage, setSelectedRelation } = useDashboardDispatch();
 
+    const [filteredVillages, setFilteredVillages] = useState(villages);
+
     const currentVillage = useMemo(() => {
         if(!selectedVillageId) { return undefined; }
         return villages.find((v) => v.id === selectedVillageId);
@@ -49,9 +51,27 @@ export function VillageBrowser({
             <VillageDetails village={currentVillage} onUpdate={onVillageUpdate}/>
         </Space> :
         <Space direction="vertical" className="w-full h-full overflow-y-auto pb-4">
-            {/* TODO: add search bar */}
+            <Input.Search
+                placeholder="Search Villages"
+                allowClear
+                onSearch={(value) => {
+                    if(!value) {
+                        setFilteredVillages(villages);
+                    } else {
+                        const search = value.toLowerCase();
+                        setFilteredVillages(villages.filter((v) =>
+                            v.name.toLowerCase().includes(search) ||
+                            v.divinities?.toLowerCase()?.includes(search) ||
+                            v.rituals?.toLowerCase()?.includes(search) ||
+                            v.temples?.toLowerCase()?.includes(search) ||
+                            v.notes?.toLowerCase()?.includes(search) ||
+                            v.people.some((p) => p.person.name.toLowerCase().includes(search))
+                        ));
+                    }
+                }}
+            />
             <Table
-                dataSource={villages}
+                dataSource={filteredVillages}
                 rowKey="id"
                 columns={columns}
                 className="striped"
