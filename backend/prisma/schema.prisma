@@ -47,14 +47,19 @@ model FileEntry {
     type     String
     parentId String?
 
+    notes String?
+    timestamp DateTime?
+
+    locationId String?
+    location   LatLng? @relation(fields: [locationId], references: [id], onDelete: SetNull, onUpdate: Cascade)
+
     typeRef FileType   @relation(fields: [type], references: [name])
     parent  FileEntry? @relation("ParentChildren", fields: [parentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
     children FileEntry[] @relation("ParentChildren")
 
-    metadata FileMetadata?
     withTags TagOnFile[]
-    people   Person[]
+    people   PersonOnFile[]
 
     associatedFiles1 FileAssociations[] @relation("File1Associations")
     associatedFiles2 FileAssociations[] @relation("File2Associations")
@@ -70,14 +75,6 @@ model FileAssociations {
     file2   FileEntry @relation("File2Associations", fields: [file2Id], references: [id])
 
     @@id([file1Id, file2Id])
-}
-
-model FileMetadata {
-    fileId String    @id
-    file   FileEntry @relation(fields: [fileId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-
-    locationId String?
-    location   LatLng? @relation(fields: [locationId], references: [id], onDelete: SetNull, onUpdate: Cascade)
 }
 
 /// Manual Join table to avoid automatic cascades
@@ -102,7 +99,7 @@ model LatLng {
     latitude  Float
     longitude Float
 
-    metadata FileMetadata[]
+    metadata FileEntry[]
     villages Village[]
 }
 
@@ -129,7 +126,7 @@ model Person {
 
     children Person[]          @relation("ParentChild")
     villages PersonInVillage[]
-    files    FileEntry[]
+    files    PersonOnFile[]
 }
 
 model Village {
@@ -146,8 +143,9 @@ model Village {
     people PersonInVillage[]
 }
 
+/// JOIN table for associations between Villages and People.
 model PersonInVillage {
-    /// The person's relation to the village
+    /// The person's relation to the village.
     description String?
 
     person    Person  @relation(fields: [personId], references: [id])
@@ -156,4 +154,18 @@ model PersonInVillage {
     villageId String
 
     @@id([personId, villageId])
+}
+
+/// JOIN table for associations between Files and People.
+model PersonOnFile {
+    /// What instrument the person played in the recording, if applicable.
+    instrument String?
+    notes String?
+    
+    personId  String
+    person    Person  @relation(fields: [personId], references: [id])
+    fileId String
+    file   FileEntry @relation(fields: [fileId], references: [id])
+    
+    @@id([personId, fileId])
 }

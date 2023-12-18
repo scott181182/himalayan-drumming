@@ -4,7 +4,7 @@ import path from "node:path";
 import { extendType, idArg, inputObjectType, intArg, nonNull, objectType, stringArg } from "nexus";
 
 import { IdNullableFilterInput, StringNullableArrayFilterInput, StringNullableFilterInput } from "./filters";
-import { unnullifyObject } from "./utils";
+import { makeRelationCreateInput, unnullifyObject } from "./utils";
 import { executeFullScan } from "@/lib/scan";
 
 
@@ -29,14 +29,16 @@ export const FileEntry = objectType({
             }
         });
 
-        t.field("metadata", {
-            type: "FileMetadata",
+        t.id("locationId");
+        t.field("location", {
+            type: "LatLng",
             resolve(src, _args, ctx) {
-                return ctx.prisma.fileMetadata.findUnique({
-                    where: { fileId: src.id }
-                });
+                return src.locationId ? ctx.prisma.latLng.findUniqueOrThrow({
+                    where: { id: src.locationId }
+                }) : null;
             }
         });
+
         t.nonNull.list.nonNull.string("tags", {
             resolve(src, _args, ctx) {
                 return ctx.prisma.tagOnFile.findMany({
@@ -47,12 +49,11 @@ export const FileEntry = objectType({
             }
         });
         t.nonNull.list.nonNull.field("people", {
-            type: "Person",
+            type: "PersonOnFile",
             resolve(src, _args, ctx) {
-                return ctx.prisma.fileEntry.findUniqueOrThrow({
-                    where: { id: src.id },
-                    select: { people: true }
-                }).then((res) => res.people);
+                return ctx.prisma.personOnFile.findMany({
+                    where: { fileId: src.id },
+                });
             }
         });
 
@@ -231,6 +232,43 @@ export const FileEntryMutation = extendType({
         });
 
 
+    }
+});
+
+
+
+
+
+export const FileCreateLocationInput = makeRelationCreateInput("FileCreateLocationInput", "IdWhereUniqueInput", "LatLngCreateInput");
+
+export const FileEntryUpdateInput = inputObjectType({
+    name: "FileEntryUpdateInput",
+    definition(t) {
+        t.string("notes");
+        t.datetime("timestamp");
+
+        t.field("location", { type: FileCreateLocationInput });
+        
+        t.field("people", { type: "PersonOnFileFileRelationUpdateInput" });
+    }
+});
+
+export const FileEntryUpdateMutation = extendType({
+    type: "Mutation",
+    definition(t) {
+        t.field("updateFile", {
+            type: FileEntry,
+            args: {
+                fileId: nonNull(idArg()),
+                data: nonNull(FileEntryUpdateInput)
+            },
+            resolve(_, args, ctx) {
+                return ctx.prisma.fileEntry.update({
+                    where: { id: args.fileId },
+                    data: unnullifyObject(args.data),
+                });
+            }
+        });
 
         t.nonNull.field("tagFile", {
             type: FileEntry,

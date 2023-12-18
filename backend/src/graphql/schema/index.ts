@@ -1,16 +1,17 @@
-import { GraphQLDate } from "graphql-scalars";
+import { GraphQLDate, GraphQLDateTime } from "graphql-scalars";
 import { asNexusMethod, enumType, inputObjectType } from "nexus";
 
 export * from "./enums";
 export * from "./filters";
 
 export * from "./FileEntry";
-export * from "./FileMetadata";
 export * from "./LatLng";
 export * from "./Person";
-export * from "./PersonInVillage";
 export * from "./Tag";
 export * from "./Village";
+
+export * from "./PersonInVillage";
+export * from "./PersonOnFile";
 
 
 
@@ -27,3 +28,4 @@ export const OrderDirection = enumType({
 });
 
 export const Date = asNexusMethod(GraphQLDate, "date");
+export const DateTime = asNexusMethod(GraphQLDateTime, "datetime");

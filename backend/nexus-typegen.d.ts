@@ -12,6 +12,10 @@ declare global {
      * A date string, such as 2007-12-03, compliant with the `full-date` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
      */
     date<FieldName extends string>(fieldName: FieldName, opts?: core.CommonInputFieldConfig<TypeName, FieldName>): void // "Date";
+    /**
+     * A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `date-time` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
+     */
+    datetime<FieldName extends string>(fieldName: FieldName, opts?: core.CommonInputFieldConfig<TypeName, FieldName>): void // "DateTime";
   }
 }
 declare global {
@@ -20,6 +24,10 @@ declare global {
      * A date string, such as 2007-12-03, compliant with the `full-date` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
      */
     date<FieldName extends string>(fieldName: FieldName, ...opts: core.ScalarOutSpread<TypeName, FieldName>): void // "Date";
+    /**
+     * A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `date-time` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
+     */
+    datetime<FieldName extends string>(fieldName: FieldName, ...opts: core.ScalarOutSpread<TypeName, FieldName>): void // "DateTime";
   }
 }
 
@@ -43,6 +51,16 @@ export interface NexusGenInputs {
     lte?: NexusGenScalars['Date'] | null; // Date
     notIn?: NexusGenScalars['Date'][] | null; // [Date!]
   }
+  FileCreateLocationInput: { // input type
+    connect?: NexusGenInputs['IdWhereUniqueInput'] | null; // IdWhereUniqueInput
+    create?: NexusGenInputs['LatLngCreateInput'] | null; // LatLngCreateInput
+  }
+  FileEntryUpdateInput: { // input type
+    location?: NexusGenInputs['FileCreateLocationInput'] | null; // FileCreateLocationInput
+    notes?: string | null; // String
+    people?: NexusGenInputs['PersonOnFileFileRelationUpdateInput'] | null; // PersonOnFileFileRelationUpdateInput
+    timestamp?: NexusGenScalars['DateTime'] | null; // DateTime
+  }
   FileEntryWhereInput: { // input type
     id?: NexusGenInputs['IdNullableFilterInput'] | null; // IdNullableFilterInput
     name?: NexusGenInputs['StringNullableFilterInput'] | null; // StringNullableFilterInput
@@ -50,20 +68,6 @@ export interface NexusGenInputs {
     tags?: NexusGenInputs['StringNullableArrayFilterInput'] | null; // StringNullableArrayFilterInput
     type?: NexusGenInputs['StringNullableFilterInput'] | null; // StringNullableFilterInput
     url?: NexusGenInputs['StringNullableFilterInput'] | null; // StringNullableFilterInput
-  }
-  FileMetadataCreateLocationInput: { // input type
-    connect?: NexusGenInputs['IdWhereUniqueInput'] | null; // IdWhereUniqueInput
-    create?: NexusGenInputs['LatLngCreateInput'] | null; // LatLngCreateInput
-  }
-  FileMetadataUpdateInput: { // input type
-    location?: NexusGenInputs['FileMetadataCreateLocationInput'] | null; // FileMetadataCreateLocationInput
-  }
-  FilesForPersonCreateInput: { // input type
-    connect?: NexusGenInputs['IdWhereUniqueInput'][] | null; // [IdWhereUniqueInput!]
-  }
-  FilesForPersonUpdateInput: { // input type
-    connect?: NexusGenInputs['IdWhereUniqueInput'][] | null; // [IdWhereUniqueInput!]
-    disconnect?: NexusGenInputs['IdWhereUniqueInput'][] | null; // [IdWhereUniqueInput!]
   }
   IdNullableFilterInput: { // input type
     equals?: string | null; // ID
@@ -101,12 +105,16 @@ export interface NexusGenInputs {
     birthdate?: NexusGenScalars['Date'] | null; // Date
     caste?: string | null; // String
     education?: string | null; // String
-    files?: NexusGenInputs['FilesForPersonCreateInput'] | null; // FilesForPersonCreateInput
+    files?: NexusGenInputs['PersonOnFilePersonRelationCreateInput'] | null; // PersonOnFilePersonRelationCreateInput
     gender?: string | null; // String
     name: string; // String!
     notes?: string | null; // String
     parentId?: string | null; // String
     villages?: NexusGenInputs['PersonInVillagePersonRelationCreateInput'] | null; // PersonInVillagePersonRelationCreateInput
+  }
+  PersonIdFileIdInput: { // input type
+    fileId: string; // ID!
+    personId: string; // ID!
   }
   PersonIdVillageIdInput: { // input type
     personId: string; // ID!
@@ -156,6 +164,53 @@ export interface NexusGenInputs {
     none?: NexusGenInputs['PersonInVillageWhereInput'] | null; // PersonInVillageWhereInput
     some?: NexusGenInputs['PersonInVillageWhereInput'] | null; // PersonInVillageWhereInput
   }
+  PersonOnFileFileCreateInput: { // input type
+    instrument?: string | null; // String
+    notes?: string | null; // String
+    personId: string; // ID!
+  }
+  PersonOnFileFileRelationCreateInput: { // input type
+    connect?: NexusGenInputs['PersonOnFileUniqueWhereInput'] | null; // PersonOnFileUniqueWhereInput
+    create?: NexusGenInputs['PersonOnFileFileCreateInput'] | null; // PersonOnFileFileCreateInput
+  }
+  PersonOnFileFileRelationUpdateInput: { // input type
+    connect?: NexusGenInputs['PersonOnFileUniqueWhereInput'] | null; // PersonOnFileUniqueWhereInput
+    create?: NexusGenInputs['PersonOnFileFileCreateInput'] | null; // PersonOnFileFileCreateInput
+    delete?: NexusGenInputs['PersonOnFileUniqueWhereInput'] | null; // PersonOnFileUniqueWhereInput
+  }
+  PersonOnFilePersonCreateInput: { // input type
+    fileId: string; // ID!
+    instrument?: string | null; // String
+    notes?: string | null; // String
+  }
+  PersonOnFilePersonRelationCreateInput: { // input type
+    connect?: NexusGenInputs['PersonOnFileUniqueWhereInput'] | null; // PersonOnFileUniqueWhereInput
+    create?: NexusGenInputs['PersonOnFilePersonCreateInput'] | null; // PersonOnFilePersonCreateInput
+  }
+  PersonOnFilePersonRelationUpdateInput: { // input type
+    connect?: NexusGenInputs['PersonOnFileUniqueWhereInput'] | null; // PersonOnFileUniqueWhereInput
+    create?: NexusGenInputs['PersonOnFilePersonCreateInput'] | null; // PersonOnFilePersonCreateInput
+    delete?: NexusGenInputs['PersonOnFileUniqueWhereInput'] | null; // PersonOnFileUniqueWhereInput
+  }
+  PersonOnFileUniqueWhereInput: { // input type
+    personId_fileId: NexusGenInputs['PersonIdFileIdInput']; // PersonIdFileIdInput!
+  }
+  PersonOnFileWhereInput: { // input type
+    AND?: NexusGenInputs['PersonOnFileWhereInput'][] | null; // [PersonOnFileWhereInput!]
+    NOT?: NexusGenInputs['PersonOnFileWhereInput'][] | null; // [PersonOnFileWhereInput!]
+    OR?: NexusGenInputs['PersonOnFileWhereInput'][] | null; // [PersonOnFileWhereInput!]
+    file?: NexusGenInputs['FileEntryWhereInput'] | null; // FileEntryWhereInput
+    fileId?: NexusGenInputs['IdNullableFilterInput'] | null; // IdNullableFilterInput
+    instrument?: NexusGenInputs['StringNullableFilterInput'] | null; // StringNullableFilterInput
+    notes?: NexusGenInputs['StringNullableFilterInput'] | null; // StringNullableFilterInput
+    person?: NexusGenInputs['PersonWhereInput'] | null; // PersonWhereInput
+    personId?: NexusGenInputs['IdNullableFilterInput'] | null; // IdNullableFilterInput
+  }
+  PersonOnFileWhereManyInput: { // input type
+    every?: NexusGenInputs['PersonOnFileWhereInput'] | null; // PersonOnFileWhereInput
+    none?: NexusGenInputs['PersonOnFileWhereInput'] | null; // PersonOnFileWhereInput
+    some?: NexusGenInputs['PersonOnFileWhereInput'] | null; // PersonOnFileWhereInput
+  }
   PersonOrderByInput: { // input type
     name?: NexusGenEnums['OrderDirection'] | null; // OrderDirection
   }
@@ -163,7 +218,7 @@ export interface NexusGenInputs {
     birthdate?: NexusGenScalars['Date'] | null; // Date
     caste?: string | null; // String
     education?: string | null; // String
-    files?: NexusGenInputs['FilesForPersonUpdateInput'] | null; // FilesForPersonUpdateInput
+    files?: NexusGenInputs['PersonOnFilePersonRelationUpdateInput'] | null; // PersonOnFilePersonRelationUpdateInput
     gender?: string | null; // String
     name?: string | null; // String
     notes?: string | null; // String
@@ -257,15 +312,16 @@ export interface NexusGenScalars {
   Boolean: boolean
   ID: string
   Date: any
+  DateTime: any
 }
 
 export interface NexusGenObjects {
   FileEntry: prisma.FileEntry;
-  FileMetadata: prisma.FileMetadata;
   LatLng: prisma.LatLng;
   Mutation: {};
   Person: prisma.Person;
   PersonInVillage: prisma.PersonInVillage;
+  PersonOnFile: prisma.PersonOnFile;
   Query: {};
   Village: prisma.Village;
 }
@@ -285,20 +341,15 @@ export interface NexusGenFieldTypes {
     associatedFiles: NexusGenRootTypes['FileEntry'][]; // [FileEntry!]!
     children: NexusGenRootTypes['FileEntry'][] | null; // [FileEntry!]
     id: string; // ID!
-    metadata: NexusGenRootTypes['FileMetadata'] | null; // FileMetadata
+    location: NexusGenRootTypes['LatLng'] | null; // LatLng
+    locationId: string | null; // ID
     name: string; // String!
     parent: NexusGenRootTypes['FileEntry'] | null; // FileEntry
     parentId: string | null; // ID
-    people: NexusGenRootTypes['Person'][]; // [Person!]!
+    people: NexusGenRootTypes['PersonOnFile'][]; // [PersonOnFile!]!
     tags: string[]; // [String!]!
     type: string; // String!
     url: string | null; // String
-  }
-  FileMetadata: { // field return type
-    file: NexusGenRootTypes['FileEntry']; // FileEntry!
-    fileId: string; // ID!
-    location: NexusGenRootTypes['LatLng'] | null; // LatLng
-    locationId: string | null; // ID
   }
   LatLng: { // field return type
     id: string; // ID!
@@ -313,10 +364,11 @@ export interface NexusGenFieldTypes {
     createVillage: NexusGenRootTypes['Village']; // Village!
     disassociateFiles: NexusGenRootTypes['FileEntry'][] | null; // [FileEntry!]
     fullscan: NexusGenRootTypes['FileEntry'] | null; // FileEntry
+    removePersonFromFile: boolean; // Boolean!
     removePersonFromVillage: boolean; // Boolean!
     tagFile: NexusGenRootTypes['FileEntry']; // FileEntry!
     untagFile: NexusGenRootTypes['FileEntry']; // FileEntry!
-    updateMetadata: NexusGenRootTypes['FileEntry']; // FileEntry!
+    updateFile: NexusGenRootTypes['FileEntry'] | null; // FileEntry
     updatePerson: NexusGenRootTypes['Person']; // Person!
     updateVillage: NexusGenRootTypes['Village']; // Village!
   }
@@ -326,7 +378,7 @@ export interface NexusGenFieldTypes {
     caste: string | null; // String
     children: NexusGenRootTypes['Person'][]; // [Person!]!
     education: string | null; // String
-    files: NexusGenRootTypes['FileEntry'][]; // [FileEntry!]!
+    files: NexusGenRootTypes['PersonOnFile'][]; // [PersonOnFile!]!
     gender: string | null; // String
     id: string; // ID!
     name: string; // String!
@@ -341,6 +393,14 @@ export interface NexusGenFieldTypes {
     personId: string; // ID!
     village: NexusGenRootTypes['Village']; // Village!
     villageId: string; // ID!
+  }
+  PersonOnFile: { // field return type
+    file: NexusGenRootTypes['FileEntry']; // FileEntry!
+    fileId: string; // ID!
+    instrument: string | null; // String
+    notes: string | null; // String
+    person: NexusGenRootTypes['Person']; // Person!
+    personId: string; // ID!
   }
   Query: { // field return type
     castes: string[]; // [String!]!
@@ -372,20 +432,15 @@ export interface NexusGenFieldTypeNames {
     associatedFiles: 'FileEntry'
     children: 'FileEntry'
     id: 'ID'
-    metadata: 'FileMetadata'
+    location: 'LatLng'
+    locationId: 'ID'
     name: 'String'
     parent: 'FileEntry'
     parentId: 'ID'
-    people: 'Person'
+    people: 'PersonOnFile'
     tags: 'String'
     type: 'String'
     url: 'String'
-  }
-  FileMetadata: { // field return type name
-    file: 'FileEntry'
-    fileId: 'ID'
-    location: 'LatLng'
-    locationId: 'ID'
   }
   LatLng: { // field return type name
     id: 'ID'
@@ -400,10 +455,11 @@ export interface NexusGenFieldTypeNames {
     createVillage: 'Village'
     disassociateFiles: 'FileEntry'
     fullscan: 'FileEntry'
+    removePersonFromFile: 'Boolean'
     removePersonFromVillage: 'Boolean'
     tagFile: 'FileEntry'
     untagFile: 'FileEntry'
-    updateMetadata: 'FileEntry'
+    updateFile: 'FileEntry'
     updatePerson: 'Person'
     updateVillage: 'Village'
   }
@@ -413,7 +469,7 @@ export interface NexusGenFieldTypeNames {
     caste: 'String'
     children: 'Person'
     education: 'String'
-    files: 'FileEntry'
+    files: 'PersonOnFile'
     gender: 'String'
     id: 'ID'
     name: 'String'
@@ -428,6 +484,14 @@ export interface NexusGenFieldTypeNames {
     personId: 'ID'
     village: 'Village'
     villageId: 'ID'
+  }
+  PersonOnFile: { // field return type name
+    file: 'FileEntry'
+    fileId: 'ID'
+    instrument: 'String'
+    notes: 'String'
+    person: 'Person'
+    personId: 'ID'
   }
   Query: { // field return type name
     castes: 'String'
@@ -477,6 +541,10 @@ export interface NexusGenArgTypes {
       file1Id: string; // ID!
       file2Id: string; // ID!
     }
+    removePersonFromFile: { // args
+      fileId: string; // ID!
+      personId: string; // ID!
+    }
     removePersonFromVillage: { // args
       personId: string; // ID!
       villageId: string; // ID!
@@ -489,8 +557,8 @@ export interface NexusGenArgTypes {
       fileId: string; // ID!
       tag: string; // String!
     }
-    updateMetadata: { // args
-      data: NexusGenInputs['FileMetadataUpdateInput']; // FileMetadataUpdateInput!
+    updateFile: { // args
+      data: NexusGenInputs['FileEntryUpdateInput']; // FileEntryUpdateInput!
       fileId: string; // ID!
     }
     updatePerson: { // args

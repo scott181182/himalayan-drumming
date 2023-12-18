@@ -44,12 +44,11 @@ export const  Person = objectType({
         });
 
         t.nonNull.list.nonNull.field("files", {
-            type: "FileEntry",
+            type: "PersonOnFile",
             resolve(src, _args, ctx) {
-                return ctx.prisma.person.findUniqueOrThrow({
-                    where: { id: src.id },
-                    select: { files: true }
-                }).then((res) => res.files);
+                return ctx.prisma.personOnFile.findMany({
+                    where: { personId: src.id },
+                });
             }
         });
     },
@@ -128,32 +127,12 @@ export const PersonQuery = extendType({
 
 
 
-export const FilesForPersonCreateInput = inputObjectType({
-    name: "FilesForPersonCreateInput",
-    definition(t) {
-        t.list.nonNull.field("connect", {
-            type: "IdWhereUniqueInput"
-        });
-    },
-});
-export const FilesForPersonUpdateInput = inputObjectType({
-    name: "FilesForPersonUpdateInput",
-    definition(t) {
-        t.list.nonNull.field("connect", {
-            type: "IdWhereUniqueInput"
-        });
-        t.list.nonNull.field("disconnect", {
-            type: "IdWhereUniqueInput"
-        });
-    },
-});
-
 export const PersonCreateInput = inputObjectType({
     name: "PersonCreateInput",
     definition(t) {
         t.nonNull.string("name");
         t.string("parentId");
-        t.field("files", { type: FilesForPersonCreateInput });
+        t.field("files", { type: "PersonOnFilePersonRelationCreateInput" });
         t.field("villages", { type: "PersonInVillagePersonRelationCreateInput" });
         
         t.date("birthdate");
@@ -170,7 +149,7 @@ export const PersonUpdateInput = inputObjectType({
     definition(t) {
         t.string("name");
         t.string("parentId");
-        t.field("files", { type: FilesForPersonUpdateInput });
+        t.field("files", { type: "PersonOnFilePersonRelationUpdateInput" });
         t.field("villages", { type: "PersonInVillagePersonRelationUpdateInput" });
         
         t.date("birthdate");

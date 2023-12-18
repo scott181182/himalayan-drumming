@@ -23,18 +23,36 @@ input DateNullableFilterInput {
   notIn: [Date!]
 }
 
+"""
+A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `date-time` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
+"""
+scalar DateTime
+
+input FileCreateLocationInput {
+  connect: IdWhereUniqueInput
+  create: LatLngCreateInput
+}
+
 type FileEntry {
   associatedFiles: [FileEntry!]!
   children: [FileEntry!]
   id: ID!
-  metadata: FileMetadata
+  location: LatLng
+  locationId: ID
   name: String!
   parent: FileEntry
   parentId: ID
-  people: [Person!]!
+  people: [PersonOnFile!]!
   tags: [String!]!
   type: String!
   url: String
+}
+
+input FileEntryUpdateInput {
+  location: FileCreateLocationInput
+  notes: String
+  people: PersonOnFileFileRelationUpdateInput
+  timestamp: DateTime
 }
 
 input FileEntryWhereInput {
@@ -44,31 +62,6 @@ input FileEntryWhereInput {
   tags: StringNullableArrayFilterInput
   type: StringNullableFilterInput
   url: StringNullableFilterInput
-}
-
-type FileMetadata {
-  file: FileEntry!
-  fileId: ID!
-  location: LatLng
-  locationId: ID
-}
-
-input FileMetadataCreateLocationInput {
-  connect: IdWhereUniqueInput
-  create: LatLngCreateInput
-}
-
-input FileMetadataUpdateInput {
-  location: FileMetadataCreateLocationInput
-}
-
-input FilesForPersonCreateInput {
-  connect: [IdWhereUniqueInput!]
-}
-
-input FilesForPersonUpdateInput {
-  connect: [IdWhereUniqueInput!]
-  disconnect: [IdWhereUniqueInput!]
 }
 
 input IdNullableFilterInput {
@@ -105,10 +98,11 @@ type Mutation {
   Perform a full scan of OneDrive and other file sources. Creates, updates, and deletes entries as necessary.
   """
   fullscan: FileEntry
+  removePersonFromFile(fileId: ID!, personId: ID!): Boolean!
   removePersonFromVillage(personId: ID!, villageId: ID!): Boolean!
   tagFile(fileId: ID!, tag: String!): FileEntry!
   untagFile(fileId: ID!, tag: String!): FileEntry!
-  updateMetadata(data: FileMetadataUpdateInput!, fileId: ID!): FileEntry!
+  updateFile(data: FileEntryUpdateInput!, fileId: ID!): FileEntry
   updatePerson(data: PersonUpdateInput!, id: ID!): Person!
   updateVillage(data: VillageUpdateInput!, id: ID!): Village!
 }
@@ -145,7 +139,7 @@ type Person {
   caste: String
   children: [Person!]!
   education: String
-  files: [FileEntry!]!
+  files: [PersonOnFile!]!
   gender: String
   id: ID!
   name: String!
@@ -159,12 +153,17 @@ input PersonCreateInput {
   birthdate: Date
   caste: String
   education: String
-  files: FilesForPersonCreateInput
+  files: PersonOnFilePersonRelationCreateInput
   gender: String
   name: String!
   notes: String
   parentId: String
   villages: PersonInVillagePersonRelationCreateInput
+}
+
+input PersonIdFileIdInput {
+  fileId: ID!
+  personId: ID!
 }
 
 input PersonIdVillageIdInput {
@@ -233,6 +232,71 @@ input PersonInVillageWhereManyInput {
   some: PersonInVillageWhereInput
 }
 
+type PersonOnFile {
+  file: FileEntry!
+  fileId: ID!
+  instrument: String
+  notes: String
+  person: Person!
+  personId: ID!
+}
+
+input PersonOnFileFileCreateInput {
+  instrument: String
+  notes: String
+  personId: ID!
+}
+
+input PersonOnFileFileRelationCreateInput {
+  connect: PersonOnFileUniqueWhereInput
+  create: PersonOnFileFileCreateInput
+}
+
+input PersonOnFileFileRelationUpdateInput {
+  connect: PersonOnFileUniqueWhereInput
+  create: PersonOnFileFileCreateInput
+  delete: PersonOnFileUniqueWhereInput
+}
+
+input PersonOnFilePersonCreateInput {
+  fileId: ID!
+  instrument: String
+  notes: String
+}
+
+input PersonOnFilePersonRelationCreateInput {
+  connect: PersonOnFileUniqueWhereInput
+  create: PersonOnFilePersonCreateInput
+}
+
+input PersonOnFilePersonRelationUpdateInput {
+  connect: PersonOnFileUniqueWhereInput
+  create: PersonOnFilePersonCreateInput
+  delete: PersonOnFileUniqueWhereInput
+}
+
+input PersonOnFileUniqueWhereInput {
+  personId_fileId: PersonIdFileIdInput!
+}
+
+input PersonOnFileWhereInput {
+  AND: [PersonOnFileWhereInput!]
+  NOT: [PersonOnFileWhereInput!]
+  OR: [PersonOnFileWhereInput!]
+  file: FileEntryWhereInput
+  fileId: IdNullableFilterInput
+  instrument: StringNullableFilterInput
+  notes: StringNullableFilterInput
+  person: PersonWhereInput
+  personId: IdNullableFilterInput
+}
+
+input PersonOnFileWhereManyInput {
+  every: PersonOnFileWhereInput
+  none: PersonOnFileWhereInput
+  some: PersonOnFileWhereInput
+}
+
 input PersonOrderByInput {
   name: OrderDirection
 }
@@ -241,7 +305,7 @@ input PersonUpdateInput {
   birthdate: Date
   caste: String
   education: String
-  files: FilesForPersonUpdateInput
+  files: PersonOnFilePersonRelationUpdateInput
   gender: String
   name: String
   notes: String
