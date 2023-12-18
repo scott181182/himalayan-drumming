@@ -18,7 +18,8 @@
 				"ms-azuretools.vscode-docker",
 				"ahmadalli.vscode-nginx-conf",
 				"prisma.prisma",
-				"dbaeumer.vscode-eslint"
+				"dbaeumer.vscode-eslint",
+				"mhutchie.git-graph"
 			]
 		}
 	}
