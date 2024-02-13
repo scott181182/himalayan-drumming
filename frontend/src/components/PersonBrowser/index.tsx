@@ -66,7 +66,8 @@ export function PersonBrowser({
                             p.education?.toLowerCase()?.includes(search) ||
                             p.gender?.toLowerCase()?.includes(search) ||
                             p.notes?.toLowerCase()?.includes(search) ||
-                            p.villages.some((p) => p.village.name.toLowerCase().includes(search))
+                            p.villages.some((p) => p.village.name.toLowerCase().includes(search)) ||
+                            p.files.some((f) => f.file.name.toLowerCase().includes(search))
                         ));
                     }
                 }}
