@@ -68,6 +68,8 @@ To launch the Dev Container for the project, open the repository with VSCode, in
 
 After entering the Dev Container, install all dependencies by running `yarn` in the root of the workspace. This will install dependencies for the root NPM project, as well as the frontend and backend NPM projects. With dependencies installed, follow the directions in both the [frontend](./frontend/README.md) and the [backend](./backend/README.md) folders to get started.
 
+After both the frontend and the backend are running, you can open <http://localhost:8080> in your browser to see the resultant web app! Requests on port 8080 will be forwarded to port 80 in the container, which Nginx will proxy to both the frontend (on port 3000) and backend (on port 3001).
+
 ### Common Pitfalls
 
 - The Dev Container runs Nginx in the background to forward incoming connections to both the backend and the frontend. Sometimes this fails to start, so you may need to run the following commands:
