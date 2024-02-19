@@ -10,6 +10,7 @@
         "graphql.vscode-graphql",
         "prisma.prisma",
         "dbaeumer.vscode-eslint",
-        "mhutchie.git-graph"
+        "mhutchie.git-graph",
+        "ms-vscode-remote.remote-containers"
     ]
 }
