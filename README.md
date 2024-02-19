@@ -1,6 +1,6 @@
 # Himalayan Drumming Research Dashboard
 
-The Himalayan Drumming Research Dashboard is a web application developed for [Dr. Stefan Fiol](https://researchdirectory.uc.edu/p/fiolsn), originally as Scott Fasone's CS Masters Project under [Dr. Jillian Aurisano](https://researchdirectory.uc.edu/p/aurisajm). The goal of the application is to provide Dr. Fiol (and other ethnomusicologists) with a dashboard for storing, categorizing, and analyzing data they collect on drumming in the [Garhwal](https://en.wikipedia.org/wiki/Garhwal_division) region of the Himalayas in order to spawn research questions and simplify data interrogation. Initial data includes:
+The Himalayan Drumming Research Dashboard is a web application developed for [Dr. Stefan Fiol](https://researchdirectory.uc.edu/p/fiolsn), originally as Scott Fasone's CS Masters Project under [Dr. Jillian Aurisano](https://researchdirectory.uc.edu/p/aurisajm). The goal of the application is to provide Dr. Fiol (and other ethnomusicologists) with a dashboard for storing, categorizing, and analyzing data they collect, currently on drumming in the [Garhwal](https://en.wikipedia.org/wiki/Garhwal_division) region of the Himalayas. The dashboard can then be used to explore research questions and simplify data interrogation. This data currently includes:
 
 - video and audio recordings of drummers, including location
 - notes on recordings
@@ -42,3 +42,39 @@ The database is a relational database currently stored in [SQLite](https://www.s
 Currently the app looks at and serves all research files from the local filesystem. This should probably be migrated to some sort of cloud-based blob storage (like [Amazon S3](https://aws.amazon.com/s3/) or [Azure Blob Storage](https://azure.microsoft.com/en-us/products/storage/blobs)) in the future.
 
 ## Developing
+
+### Prerequisites
+
+This application uses a [Dev Container](https://code.visualstudio.com/docs/devcontainers/containers) for a portable development setup, and as such only requires [VSCode](https://code.visualstudio.com/) and Docker to be installed. For developers on Windows, we recommend using [Rancher Desktop](https://rancherdesktop.io/) as your container manager (with moby as the docker engine) and storing the code for this repository in [WSL](https://learn.microsoft.com/en-us/windows/wsl/install).
+
+### Project Structure
+
+- `.devcontainer`, files for configuring the Dev Container
+- `.github`, hooks for GitHub Actions and Dependabot
+- `.vscode`, editor configuration and recommend extensions
+- [`backend`](./backend), **NPM project for the server-side**
+- `blob`, directory that contains all research files
+- `diagram`, random files used for documentation diagrams (like in this README)
+- `docker`, files used for the production Docker image
+- [`frontend`](./frontend), **NPM project for the client-side**
+- `node_modules`, dependencies for the root NPM project
+- `example.env`, file with example environment variables that should be copied into a proper `.env` file
+- `graphql.config.json`, configuration for the VSCode GraphQL extension used for intellisense
+- `package.json`, manifest for the root NPM project
+
+### Getting Started
+
+To launch the Dev Container for the project, open the repository with VSCode, install all recommended extensions (most importantly the "Dev Containers" extension), then run the "Dev Containers: Reopen in Container" VSCode command. It may take up to a minute to build and launch the development container.
+
+After entering the Dev Container, install all dependencies by running `yarn` in the root of the workspace. This will install dependencies for the root NPM project, as well as the frontend and backend NPM projects. With dependencies installed, follow the directions in both the [frontend](./frontend/README.md) and the [backend](./backend/README.md) folders to get started.
+
+### Common Pitfalls
+
+- The Dev Container runs Nginx in the background to forward incoming connections to both the backend and the frontend. Sometimes this fails to start, so you may need to run the following commands:
+
+```sh
+# Check the status of Nginx
+sudo service nginx status
+# Restart Nginx if it isn't running
+sudo service nginx restart
+```
