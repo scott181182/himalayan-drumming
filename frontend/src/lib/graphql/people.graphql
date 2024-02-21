@@ -46,7 +46,7 @@ query GetPerson($personId: ID!) {
 
 mutation CreatePerson($data: PersonCreateInput!) {
     createPerson(data: $data) {
-        ...PersonAndParent
+        ...PersonInContext
     }
 }
 

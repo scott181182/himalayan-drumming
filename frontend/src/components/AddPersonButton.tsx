@@ -4,7 +4,8 @@ import { useMutation } from "@apollo/client";
 import { App, Button, Form, Input, Modal } from "antd";
 import { useCallback, useState } from "react";
 
-import { CreatePersonDocument, GetAllPeopleDocument } from "@/generated/graphql";
+import { useDashboardDispatch } from "@/contexts/DashboardContext";
+import { CreatePersonDocument } from "@/generated/graphql";
 
 
 
@@ -13,12 +14,13 @@ interface FormValues {
 }
 
 export function AddPersonButton() {
-    const [createPersonMutation] = useMutation(CreatePersonDocument, {
-        refetchQueries: [ GetAllPeopleDocument ]
-    });
     const { message } = App.useApp();
     const [form] = Form.useForm<FormValues>();
+    const { updatePerson } = useDashboardDispatch();
 
+    const [createPersonMutation] = useMutation(CreatePersonDocument, {
+        onCompleted: (data) => updatePerson(data.createPerson)
+    });
     const [open, setOpen] = useState(false);
 
     const openModal = useCallback(() => setOpen(true), [setOpen]);

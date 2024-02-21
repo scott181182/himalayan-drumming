@@ -143,9 +143,12 @@ export const dashboardReducer: Reducer<DashboardContextValue, DashboardDispatchA
                 villages: action.payload
             };
         case "updateVillage": {
+            const hasVillage = state.villages.some((v) => v.id === action.payload.id);
             return {
                 ...state,
-                villages: state.villages.map((p) => p.id === action.payload.id ? action.payload : p)
+                villages: hasVillage ?
+                    state.villages.map((v) => v.id === action.payload.id ? action.payload : v) :
+                    [ ...state.villages, action.payload ]
             };
         }
         case "setPeople":
@@ -154,9 +157,12 @@ export const dashboardReducer: Reducer<DashboardContextValue, DashboardDispatchA
                 people: action.payload
             };
         case "updatePerson": {
+            const hasPerson = state.people.some((p) => p.id === action.payload.id);
             return {
                 ...state,
-                people: state.people.map((p) => p.id === action.payload.id ? action.payload : p)
+                people: hasPerson ?
+                    state.people.map((p) => p.id === action.payload.id ? action.payload : p) :
+                    [ ...state.people, action.payload ]
             };
         }
 

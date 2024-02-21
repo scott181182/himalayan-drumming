@@ -28,8 +28,20 @@ export function VillageBrowser({
 }: VillageBrowserProps) {
     const { villages } = useDashboardState();
     const { refetchVillage, setSelectedRelation } = useDashboardDispatch();
+    const [searchValue, setSearchValue] = useState("");
 
-    const [filteredVillages, setFilteredVillages] = useState(villages);
+    const filteredVillages = useMemo(() => {
+        return searchValue ?
+            villages.filter((v) =>
+                v.name.toLowerCase().includes(searchValue) ||
+                v.divinities?.toLowerCase()?.includes(searchValue) ||
+                v.rituals?.toLowerCase()?.includes(searchValue) ||
+                v.temples?.toLowerCase()?.includes(searchValue) ||
+                v.notes?.toLowerCase()?.includes(searchValue) ||
+                v.people.some((p) => p.person.name.toLowerCase().includes(searchValue))
+            ) :
+            villages;
+    }, [searchValue, villages]);
 
     const currentVillage = useMemo(() => {
         if(!selectedVillageId) { return undefined; }
@@ -54,21 +66,7 @@ export function VillageBrowser({
             <Input.Search
                 placeholder="Search Villages"
                 allowClear
-                onSearch={(value) => {
-                    if(!value) {
-                        setFilteredVillages(villages);
-                    } else {
-                        const search = value.toLowerCase();
-                        setFilteredVillages(villages.filter((v) =>
-                            v.name.toLowerCase().includes(search) ||
-                            v.divinities?.toLowerCase()?.includes(search) ||
-                            v.rituals?.toLowerCase()?.includes(search) ||
-                            v.temples?.toLowerCase()?.includes(search) ||
-                            v.notes?.toLowerCase()?.includes(search) ||
-                            v.people.some((p) => p.person.name.toLowerCase().includes(search))
-                        ));
-                    }
-                }}
+                onSearch={setSearchValue}
             />
             <Table
                 dataSource={filteredVillages}

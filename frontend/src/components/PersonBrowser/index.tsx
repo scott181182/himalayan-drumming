@@ -29,8 +29,21 @@ export function PersonBrowser({
 }: PersonBrowserProps) {
     const { people } = useDashboardState();
     const { refetchPerson, setSelectedRelation } = useDashboardDispatch();
+    const [searchValue, setSearchValue] = useState("");
 
-    const [filteredPeople, setFilteredPeople] = useState(people);
+    const filteredPeople = useMemo(() => {
+        return searchValue ?
+            people.filter((p) =>
+                p.name.toLowerCase().includes(searchValue) ||
+                p.caste?.toLowerCase()?.includes(searchValue) ||
+                p.education?.toLowerCase()?.includes(searchValue) ||
+                p.gender?.toLowerCase()?.includes(searchValue) ||
+                p.notes?.toLowerCase()?.includes(searchValue) ||
+                p.villages.some((p) => p.village.name.toLowerCase().includes(searchValue)) ||
+                p.files.some((f) => f.file.name.toLowerCase().includes(searchValue))
+            ) :
+            people;
+    }, [people, searchValue]);
 
     const selectedPerson = useMemo(() => {
         if(!selectedPersonId) { return undefined; }
@@ -55,22 +68,7 @@ export function PersonBrowser({
             <Input.Search
                 placeholder="Search People"
                 allowClear
-                onSearch={(value) => {
-                    if(!value) {
-                        setFilteredPeople(people);
-                    } else {
-                        const search = value.toLowerCase();
-                        setFilteredPeople(people.filter((p) =>
-                            p.name.toLowerCase().includes(search) ||
-                            p.caste?.toLowerCase()?.includes(search) ||
-                            p.education?.toLowerCase()?.includes(search) ||
-                            p.gender?.toLowerCase()?.includes(search) ||
-                            p.notes?.toLowerCase()?.includes(search) ||
-                            p.villages.some((p) => p.village.name.toLowerCase().includes(search)) ||
-                            p.files.some((f) => f.file.name.toLowerCase().includes(search))
-                        ));
-                    }
-                }}
+                onSearch={setSearchValue}
             />
             <Table
                 dataSource={filteredPeople}

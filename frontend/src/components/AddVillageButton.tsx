@@ -4,8 +4,8 @@ import { useMutation } from "@apollo/client";
 import { App, Button, Form, Input, Modal, Tooltip } from "antd";
 import { useCallback, useState } from "react";
 
-import { useDashboardState } from "@/contexts/DashboardContext";
-import { CreateVillageDocument, GetAllVillagesDocument } from "@/generated/graphql";
+import { useDashboardDispatch, useDashboardState } from "@/contexts/DashboardContext";
+import { CreateVillageDocument } from "@/generated/graphql";
 import { selectedLocationToInput } from "@/utils/location";
 
 
@@ -15,12 +15,14 @@ interface FormValues {
 }
 
 export function AddVillageButton() {
-    const [createVillageMutation] = useMutation(CreateVillageDocument, {
-        refetchQueries: [ GetAllVillagesDocument ]
-    });
     const { message } = App.useApp();
     const [form] = Form.useForm<FormValues>();
     const { selectedLocation } = useDashboardState();
+    const { updateVillage } = useDashboardDispatch();
+
+    const [createVillageMutation] = useMutation(CreateVillageDocument, {
+        onCompleted: (data) => updateVillage(data.createVillage)
+    });
 
     const [open, setOpen] = useState(false);
 
@@ -42,7 +44,9 @@ export function AddVillageButton() {
                 }
             }
         })
-            .then(() => { message.success(`Created ${data.name}!`); })
+            .then(() => {
+                message.success(`Created ${data.name}!`);
+            })
             .catch((err) => {
                 message.error("Failed to create village, please try again");
                 console.error(err);

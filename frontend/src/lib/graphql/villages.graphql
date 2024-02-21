@@ -24,7 +24,7 @@ query GetAllVillages {
 
 mutation CreateVillage($data: VillageCreateInput!) {
     createVillage(data: $data) {
-        ...SimpleVillage
+        ...VillageInContext
     }
 }
 
