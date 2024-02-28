@@ -7,8 +7,8 @@ import { useSearchParams } from "next/navigation";
 import { useMemo } from "react";
 
 import { AsyncData } from "@/components/AsyncData";
-import { EnumProvider } from "@/contexts/EnumContext";
 import { MediaPlayerRow } from "@/components/MediaPlayerRow";
+import { EnumProvider } from "@/contexts/EnumContext";
 import { GetFileEntriesDocument } from "@/generated/graphql";
 
 
