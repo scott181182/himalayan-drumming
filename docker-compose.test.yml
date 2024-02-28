@@ -1,0 +1,14 @@
+version: '3.7'
+services:
+  dashboard:
+    container_name: ${APP_NAME}-dashboard
+    build:
+      dockerfile: ./docker/Dockerfile
+      context: .
+    env_file:
+      - .env
+    volumes:
+      - ./blob:/app/blob:rw
+      - ./backend/prisma/dev.db:/app/server/prisma/dev.db:rw
+    ports:
+      - 8080:80
