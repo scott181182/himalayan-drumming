@@ -32,6 +32,10 @@ async function getPrismaFileTree(prisma: PrismaClient): Promise<PrismaTreeNode |
     }
 
     const assignChildren = (parent: PrismaTreeNode) => {
+        if(!(parent.id in parentMap)) {
+            // This "parent" doesn't have any children.
+            return;
+        }
         parent.children = parentMap[parent.id].map((entry) => ({
             value: entry,
             id: entry.id,
@@ -134,13 +138,13 @@ export async function executeFullScan(prisma: PrismaClient) {
     let pFileRoot: FileEntry;
 
     const pTree = await getPrismaFileTree(prisma);
-    if(!pTree) {
-        pFileRoot = await createPrismaFileTree(fTree, null, prisma);
-    } else {
+    if(pTree) {
         await updatePrismaFileTree(pTree, fTree, prisma);
         pFileRoot = await prisma.fileEntry.findUniqueOrThrow({
             where: { id: fTree.id }
         });
+    } else {
+        pFileRoot = await createPrismaFileTree(fTree, null, prisma);
     }
 
     return pFileRoot;
