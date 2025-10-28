@@ -1,12 +1,12 @@
-FROM node:18
+FROM node:22
 
 # Install basic development tools
-RUN apt update && apt install -y less man-db sudo git nginx tree zsh vim
+RUN apt update && apt install -y less man-db sudo git nginx tree zsh vim && apt-get clean
 
 # Ensure default `node` user has access to `sudo`
 ARG USERNAME=node
-RUN echo $USERNAME ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/$USERNAME \
-    && chmod 0440 /etc/sudoers.d/$USERNAME
+RUN echo "$USERNAME" ALL=\(root\) NOPASSWD:ALL > "/etc/sudoers.d/$USERNAME" \
+    && chmod 0440 "/etc/sudoers.d/$USERNAME"
 
 # Install ZSH
 USER $USERNAME
