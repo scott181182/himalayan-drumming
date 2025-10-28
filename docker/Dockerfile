@@ -1,4 +1,6 @@
-FROM node:18-alpine as build_server
+FROM node:22-alpine AS base
+
+FROM base AS build_server
 
 # Move the utility, client, and server files
 WORKDIR /build/server
@@ -11,10 +13,10 @@ RUN yarn build
 
 
 
-FROM node:18-alpine as build_client
+FROM base AS build_client
 
 ARG NEXT_PUBLIC_API_ROOT_ENDPOINT="/api"
-ENV NEXT_PUBLIC_API_ROOT_ENDPOINT $NEXT_PUBLIC_API_ROOT_ENDPOINT
+ENV NEXT_PUBLIC_API_ROOT_ENDPOINT=$NEXT_PUBLIC_API_ROOT_ENDPOINT
 
 WORKDIR /build/client
 COPY ./frontend/package.json ./frontend/yarn.lock /build/client/
@@ -27,14 +29,14 @@ RUN yarn build
 
 
 
-FROM node:18-alpine
+FROM base
 EXPOSE 80 3001
 
 ARG DATABASE_URL="file://./drumming.db"
-ENV DATABASE_URL $DATABASE_URL
+ENV DATABASE_URL=$DATABASE_URL
 VOLUME [ "/app/server/prisma/drumming.db" ]
 
-RUN apk update && apk add nginx
+RUN apk update && apk add nginx && apk cache clean
 # VOLUME [ "/etc/ssl" ]
 COPY ./docker/nginx/nginx.conf   /etc/nginx/nginx.conf
 COPY ./docker/nginx/proxy.conf   /etc/nginx/proxy.conf
@@ -45,7 +47,7 @@ RUN chmod 777 -R /var/
 RUN mkdir -p /run/nginx && chown node:node /run/nginx
 RUN su node -c "yarn global add pm2 typescript ts-node"
 
-ENV PATH "/usr/local/bin:$PATH"
+ENV PATH="/usr/local/bin:$PATH"
 RUN mkdir -p /app/server /app/client && chown -R node:node /app
 USER node
 
