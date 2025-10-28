@@ -9,9 +9,8 @@
 After installing dependencies, the database needs initialized. This can be done with the following commands ran in this directory:
 
 ```sh
-# Generate the database, overriding any existing one.
-# This will create a `dev.db` SQLite file in the `prisma` directory.
-npx prisma db push
+# Push the current schema to the database, overriding any existing one.
+yarn prisma db push
 
 # Generate the Prisma Client so the server can interface with the database.
 yarn generate:prisma

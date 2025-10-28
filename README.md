@@ -12,7 +12,7 @@ The Himalayan Drumming Research Dashboard is a web application developed for [Dr
 
 The diagram below shows the current (development) architecture of the application.
 
-![Architecture Diagram](./diagram/architecture-bg.drawio.png)
+![Architecture Diagram](./diagram/architecture.drawio.png)
 
 ### Docker Container
 
@@ -34,7 +34,7 @@ The backend is also written in TypeScript running on [Node.js](https://nodejs.or
 
 ### Database
 
-The database is a relational database currently stored in [SQLite](https://www.sqlite.org/index.html). This should eventually be migrated to an actual relational database management system like [PostgreSQL](https://www.postgresql.org/) for scalability.
+The database is a relational database currently managed by [PostgreSQL](https://www.postgresql.org/).
 
 ### File Storage
 
