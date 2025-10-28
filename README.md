@@ -36,7 +36,6 @@ The backend is also written in TypeScript running on [Node.js](https://nodejs.or
 
 The database is a relational database currently stored in [SQLite](https://www.sqlite.org/index.html). This should eventually be migrated to an actual relational database management system like [PostgreSQL](https://www.postgresql.org/) for scalability.
 
-
 ### File Storage
 
 Currently the app looks at and serves all research files from the local filesystem. This should probably be migrated to some sort of cloud-based blob storage (like [Amazon S3](https://aws.amazon.com/s3/) or [Azure Blob Storage](https://azure.microsoft.com/en-us/products/storage/blobs)) in the future.
@@ -79,4 +78,18 @@ After both the frontend and the backend are running, you can open <http://localh
 sudo service nginx status
 # Restart Nginx if it isn't running
 sudo service nginx restart
+```
+
+## Deployment
+
+To run a full version of this application on your (or another) system, you'll need a Docker engine. As above, we
+recommend Rancher Desktop for Windows users. After that, you'll need to open up a terminal in the root of this
+repository and run the following commands:
+
+```sh
+# Startup the Docker container in the background, building if necessary.
+docker compose -f docker-compose.test.yml up -d
+
+# Check the logs of the running container
+docker compose -f docker-compose.test.yml logs
 ```
