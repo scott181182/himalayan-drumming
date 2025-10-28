@@ -1,5 +1,7 @@
 #!/bin/sh
 
+set -e
+
 cd /app/client
 pm2 start yarn --interpreter sh --name client -- start >/dev/null
 sleep 1

@@ -32,7 +32,7 @@ RUN yarn generate && yarn build
 FROM base
 EXPOSE 80 3001
 
-RUN apk update && apk add nginx && apk cache clean
+RUN apk update && apk add nginx openssl && apk cache clean
 # VOLUME [ "/etc/ssl" ]
 COPY ./docker/nginx/nginx.conf   /etc/nginx/nginx.conf
 COPY ./docker/nginx/proxy.conf   /etc/nginx/proxy.conf
