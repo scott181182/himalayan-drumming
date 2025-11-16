@@ -2,6 +2,7 @@ import { readdir } from "node:fs/promises";
 import path from "node:path";
 
 import type { TreeNode } from "./tree";
+import { FILE_ROOT } from "@/config";
 
 
 
@@ -19,9 +20,9 @@ export async function readDirRecursive(dirpath: string, rootpath: string): Promi
 
     const children: TreeNode<FileItem>[] = [];
 
-    for(const dirent of directoryEntries) {
+    for (const dirent of directoryEntries) {
         // Ignore dot files/directories.
-        if(dirent.name.startsWith(".")) { continue; }
+        if (dirent.name.startsWith(".")) { continue; }
 
         const fullpath = path.join(dirpath, dirent.name);
         const id = path.relative(rootpath, fullpath);
@@ -31,11 +32,11 @@ export async function readDirRecursive(dirpath: string, rootpath: string): Promi
             type: dirent.isFile() ? "file" : "directory"
         };
 
-        if(dirent.isFile()) {
+        if (dirent.isFile()) {
             children.push({
                 id, value, children: []
             });
-        } else if(dirent.isDirectory()) {
+        } else if (dirent.isDirectory()) {
             children.push({
                 id, value,
                 children: await readDirRecursive(fullpath, rootpath)
@@ -47,16 +48,13 @@ export async function readDirRecursive(dirpath: string, rootpath: string): Promi
 }
 
 export async function getFileTree(): Promise<TreeNode<FileItem>> {
-    const rootDir = process.env.BLOB_FILE_ROOT ??
-        path.resolve(__dirname, "..", "..", "..", "..", "blob", "files");
-
     return {
         id: "/",
         value: {
             name: "files",
-            path: rootDir,
+            path: FILE_ROOT,
             type: "directory"
         },
-        children: await readDirRecursive(rootDir, rootDir)
+        children: await readDirRecursive(FILE_ROOT, FILE_ROOT)
     };
 }
