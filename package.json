@@ -6,7 +6,7 @@
     "license": "MIT",
     "private": true,
     "scripts": {
-        "build:deps": "pnpm run -r -F ./packages/database build",
+        "build:deps": "pnpm run -r -F 'himalayan-drumming-research-server^...' -F 'himalayan-drumming-research-frontend^...' build",
         "postinstall": "node ./scripts/postinstall.js",
         "typecheck": "pnpm run -r typecheck",
         "lint": "pnpm run -r lint",
