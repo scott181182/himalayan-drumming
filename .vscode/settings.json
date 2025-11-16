@@ -3,8 +3,8 @@
         "source.fixAll.eslint": "explicit"
     },
     "eslint.workingDirectories": [
-        "./backend",
-        "./frontend"
+        "packages/backend",
+        "packages/frontend"
     ],
     "conventionalCommits.scopes": [
         "scripts",
