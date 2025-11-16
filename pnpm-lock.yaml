@@ -184,6 +184,12 @@ importers:
       graphql:
         specifier: ^16.8.0
         version: 16.12.0
+      himalayan-drumming-research-auth:
+        specifier: workspace:*
+        version: link:../auth
+      himalayan-drumming-research-database:
+        specifier: workspace:*
+        version: link:../database
       leaflet:
         specifier: ^1.9.4
         version: 1.9.4
