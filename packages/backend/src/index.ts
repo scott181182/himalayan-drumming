@@ -9,10 +9,10 @@ import { expressMiddleware } from "@apollo/server/express4";
 import express from "express";
 import fileUpload from "express-fileupload";
 import { GraphQLError } from "graphql";
+import { PrismaClient } from "himalayan-drumming-research-database";
 
 import { schema } from "./graphql";
 import type { Context } from "./graphql/context";
-import { PrismaClient } from "@/generated/prisma";
 import { odTree2prismaCreateInput } from "@/lib/scan";
 
 

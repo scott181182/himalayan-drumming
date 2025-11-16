@@ -1,0 +1,28 @@
+{
+  "name": "himalayan-drumming-research-database",
+  "version": "0.2.0",
+  "description": "",
+  "license": "MIT",
+  "packageManager": "pnpm@10.20.0",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "db:generate": "prisma generate",
+    "db:migrate": "prisma migrate dev",
+    "db:deploy": "prisma migrate deploy",
+    "build": "pnpm db:generate && tsc -p . --pretty",
+    "regenerate": "pnpm db:migrate && pnpm build",
+    "typecheck": "tsc --noEmit -p . --pretty"
+  },
+  "dependencies": {
+    "@prisma/adapter-pg": "catalog:",
+    "@prisma/client": "catalog:"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "prisma": "catalog:",
+    "tsx": "^4.20.6",
+    "typescript": "catalog:"
+  }
+}

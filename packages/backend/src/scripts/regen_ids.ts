@@ -1,6 +1,5 @@
 import { createId, isCuid } from "@paralleldrive/cuid2";
-
-import { PrismaClient } from "@/generated/prisma";
+import { PrismaClient } from "himalayan-drumming-research-database";
 
 
 

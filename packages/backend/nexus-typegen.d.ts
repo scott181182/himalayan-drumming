@@ -3,7 +3,7 @@
  * Do not make changes to this file directly
  */
 
-import type * as prisma from "./src/generated/prisma/index"
+
 import type { Context } from "./src/graphql/context"
 import type { core } from "nexus"
 declare global {
@@ -260,14 +260,49 @@ export interface NexusGenScalars {
 }
 
 export interface NexusGenObjects {
-  FileEntry: prisma.FileEntry;
-  FileMetadata: prisma.FileMetadata;
-  LatLng: prisma.LatLng;
+  FileEntry: { // root type
+    id: string; // ID!
+    name: string; // String!
+    parentId?: string | null; // ID
+    type: string; // String!
+    url?: string | null; // String
+  }
+  FileMetadata: { // root type
+    fileId: string; // ID!
+    locationId?: string | null; // ID
+  }
+  LatLng: { // root type
+    id: string; // ID!
+    latitude: number; // Float!
+    longitude: number; // Float!
+  }
   Mutation: {};
-  Person: prisma.Person;
-  PersonInVillage: prisma.PersonInVillage;
+  Person: { // root type
+    avatarUrl?: string | null; // String
+    birthdate?: NexusGenScalars['Date'] | null; // Date
+    caste?: string | null; // String
+    education?: string | null; // String
+    gender?: string | null; // String
+    id: string; // ID!
+    name: string; // String!
+    notes?: string | null; // String
+    parentId?: string | null; // String
+  }
+  PersonInVillage: { // root type
+    description?: string | null; // String
+    personId: string; // ID!
+    villageId: string; // ID!
+  }
   Query: {};
-  Village: prisma.Village;
+  Village: { // root type
+    divinities?: string | null; // String
+    id: string; // ID!
+    locationId: string; // String!
+    name: string; // String!
+    notes?: string | null; // String
+    rituals?: string | null; // String
+    temples?: string | null; // String
+  }
 }
 
 export interface NexusGenInterfaces {
