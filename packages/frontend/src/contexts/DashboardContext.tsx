@@ -2,12 +2,12 @@
 
 import { useApolloClient, useQuery } from "@apollo/client";
 import { App } from "antd";
-import type { Reducer} from "react";
-import { createContext, useContext, useMemo, useReducer } from "react";
+import type { Reducer } from "react";
+import { createContext, useContext, useEffect, useMemo, useReducer } from "react";
 
 import { AsyncData } from "@/components/AsyncData";
 import type { FileEntryBasicFragment, LocationCompleteFragment, VillageInContextFragment, PersonInContextFragment } from "@/generated/graphql";
-import { GetFullContextDocument, GetPartialContextDocument, GetPersonDocument, GetVillageDocument} from "@/generated/graphql";
+import { GetFullContextDocument, GetPartialContextDocument, GetPersonDocument, GetVillageDocument } from "@/generated/graphql";
 import { FileTree } from "@/utils/tree";
 
 
@@ -97,7 +97,7 @@ export type DashboardDispatchFunctions = {
 
 
 export const dashboardReducer: Reducer<DashboardContextValue, DashboardDispatchAction> = (state, action) => {
-    switch(action.type) {
+    switch (action.type) {
         case "setSelectedFiles":
             return {
                 ...state,
@@ -181,12 +181,12 @@ export const DashboardDispatchContext = createContext<DashboardDispatchFunctions
 
 export function useDashboardState() {
     const state = useContext(DashboardContext);
-    if(!state) { throw new Error("Dashboard context tried to be accessed before it was initialized!"); }
+    if (!state) { throw new Error("Dashboard context tried to be accessed before it was initialized!"); }
     return state;
 }
 export function useDashboardDispatch() {
     const dispatch = useContext(DashboardDispatchContext);
-    if(!dispatch) { throw new Error("Dashboard context tried to be accessed before it was initialized!"); }
+    if (!dispatch) { throw new Error("Dashboard context tried to be accessed before it was initialized!"); }
     return dispatch;
 }
 
@@ -213,19 +213,19 @@ export function DashboardProvider({
     });
 
 
-    const { loading, error, refetch } = useQuery(GetFullContextDocument, {
-        onCompleted(data) {
-            try {
-                const payload = FileTree.fromEntries(data.fileEntries);
-                dispatch({ type: "setFileTree", payload });
-                dispatch({ type: "setPeople", payload: data.people });
-                dispatch({ type: "setVillages", payload: data.villages });
-            } catch(err) {
-                console.error(err);
-                message.error("There was a problem loading data from OneDrive");
-            }
-        },
-    });
+    const { data, loading, error, refetch } = useQuery(GetFullContextDocument);
+    useEffect(() => {
+        if (!data) { return; }
+        try {
+            const payload = FileTree.fromEntries(data.fileEntries);
+            dispatch({ type: "setFileTree", payload });
+            dispatch({ type: "setPeople", payload: data.people });
+            dispatch({ type: "setVillages", payload: data.villages });
+        } catch (err) {
+            console.error(err);
+            message.error("There was a problem loading data from OneDrive");
+        }
+    }, [data, message]);
 
     const functions: DashboardDispatchFunctions = useMemo(() => ({
         setSelectedFiles: (files: FileEntryBasicFragment[]) =>
@@ -259,24 +259,24 @@ export function DashboardProvider({
                     ...options
                 }
             }).then((res) => {
-                if(options.fileIds) {
-                    for(const file of res.data.fileEntries) {
+                if (options.fileIds) {
+                    for (const file of res.data.fileEntries) {
                         dispatch({
                             type: "updateFile",
                             payload: file
                         });
                     }
                 }
-                if(options.villageIds) {
-                    for(const village of res.data.villages) {
+                if (options.villageIds) {
+                    for (const village of res.data.villages) {
                         dispatch({
                             type: "updateVillage",
                             payload: village
                         });
                     }
                 }
-                if(options.personIds) {
-                    for(const person of res.data.people) {
+                if (options.personIds) {
+                    for (const person of res.data.people) {
                         dispatch({
                             type: "updatePerson",
                             payload: person
@@ -290,7 +290,7 @@ export function DashboardProvider({
                 query: GetPersonDocument,
                 variables: { personId }
             }).then((res) => {
-                if(res.data.person) {
+                if (res.data.person) {
                     dispatch({
                         type: "updatePerson",
                         payload: res.data.person
@@ -306,7 +306,7 @@ export function DashboardProvider({
                 query: GetVillageDocument,
                 variables: { villageId }
             }).then((res) => {
-                if(res.data.village) {
+                if (res.data.village) {
                     dispatch({
                         type: "updateVillage",
                         payload: res.data.village
