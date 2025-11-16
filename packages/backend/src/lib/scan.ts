@@ -1,9 +1,8 @@
-import type { FileEntry, Prisma, PrismaClient } from "@prisma/client";
-
 import type { FileItem} from "./local";
 import { getFileTree } from "./local";
 import type { TreeNode} from "./tree";
 import { diffObject, mergeTrees } from "./tree";
+import type { FileEntry, Prisma, PrismaClient } from "@/generated/prisma";
 
 
 

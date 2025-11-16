@@ -6,14 +6,14 @@ import type { ContextFunction } from "@apollo/server";
 import { ApolloServer } from "@apollo/server";
 import type { ExpressContextFunctionArgument} from "@apollo/server/express4";
 import { expressMiddleware } from "@apollo/server/express4";
-import { PrismaClient } from "@prisma/client";
 import express from "express";
 import fileUpload from "express-fileupload";
 import { GraphQLError } from "graphql";
 
 import { schema } from "./graphql";
 import type { Context } from "./graphql/context";
-import { odTree2prismaCreateInput } from "./lib/scan";
+import { PrismaClient } from "@/generated/prisma";
+import { odTree2prismaCreateInput } from "@/lib/scan";
 
 
 
@@ -87,7 +87,7 @@ const devContext: ContextFn = (prisma) =>(async () => {
         async (req, res) => {
             const parentId = req.params.parentId;
             if(!parentId) { return res.status(404).send(); }
-            
+
             const file = req.files?.file;
             if(!file) {
                 return res.status(400).json({ status: "error", reason: "No file in request" });
@@ -109,7 +109,7 @@ const devContext: ContextFn = (prisma) =>(async () => {
             const vPath = path.join(parent.path, file.name);
             const fileDestFull = path.join(FILE_DIR, vPath);
             // TODO: check if file already exists
-            
+
             file.mv(fileDestFull, (err) => {
                 if(err) {
                     console.error(err);
@@ -127,7 +127,7 @@ const devContext: ContextFn = (prisma) =>(async () => {
                         },
                         parent.id
                     );
-                    
+
                     prismaClient.fileEntry.create({
                         data: fileCreateInput
                     }).then(() => {
