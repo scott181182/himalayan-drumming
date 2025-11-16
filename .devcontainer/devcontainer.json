@@ -1,4 +1,3 @@
-// See https://containers.dev/implementors/json_reference/ for configuration reference
 {
 	"name": "Himalayan Drumming Organizer",
 	"dockerComposeFile": "docker-compose.yml",

@@ -1,10 +1,10 @@
-version: '3.7'
+name: himalayan-drumming-dev
 services:
   workspace:
     container_name: himalayan-drumming-dev-workspace
     build:
-      dockerfile: ./Dockerfile
-      context: ..
+      dockerfile: Dockerfile
+      context: .
     env_file:
       - .env
     volumes:
