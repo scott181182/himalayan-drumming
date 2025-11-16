@@ -1,14 +1,92 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
-    provider = "prisma-client-js"
-    output = "../src/generated/prisma"
+    provider = "prisma-client"
+    output   = "../src/generated/prisma"
 }
 
 datasource db {
     provider = "postgresql"
     url      = env("DATABASE_URL")
+}
+
+////////////////////////////////////////////////////////////////////////
+//      The following tables are based on the BetterAuth schema:      //
+//   https://www.better-auth.com/docs/concepts/database#core-schema   //
+////////////////////////////////////////////////////////////////////////
+model User {
+    id            String  @id
+    /// User's chosen display name.
+    name          String
+    /// User's email address for communication and login.
+    email         String  @unique
+    emailVerified Boolean @map("email_verified")
+    image         String?
+
+    createdAt DateTime @default(now()) @map("created_at")
+    updatedAt DateTime @updatedAt @map("updated_at")
+
+    sessions Session[]
+    accounts Account[]
+    people   Person[]
+
+    @@map("users")
+}
+
+model Session {
+    id        String  @id
+    /// The unique session token.
+    token     String  @unique
+    /// The IP address of the device.
+    ipAddress String? @map("ip_address")
+    /// The user agent information of the device.
+    userAgent String? @map("user_agent")
+
+    /// The time when the session expires.
+    expiresAt DateTime @map("expires_at")
+    createdAt DateTime @default(now()) @map("created_at")
+    updatedAt DateTime @updatedAt @map("updated_at")
+
+    userId String @map("user_id")
+    user   User   @relation(fields: [userId], references: [id])
+
+    @@map("sessions")
+}
+
+model Account {
+    id           String  @id
+    /// The ID of the account as provided by the SSO or equal to userId for credential accounts.
+    accountId    String  @map("account_id")
+    providerId   String  @map("provider_id")
+    accessToken  String? @map("access_token")
+    refreshToken String? @map("refresh_token")
+    idToken      String? @map("id_token")
+    scope        String?
+    /// The password of the account. Mainly used for email and password authentication.
+    password     String?
+
+    accessTokenExpiresAt  DateTime? @map("access_token_expires_at")
+    refreshTokenExpiresAt DateTime? @map("refresh_token_expires_at")
+    createdAt             DateTime  @default(now()) @map("created_at")
+    updatedAt             DateTime  @updatedAt @map("updated_at")
+
+    userId String @map("user_id")
+    user   User   @relation(fields: [userId], references: [id])
+
+    @@map("accounts")
+}
+
+model Verification {
+    id         String @id
+    /// The identifier for the verification request.
+    identifier String @unique
+    /// The value to be verified.
+    value      String
+
+    /// The time when the verification request expires.
+    expiresAt DateTime @map("expires_at")
+    createdAt DateTime @default(now()) @map("created_at")
+    updatedAt DateTime @updatedAt @map("updated_at")
+
+    @@map("verifications")
 }
 
 ///////////////
@@ -122,6 +200,9 @@ model Person {
 
     parent   Person? @relation("ParentChild", fields: [parentId], references: [id])
     parentId String?
+    /// The user account associated with this person, if they exist in the system.
+    user     User?   @relation(fields: [userId], references: [id])
+    userId   String?
 
     gender    String?
     genderRef Gender? @relation(fields: [gender], references: [name])

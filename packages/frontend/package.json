@@ -1,6 +1,6 @@
 {
     "name": "himalayan-drumming-research-frontend",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "private": true,
     "scripts": {
         "lint": "next lint",
@@ -14,12 +14,13 @@
     "dependencies": {
         "@ant-design/icons": "^5.2.6",
         "@apollo/client": "^3.7.16",
-        "@azure/msal-browser": "^2.37.1",
-        "@azure/msal-react": "^1.5.8",
         "antd": "5.6.4",
         "autoprefixer": "10.4.14",
+        "better-auth": "catalog:",
         "dayjs": "1.11.19",
         "graphql": "^16.8.0",
+        "himalayan-drumming-research-auth": "workspace:*",
+        "himalayan-drumming-research-database": "workspace:*",
         "leaflet": "^1.9.4",
         "next": "13.4.7",
         "postcss": "8.4.24",

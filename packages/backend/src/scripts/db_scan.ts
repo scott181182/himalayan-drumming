@@ -1,4 +1,5 @@
-import { PrismaClient } from "@/generated/prisma";
+import { PrismaClient } from "himalayan-drumming-research-database";
+
 import { executeFullScan } from "@/lib/scan";
 
 
