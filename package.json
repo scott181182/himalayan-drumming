@@ -6,6 +6,8 @@
     "license": "MIT",
     "private": true,
     "scripts": {
+        "build:deps": "pnpm run -r -F ./packages/database build",
+        "postinstall": "node ./scripts/postinstall.js",
         "typecheck": "pnpm run -r typecheck",
         "lint": "pnpm run -r lint",
         "lint:fix": "pnpm run -r lint:fix",
