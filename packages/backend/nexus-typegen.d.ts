@@ -3,7 +3,7 @@
  * Do not make changes to this file directly
  */
 
-import type * as prisma from "./node_modules/.prisma/client/index"
+import type * as prisma from "./src/generated/prisma/index"
 import type { Context } from "./src/graphql/context"
 import type { core } from "nexus"
 declare global {

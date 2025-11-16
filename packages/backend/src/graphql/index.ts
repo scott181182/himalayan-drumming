@@ -15,7 +15,7 @@ export const schema = makeSchema({
     sourceTypes: {
         modules: [
             {
-                module: path.resolve(__dirname, "..", "..", "node_modules", ".prisma", "client", "index.d.ts"),
+                module: path.resolve(__dirname, "..", "generated", "prisma", "index.d.ts"),
                 alias: "prisma"
             }
         ]
