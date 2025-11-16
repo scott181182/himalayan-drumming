@@ -15,6 +15,7 @@
         "db:scan": "tsx ./src/scripts/db_scan.ts",
         "regen_ids": "tsx ./src/scripts/regen_ids.ts",
         "compile": "tsc -p . --pretty",
+        "dev": "tsx --watch ./src/index.ts",
         "build": "pnpm run generate && pnpm run compile",
         "start": "node ."
     },

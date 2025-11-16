@@ -47,7 +47,8 @@ export async function readDirRecursive(dirpath: string, rootpath: string): Promi
 }
 
 export async function getFileTree(): Promise<TreeNode<FileItem>> {
-    const rootDir = path.resolve(__dirname, "..", "..", "..", "blob", "files");
+    const rootDir = process.env.BLOB_FILE_ROOT ??
+        path.resolve(__dirname, "..", "..", "..", "..", "blob", "files");
 
     return {
         id: "/",
