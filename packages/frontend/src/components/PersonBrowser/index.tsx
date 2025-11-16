@@ -5,9 +5,9 @@ import { Button, Input, Space, Table } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { useCallback, useMemo, useState } from "react";
 
-import { PersonDetails } from "./PersonDetails";
 import { useDashboardDispatch, useDashboardState } from "../../contexts/DashboardContext";
 import { AddPersonButton } from "../AddPersonButton";
+import { PersonDetails } from "./PersonDetails";
 import type { PersonInContextFragment } from "@/generated/graphql";
 
 

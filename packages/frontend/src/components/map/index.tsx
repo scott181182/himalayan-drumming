@@ -60,7 +60,7 @@ export function Map() {
                 eventHandlers={makeMarkerHandler(v.location)}
                 icon={villageMarkerIcon}
             />
-        ) ?? [])
+        )) ?? []
     ), [makeMarkerHandler, villages]);
     const fileMarkers = useMemo(() => (
         locations?.filter((l) => !villages.some((v) => v.location.id === l.id)).map((l) => (
@@ -70,7 +70,7 @@ export function Map() {
                 eventHandlers={makeMarkerHandler(l)}
                 icon={recordingMarkerIcon}
             />
-        ) ?? [])
+        )) ?? []
     ), [locations, makeMarkerHandler, villages]);
 
 

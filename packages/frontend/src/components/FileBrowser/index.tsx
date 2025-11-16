@@ -8,11 +8,11 @@ import Link from "next/link";
 import type { MouseEvent} from "react";
 import { useCallback, useEffect, useMemo, useRef } from "react";
 
+import { MultiCase } from "../MultiCase";
 import { useFilePreview } from "./FilePreview";
 import { FileSelector } from "./FileSelector";
 import { useAddReferenceModal, useCreateFolderModal, useUploadFileModal } from "./hooks";
 import { TagSelector } from "./TagSelector";
-import { MultiCase } from "../MultiCase";
 import { useDashboardDispatch, useDashboardState } from "@/contexts/DashboardContext";
 import type { FileEntryBasicFragment} from "@/generated/graphql";
 import { AssignFileMetadataDocument } from "@/generated/graphql";

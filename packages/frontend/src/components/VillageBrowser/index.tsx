@@ -5,8 +5,8 @@ import { Button, Input, Space, Table } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { useCallback, useMemo, useState } from "react";
 
-import { VillageDetails } from "./VillageDetails";
 import { AddVillageButton } from "../AddVillageButton";
+import { VillageDetails } from "./VillageDetails";
 import { useDashboardDispatch, useDashboardState } from "@/contexts/DashboardContext";
 import type { VillageInContextFragment } from "@/generated/graphql";
 

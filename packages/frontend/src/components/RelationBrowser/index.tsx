@@ -4,9 +4,9 @@ import type { TabsProps } from "antd";
 import { Tabs } from "antd";
 import { useCallback, useMemo } from "react";
 
-import cls from "./index.module.scss";
 import { PersonBrowser } from "../PersonBrowser";
 import { VillageBrowser } from "../VillageBrowser";
+import cls from "./index.module.scss";
 import { useDashboardDispatch, useDashboardState } from "@/contexts/DashboardContext";
 
 

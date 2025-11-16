@@ -4,10 +4,10 @@ import { App, Button, DatePicker, Descriptions, Select, Space, Upload } from "an
 import dayjs from "dayjs";
 import { useCallback } from "react";
 
-import { FileSelector } from "./FileSelector";
-import cls from "./PersonDetail.module.scss";
 import { EditableGraphQLInput } from "../EditableGraphQLInput";
 import { PersonInVillageTable } from "../PersonInVillageTable";
+import { FileSelector } from "./FileSelector";
+import cls from "./PersonDetail.module.scss";
 import { useEnums } from "@/contexts/EnumContext";
 import { UpdatePersonDocument, type PersonInContextFragment } from "@/generated/graphql";
 
@@ -52,7 +52,7 @@ export function PersonDetails({
     }, [modal, onUpdate, person.id]);
 
 
-    
+
     return <Space direction="vertical" className="overflow-y-auto">
         <div className={cls["person-picture-container"]}>
             <img src={person.avatarUrl ?? "/empty_person.webp"} alt={person.name + " profile picture"}/>
@@ -85,7 +85,7 @@ export function PersonDetails({
                     mutationDocument={UpdatePersonDocument}
                     onMutate={(value) => ({ personId: person.id, data: { gender: value || null } })}
                     afterUpdate={onUpdate}
-                    
+
                     renderInput={(value, onChange) => <Select
                         className="flex-grow"
                         value={value}
@@ -93,7 +93,7 @@ export function PersonDetails({
                         options={genderOptions}
                         allowClear
                     />}
-                />    
+                />
             </Descriptions.Item>
             <Descriptions.Item label="Caste">
                 <EditableGraphQLInput
@@ -101,7 +101,7 @@ export function PersonDetails({
                     mutationDocument={UpdatePersonDocument}
                     onMutate={(value) => ({ personId: person.id, data: { caste: value || null } })}
                     afterUpdate={onUpdate}
-                    
+
                     renderInput={(value, onChange) => <Select
                         className="flex-grow"
                         value={value}
@@ -109,7 +109,7 @@ export function PersonDetails({
                         options={casteOptions}
                         allowClear
                     />}
-                />    
+                />
             </Descriptions.Item>
             <Descriptions.Item label="Education">
                 <EditableGraphQLInput
@@ -125,7 +125,7 @@ export function PersonDetails({
                     mutationDocument={UpdatePersonDocument}
                     onMutate={(value) => ({ personId: person.id, data: { notes: value } })}
                     afterUpdate={onUpdate}
-                />    
+                />
             </Descriptions.Item>
             <Descriptions.Item label="Associated Files">
                 <FileSelector person={person}/>
