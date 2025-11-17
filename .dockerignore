@@ -1,4 +1,17 @@
-node_modules
+# General directories, particularly in root.
+.devcontainer/
+.github/
+.pnpm-store/
+.vscode/
+blob/
+diagram/
+node_modules/
 
-frontend/src/generated
-backend/nexus-typegen.d.ts
+# Other general directories, not in root.
+dist/
+
+# Package-specific ignores.
+packages/backend/nexus-typegen.d.ts
+packages/database/src/generated
+packages/frontend/.next
+packages/frontend/src/generated
