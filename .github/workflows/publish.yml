@@ -50,36 +50,13 @@ jobs:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/backend
           bake-target: backend
 
-      - name: Build and Push Frontend Docker Image
-        id: publish_frontend
+      - name: Build and Push Docker Images
+        id: publish
         uses: docker/bake-action@v6
         with:
-          file: |
+          files: |
             ./compose.yml
             cwd://${{ steps.meta_frontend.outputs.bake-file }}
-          platforms: linux/amd64,linux/arm64
-          target: frontend
-          push: true
-      - name: Build and Push Backend Docker Image
-        id: publish_backend
-        uses: docker/bake-action@v6
-        with:
-          file: |
-            ./compose.yml
             cwd://${{ steps.meta_backend.outputs.bake-file }}
-          platforms: linux/amd64,linux/arm64
-          target: backend
+          targets: frontend,backend
           push: true
-
-      - name: Generate Frontend Artifact Attestation
-        uses: actions/attest-build-provenance@v2
-        with:
-          subject-name: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/frontend
-          subject-digest: ${{ steps.publish_frontend.outputs.digest }}
-          push-to-registry: true
-      - name: Generate Backend Artifact Attestation
-        uses: actions/attest-build-provenance@v2
-        with:
-          subject-name: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/backend
-          subject-digest: ${{ steps.publish_backend.outputs.digest }}
-          push-to-registry: true
