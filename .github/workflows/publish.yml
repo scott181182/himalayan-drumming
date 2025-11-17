@@ -1,0 +1,85 @@
+name: Publish
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  build-and-push:
+    name: Build and Publish Docker Images
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      attestations: write
+      id-token: write
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract Frontend Metadata
+        id: meta_frontend
+        uses: docker/metadata-action@v5
+        with:
+          tags: |
+            type=semver,pattern={{version}}
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/frontend
+          bake-target: frontend
+      - name: Extract Backend Metadata
+        id: meta_backend
+        uses: docker/metadata-action@v5
+        with:
+          tags: |
+            type=semver,pattern={{version}}
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/backend
+          bake-target: backend
+
+      - name: Build and Push Frontend Docker Image
+        id: publish_frontend
+        uses: docker/bake-action@v6
+        with:
+          file: |
+            ./compose.yml
+            cwd://${{ steps.meta_frontend.outputs.bake-file }}
+          platforms: linux/amd64,linux/arm64
+          target: frontend
+          push: true
+      - name: Build and Push Backend Docker Image
+        id: publish_backend
+        uses: docker/bake-action@v6
+        with:
+          file: |
+            ./compose.yml
+            cwd://${{ steps.meta_backend.outputs.bake-file }}
+          platforms: linux/amd64,linux/arm64
+          target: backend
+          push: true
+
+      - name: Generate Frontend Artifact Attestation
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-name: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/frontend
+          subject-digest: ${{ steps.publish_frontend.outputs.digest }}
+          push-to-registry: true
+      - name: Generate Backend Artifact Attestation
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-name: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/backend
+          subject-digest: ${{ steps.publish_backend.outputs.digest }}
+          push-to-registry: true
