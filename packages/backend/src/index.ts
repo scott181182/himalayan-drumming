@@ -10,7 +10,8 @@ import express from "express";
 import fileUpload from "express-fileupload";
 import { GraphQLError } from "graphql";
 import { makeAuth } from "himalayan-drumming-research-auth";
-import { PrismaClient } from "himalayan-drumming-research-database";
+import type { PrismaClient } from "himalayan-drumming-research-database";
+import { createPrismaClient } from "himalayan-drumming-research-database";
 
 import { authGuardMiddleware } from "./auth";
 import { AVATAR_ROOT, FILE_ROOT } from "./config";
@@ -46,7 +47,9 @@ const makeContext: ContextFn = (prisma) => (async ({ res }) => {
 
     app.disable("x-powered-by");
 
-    const prismaClient = new PrismaClient();
+    const prismaClient = createPrismaClient({
+        connectionString: process.env.DATABASE_URL
+    });
     const auth = makeAuth(prismaClient);
 
     app.use((_req, res, next) => {

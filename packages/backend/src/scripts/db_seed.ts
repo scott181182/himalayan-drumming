@@ -1,4 +1,4 @@
-import { PrismaClient } from "himalayan-drumming-research-database";
+import { createPrismaClient } from "himalayan-drumming-research-database";
 
 
 
@@ -37,8 +37,8 @@ async function seedEnum(
     // Check for seed data already present
     const currentValues = await model.findMany();
     const unseenValues = new Set(values);
-    for(const ft of currentValues) {
-        if(unseenValues.has(ft.name)) {
+    for (const ft of currentValues) {
+        if (unseenValues.has(ft.name)) {
             // Database already has this type, nice!
             unseenValues.delete(ft.name);
         } else {
@@ -46,7 +46,7 @@ async function seedEnum(
             await model.delete({ where: { name: ft.name } });
         }
     }
-    for(const unseenValue of unseenValues) {
+    for (const unseenValue of unseenValues) {
         // Add any file types not present in database.
         await model.create({
             data: { name: unseenValue }
@@ -55,7 +55,9 @@ async function seedEnum(
 }
 
 (async function main() {
-    const prismaClient = new PrismaClient();
+    const prismaClient = createPrismaClient({
+        connectionString: process.env.DATABASE_URL
+    });
 
     await seedEnum(FILE_TYPES, prismaClient.fileType);
     await seedEnum(CASTES, prismaClient.caste);

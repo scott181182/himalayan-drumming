@@ -1,18 +1,20 @@
 import { createId, isCuid } from "@paralleldrive/cuid2";
-import { PrismaClient } from "himalayan-drumming-research-database";
+import { createPrismaClient } from "himalayan-drumming-research-database";
 
 
 
 (async function main() {
-    const prismaClient = new PrismaClient();
+    const prismaClient = createPrismaClient({
+        connectionString: process.env.DATABASE_URL
+    });
 
     const fileEntries = await prismaClient.fileEntry.findMany();
     console.log(`Found ${fileEntries.length} file entries`);
 
     let changed = 0;
-    for(const entry of fileEntries) {
+    for (const entry of fileEntries) {
         // Only update ID if it _isn't_ already a CUID.
-        if(!isCuid(entry.id)) {
+        if (!isCuid(entry.id)) {
             changed++;
             await prismaClient.fileEntry.update({
                 where: { id: entry.id },
