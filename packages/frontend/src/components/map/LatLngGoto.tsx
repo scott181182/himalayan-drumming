@@ -1,7 +1,7 @@
 import { Button, Card, Input, Space } from "antd";
 import L from "leaflet";
 import Image from "next/image";
-import type { MouseEventHandler} from "react";
+import type { MouseEventHandler } from "react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useMap } from "react-leaflet";
 
@@ -20,9 +20,9 @@ export function LatLngGoto({ className }: LatLngGotoProps) {
     const { setVirtualLocation } = useDashboardDispatch();
 
     const cardRef = useRef<HTMLDivElement>(null);
-    const [latLngStr, setLatLngStr ] = useState<string | undefined>();
+    const [latLngStr, setLatLngStr] = useState<string | undefined>();
     const onGoto = useCallback<MouseEventHandler>(() => {
-        if(latLngStr) {
+        if (latLngStr) {
             // TODO: more robust LatLng string parsing (e.g. w/ and w/out parens)
             const latlng = latLngStr.split(/\s*,\s*/).map((l) => parseFloat(l)) as [number, number];
             map.setView(latlng);
@@ -34,28 +34,28 @@ export function LatLngGoto({ className }: LatLngGotoProps) {
     }, [latLngStr, map, setVirtualLocation]);
 
     useEffect(() => {
-        if(cardRef.current) {
+        if (cardRef.current) {
             L.DomEvent.disableClickPropagation(cardRef.current);
         }
     }, []);
 
     const markerImage = useMemo(() => {
-        if(selectedLocation?.id === "") {
-            return <Image src="/assets/empty_marker.png" alt="empty marker" width={32} height={35}/>;
-        } else if(villages.some((v) => v.location.id === selectedLocation?.id)) {
-            return <Image src="/assets/village_marker.png" alt="village marker" width={32} height={35}/>;
-        } else if(selectedFiles.length > 0) {
-            return <Image src="/assets/recording_marker.png" alt="village marker" width={32} height={35}/>;
+        if (selectedLocation?.id === "") {
+            return <Image src="/assets/empty_marker.png" alt="empty marker" width={32} height={35} />;
+        } else if (villages.some((v) => v.location.id === selectedLocation?.id)) {
+            return <Image src="/assets/village_marker.png" alt="village marker" width={32} height={35} />;
+        } else if (selectedFiles.length > 0) {
+            return <Image src="/assets/recording_marker.png" alt="village marker" width={32} height={35} />;
         } else {
             return <></>;
         }
     }, [selectedLocation?.id, villages, selectedFiles.length]);
 
     return (
-        <Card className={className} ref={cardRef} bodyStyle={{ padding: "0.5rem" }}>
+        <Card className={className} ref={cardRef} styles={{ body: { padding: "0.5rem" } }} >
             <Space direction="vertical" align="center">
                 <Space>
-                    <Input size="small" value={latLngStr} onChange={(ev) => setLatLngStr(ev.target.value)}/>
+                    <Input size="small" value={latLngStr} onChange={(ev) => setLatLngStr(ev.target.value)} />
                     <Button size="small" onClick={onGoto}>Go To</Button>
                 </Space>
                 <div className="flex items-center gap-2">

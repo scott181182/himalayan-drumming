@@ -2,7 +2,7 @@
 
 import { UserOutlined } from "@ant-design/icons";
 import { Avatar, Button, Dropdown, Space } from "antd";
-import type { ItemType } from "antd/es/menu/hooks/useItems";
+import type { ItemType } from "antd/es/menu/interface";
 import { useRouter } from "next/navigation";
 import { useCallback, useMemo } from "react";
 
