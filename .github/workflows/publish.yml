@@ -55,7 +55,7 @@ jobs:
         uses: docker/bake-action@v6
         with:
           files: |
-            ./compose.yml
+            ./docker-bake.hcl
             cwd://${{ steps.meta_frontend.outputs.bake-file }}
             cwd://${{ steps.meta_backend.outputs.bake-file }}
           targets: frontend,backend
