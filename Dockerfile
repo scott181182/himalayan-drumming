@@ -20,7 +20,7 @@ RUN pnpm build
 
 FROM build AS build_backend
 WORKDIR /build/packages/backend
-RUN pnpm build && pnpm deploy --filter=. --prod /dist/backend && ls -lha /dist/backend
+RUN pnpm build && pnpm deploy --filter=. --prod --legacy /dist/backend && ls -lha /dist/backend
 
 FROM base AS frontend
 
