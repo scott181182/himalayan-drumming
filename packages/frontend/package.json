@@ -4,8 +4,8 @@
     "private": true,
     "packageManager": "pnpm@10.22.0",
     "scripts": {
-        "lint": "eslint .",
-        "lint:fix": "eslint . --fix",
+        "lint": "eslint ./src",
+        "lint:fix": "eslint ./src --fix",
         "typecheck": "tsc --noEmit -p . --pretty",
         "generate": "graphql-codegen",
         "dev": "next dev",
