@@ -1,8 +1,9 @@
 {
     "name": "himalayan-drumming-research",
-    "version": "1.0.0",
+    "version": "0.2.0",
     "repository": "git@github.com:scott181182/himalayan-drumming.git",
     "author": "Scott Fasone <scott.fasone@bixford.digital>",
+    "packageManager": "pnpm@10.20.0",
     "license": "MIT",
     "private": true,
     "scripts": {
