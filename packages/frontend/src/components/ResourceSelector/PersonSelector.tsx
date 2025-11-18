@@ -30,7 +30,7 @@ export function PersonSelector({
     });
 
     const options = useMemo<DefaultOptionType[]>(
-        () => [ ...(data?.people ?? []), value ]
+        () => [...(data?.people ?? []), value]
             .filter(isDefined)
             .map((f) => ({
                 label: f.name,
@@ -50,8 +50,8 @@ export function PersonSelector({
 
         options={options}
         onChange={(id, opt) => {
-            if(Array.isArray(opt)) { return; }
-            onChange?.({ id, name: opt.label as string });
+            if (Array.isArray(opt)) { return; }
+            onChange?.({ id, name: opt?.label as string });
         }}
 
         filterOption={false}

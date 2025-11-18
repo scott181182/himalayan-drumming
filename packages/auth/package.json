@@ -2,7 +2,7 @@
   "name": "himalayan-drumming-research-auth",
   "version": "0.2.0",
   "license": "MIT",
-  "packageManager": "pnpm@10.20.0",
+  "packageManager": "pnpm@10.22.0",
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

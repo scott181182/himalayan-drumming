@@ -2,19 +2,21 @@
     "name": "himalayan-drumming-research-frontend",
     "version": "0.2.0",
     "private": true,
+    "packageManager": "pnpm@10.22.0",
     "scripts": {
-        "lint": "next lint",
-        "lint:fix": "next lint --fix",
+        "lint": "eslint ./src",
+        "lint:fix": "eslint ./src --fix",
         "typecheck": "tsc --noEmit -p . --pretty",
         "generate": "graphql-codegen",
         "dev": "next dev",
-        "build": "next build",
+        "build": "pnpm run generate && next build",
         "start": "next start"
     },
     "dependencies": {
         "@ant-design/icons": "^5.2.6",
         "@apollo/client": "^3.7.16",
-        "antd": "5.6.4",
+        "@prisma/client": "catalog:",
+        "antd": "5.28.1",
         "autoprefixer": "10.4.14",
         "better-auth": "catalog:",
         "dayjs": "1.11.19",
@@ -22,12 +24,13 @@
         "himalayan-drumming-research-auth": "workspace:*",
         "himalayan-drumming-research-database": "workspace:*",
         "leaflet": "^1.9.4",
-        "next": "13.4.7",
+        "next": "16.0.3",
+        "pg": "catalog:",
         "postcss": "8.4.24",
         "rc-select": "14.5.2",
-        "react": "18.2.0",
-        "react-dom": "18.2.0",
-        "react-leaflet": "^4.2.1",
+        "react": "19.2.0",
+        "react-dom": "19.2.0",
+        "react-leaflet": "^5.0.0",
         "sass": "^1.65.1",
         "tailwindcss": "3.3.2",
         "wavesurfer.js": "^7.4"
@@ -47,6 +50,7 @@
         "eslint": "catalog:",
         "eslint-config-next": "13.4.7",
         "eslint-plugin-import": "catalog:",
+        "rc-table": "7.54.0",
         "typescript": "catalog:"
     }
 }

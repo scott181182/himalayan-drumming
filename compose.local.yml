@@ -1,18 +1,36 @@
 services:
-  dashboard:
-    container_name: himalayan-drumming-dashboard
+  frontend:
+    image: ghcr.io/scott181182/himalayan-drumming/frontend:${TAG:-latest}
+    container_name: himalayan-drumming-frontend
     build:
-      dockerfile: ./docker/Dockerfile
       context: .
+      target: frontend
     depends_on:
       database:
         condition: service_healthy
     env_file:
       - .env
-    volumes:
-      - ./blob:/app/blob:rw
+    environment:
+      - SSR_API_HOST=http://backend:3001
     ports:
-      - 8080:80
+      - 3100:3000
+  backend:
+    image: ghcr.io/scott181182/himalayan-drumming/backend:${TAG:-latest}
+    container_name: himalayan-drumming-backend
+    build:
+      context: .
+      target: backend
+    depends_on:
+      database:
+        condition: service_healthy
+    env_file:
+      - .env
+    environment:
+      - BLOB_ROOT=/data/blob
+    volumes:
+      - ./blob:/data/blob:rw
+    ports:
+      - 3101:3001
   database:
     image: postgres:17-alpine
     container_name: himalayan-drumming-database
@@ -23,7 +41,7 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data:rw
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}" ]
       start_period: 30s
       timeout: 10s
       interval: 10s

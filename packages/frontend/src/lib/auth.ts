@@ -1,6 +1,8 @@
 import { makeAuth } from "himalayan-drumming-research-auth";
-import { PrismaClient } from "himalayan-drumming-research-database";
+import { createPrismaClient } from "himalayan-drumming-research-database";
 
-const prisma = new PrismaClient();
+const prisma = createPrismaClient({
+    connectionString: process.env.DATABASE_URL
+});
 
 export const auth = makeAuth(prisma);

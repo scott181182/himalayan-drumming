@@ -5,7 +5,8 @@ import { useApolloClient } from "@apollo/client";
 import { Button, Descriptions, Table, Space, Input } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import Link from "next/link";
-import type { MouseEvent} from "react";
+import type { Reference as TableReference } from "rc-table/es/interface";
+import type { MouseEvent } from "react";
 import { useCallback, useEffect, useMemo, useRef } from "react";
 
 import { MultiCase } from "../MultiCase";
@@ -14,7 +15,7 @@ import { FileSelector } from "./FileSelector";
 import { useAddReferenceModal, useCreateFolderModal, useUploadFileModal } from "./hooks";
 import { TagSelector } from "./TagSelector";
 import { useDashboardDispatch, useDashboardState } from "@/contexts/DashboardContext";
-import type { FileEntryBasicFragment} from "@/generated/graphql";
+import type { FileEntryBasicFragment } from "@/generated/graphql";
 import { AssignFileMetadataDocument } from "@/generated/graphql";
 import { usePromiseMessage } from "@/utils/antd";
 import { isDefined } from "@/utils/array";
@@ -30,7 +31,7 @@ const fileBrowserColumns: ColumnsType<AntDTreeNode<FileEntryBasicFragment>> = [
     {
         key: "icons",
         render: (_, record) => <Space>
-            {record.data.metadata?.location && <CompassOutlined/>}
+            {record.data.metadata?.location && <CompassOutlined />}
         </Space>
     }
 ];
@@ -44,7 +45,7 @@ export function FileBrowser() {
     const { fileTree, selectedFiles, selectedLocation, filePredicate } = useDashboardState();
     const { setSelectedFiles, updateFile, filterFiles } = useDashboardDispatch();
 
-    const tableRef = useRef<HTMLDivElement>(null);
+    const tableRef = useRef<TableReference>(null);
 
 
 
@@ -59,7 +60,7 @@ export function FileBrowser() {
 
     const assignLocation = useCallback(() => {
         const selectedFile = selectedFiles[0];
-        if(!selectedFile || !selectedLocation) { return; }
+        if (!selectedFile || !selectedLocation) { return; }
 
         apolloClient.mutate({
             mutation: AssignFileMetadataDocument,
@@ -78,7 +79,7 @@ export function FileBrowser() {
             }
         })
             .then((res) => {
-                if(res.data?.updateMetadata) { updateFile(res.data.updateMetadata); }
+                if (res.data?.updateMetadata) { updateFile(res.data.updateMetadata); }
             })
             .then(...promiseMsg(
                 "Successfully assigned location to file!",
@@ -105,7 +106,7 @@ export function FileBrowser() {
 
 
     const onSearch = useCallback((value: string) => {
-        if(value) {
+        if (value) {
             filterFiles((file) =>
                 file.name.includes(value) || file.tags.some((t) => t.includes(value)));
         } else {
@@ -115,10 +116,10 @@ export function FileBrowser() {
 
     const onRowClick = useCallback((row: AntDTreeNode<FileEntryBasicFragment>) => {
         return (ev: MouseEvent) => {
-            if(ev.ctrlKey) {
+            if (ev.ctrlKey) {
                 // Individual multi-select
-                onSelect([ ...selectedFiles.map((f) => f.id), row.key ]);
-            } else if(ev.shiftKey) {
+                onSelect([...selectedFiles.map((f) => f.id), row.key]);
+            } else if (ev.shiftKey) {
                 // Remove text selection that is caused by shift-clicking text.
                 document.getSelection()?.removeAllRanges();
 
@@ -130,7 +131,7 @@ export function FileBrowser() {
                 ]);
             } else {
                 // Single select
-                onSelect([ row.key ]);
+                onSelect([row.key]);
             }
         };
     }, [fileTree, onSelect, selectedFiles]);
@@ -138,11 +139,11 @@ export function FileBrowser() {
 
 
     useEffect(() => {
-        if(!tableRef.current || selectedFiles.length === 0) { return; }
+        if (!tableRef.current || selectedFiles.length === 0) { return; }
         const firstFile = selectedFiles[0];
-        const rows = [ ...tableRef.current.getElementsByTagName("tr") ];
+        const rows = [...tableRef.current.nativeElement.getElementsByTagName("tr")];
         const firstRow = rows.find((r) => r.textContent?.includes(firstFile.name));
-        if(!firstRow) {
+        if (!firstRow) {
             console.warn(`Could not find row with text '${firstFile.name}'`);
             return;
         }
@@ -196,10 +197,10 @@ export function FileBrowser() {
                         size="small"
                     >
                         <Descriptions.Item label="Tags" span={24}>
-                            <TagSelector file={selectedFile}/>
+                            <TagSelector file={selectedFile} />
                         </Descriptions.Item>
                         <Descriptions.Item label="Associated Files" span={24}>
-                            <FileSelector file={selectedFile}/>
+                            <FileSelector file={selectedFile} />
                         </Descriptions.Item>
                     </Descriptions>
                     <Space align="center" className="w-full px-4">
