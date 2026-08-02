@@ -1,14 +1,26 @@
-generator client {
-    provider            = "prisma-client"
-    output              = "../src/generated/prisma"
-    runtime             = "nodejs"
-    importFileExtension = "js"
-    engineType          = "client"
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
-datasource db {
-    provider = "postgresql"
-    url      = env("DATABASE_URL")
+plugin typescript {
+  provider = "@core/typescript"
+  output = "../src/generated/zenstack"
+}
+plugin prisma {
+  provider = "@core/prisma"
+  output = "../src/generated/schema.prisma"
+}
+// This is used for GraphQL API generation.
+generator pothos {
+  provider = 'prisma-pothos-types'
+  clientOutput = './zenstack/models.ts'
+  output = './pothos-prisma-types.ts'
+}
+generator dmmf {
+  provider = "pnpm exec tsx src/lib/server/prisma/generator.ts"
+  pothosOutput = "./pothos-prisma-types.ts"
+  output = "./dmmf.json"
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -16,80 +28,80 @@ datasource db {
 //   https://www.better-auth.com/docs/concepts/database#core-schema   //
 ////////////////////////////////////////////////////////////////////////
 model User {
-    id            String  @id
-    /// User's chosen display name.
-    name          String
-    /// User's email address for communication and login.
-    email         String  @unique
-    emailVerified Boolean @map("email_verified")
-    image         String?
+  id            String    @id
+  /// User's chosen display name.
+  name          String
+  /// User's email address for communication and login.
+  email         String    @unique
+  emailVerified Boolean   @map("email_verified")
+  image         String?
 
-    createdAt DateTime @default(now()) @map("created_at")
-    updatedAt DateTime @updatedAt @map("updated_at")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
 
-    sessions Session[]
-    accounts Account[]
-    people   Person[]
+  sessions      Session[]
+  accounts      Account[]
+  people        Person[]
 
-    @@map("users")
+  @@map("users")
 }
 
 model Session {
-    id        String  @id
-    /// The unique session token.
-    token     String  @unique
-    /// The IP address of the device.
-    ipAddress String? @map("ip_address")
-    /// The user agent information of the device.
-    userAgent String? @map("user_agent")
+  id        String   @id
+  /// The unique session token.
+  token     String   @unique
+  /// The IP address of the device.
+  ipAddress String?  @map("ip_address")
+  /// The user agent information of the device.
+  userAgent String?  @map("user_agent")
 
-    /// The time when the session expires.
-    expiresAt DateTime @map("expires_at")
-    createdAt DateTime @default(now()) @map("created_at")
-    updatedAt DateTime @updatedAt @map("updated_at")
+  /// The time when the session expires.
+  expiresAt DateTime @map("expires_at")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
-    userId String @map("user_id")
-    user   User   @relation(fields: [userId], references: [id])
+  userId    String   @map("user_id")
+  user      User     @relation(fields: [userId], references: [id])
 
-    @@map("sessions")
+  @@map("sessions")
 }
 
 model Account {
-    id           String  @id
-    /// The ID of the account as provided by the SSO or equal to userId for credential accounts.
-    accountId    String  @map("account_id")
-    providerId   String  @map("provider_id")
-    accessToken  String? @map("access_token")
-    refreshToken String? @map("refresh_token")
-    idToken      String? @map("id_token")
-    scope        String?
-    /// The password of the account. Mainly used for email and password authentication.
-    password     String?
+  id                    String    @id
+  /// The ID of the account as provided by the SSO or equal to userId for credential accounts.
+  accountId             String    @map("account_id")
+  providerId            String    @map("provider_id")
+  accessToken           String?   @map("access_token")
+  refreshToken          String?   @map("refresh_token")
+  idToken               String?   @map("id_token")
+  scope                 String?
+  /// The password of the account. Mainly used for email and password authentication.
+  password              String?
 
-    accessTokenExpiresAt  DateTime? @map("access_token_expires_at")
-    refreshTokenExpiresAt DateTime? @map("refresh_token_expires_at")
-    createdAt             DateTime  @default(now()) @map("created_at")
-    updatedAt             DateTime  @updatedAt @map("updated_at")
+  accessTokenExpiresAt  DateTime? @map("access_token_expires_at")
+  refreshTokenExpiresAt DateTime? @map("refresh_token_expires_at")
+  createdAt             DateTime  @default(now()) @map("created_at")
+  updatedAt             DateTime  @updatedAt @map("updated_at")
 
-    userId String @map("user_id")
-    user   User   @relation(fields: [userId], references: [id])
+  userId                String    @map("user_id")
+  user                  User      @relation(fields: [userId], references: [id])
 
-    @@map("accounts")
+  @@map("accounts")
 }
 
 model Verification {
-    id         String @id
-    /// The identifier for the verification request.
-    identifier String @unique
-    /// The value to be verified.
-    value      String
+  id         String   @id
+  /// The identifier for the verification request.
+  identifier String   @unique
+  /// The value to be verified.
+  value      String
 
-    /// The time when the verification request expires.
-    expiresAt DateTime @map("expires_at")
-    createdAt DateTime @default(now()) @map("created_at")
-    updatedAt DateTime @updatedAt @map("updated_at")
+  /// The time when the verification request expires.
+  expiresAt  DateTime @map("expires_at")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
 
-    @@map("verifications")
+  @@map("verifications")
 }
 
 ///////////////
@@ -97,21 +109,21 @@ model Verification {
 ///////////////
 
 model FileType {
-    name String @id
+  name    String      @id
 
-    entries FileEntry[]
+  entries FileEntry[]
 }
 
 model Caste {
-    name String @id
+  name    String   @id
 
-    members Person[]
+  members Person[]
 }
 
 model Gender {
-    name String @id
+  name   String   @id
 
-    people Person[]
+  people Person[]
 }
 
 /////////////////////
@@ -119,73 +131,73 @@ model Gender {
 /////////////////////
 
 model FileEntry {
-    id   String  @id @default(cuid())
-    /// Virtual path, in the application.
-    path String  @unique
-    name String
-    /// Endpoint the file can be retrieved at.
-    url  String?
+  id               String             @id @default(cuid())
+  /// Virtual path, in the application.
+  path             String             @unique
+  name             String
+  /// Endpoint the file can be retrieved at.
+  url              String?
 
-    type     String
-    parentId String?
+  type             String
+  parentId         String?
 
-    typeRef FileType   @relation(fields: [type], references: [name])
-    parent  FileEntry? @relation("ParentChildren", fields: [parentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  typeRef          FileType           @relation(fields: [type], references: [name])
+  parent           FileEntry?         @relation("ParentChildren", fields: [parentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
-    children FileEntry[] @relation("ParentChildren")
+  children         FileEntry[]        @relation("ParentChildren")
 
-    metadata FileMetadata?
-    withTags TagOnFile[]
-    people   Person[]
+  metadata         FileMetadata?
+  withTags         TagOnFile[]
+  people           Person[]
 
-    associatedFiles1 FileAssociations[] @relation("File1Associations")
-    associatedFiles2 FileAssociations[] @relation("File2Associations")
+  associatedFiles1 FileAssociations[] @relation("File1Associations")
+  associatedFiles2 FileAssociations[] @relation("File2Associations")
 
-    @@index([parentId])
+  @@index([parentId])
 }
 
 /// JOIN Table for file entries.
 model FileAssociations {
-    file1Id String
-    file1   FileEntry @relation("File1Associations", fields: [file1Id], references: [id])
-    file2Id String
-    file2   FileEntry @relation("File2Associations", fields: [file2Id], references: [id])
+  file1Id String
+  file1   FileEntry @relation("File1Associations", fields: [file1Id], references: [id])
+  file2Id String
+  file2   FileEntry @relation("File2Associations", fields: [file2Id], references: [id])
 
-    @@id([file1Id, file2Id])
+  @@id([file1Id, file2Id])
 }
 
 model FileMetadata {
-    fileId String    @id
-    file   FileEntry @relation(fields: [fileId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  fileId     String    @id
+  file       FileEntry @relation(fields: [fileId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
-    locationId String?
-    location   LatLng? @relation(fields: [locationId], references: [id], onDelete: SetNull, onUpdate: Cascade)
+  locationId String?
+  location   LatLng?   @relation(fields: [locationId], references: [id], onDelete: SetNull, onUpdate: Cascade)
 }
 
 /// Manual Join table to avoid automatic cascades
 model TagOnFile {
-    tagName String
-    fileId  String
+  tagName String
+  fileId  String
 
-    tag  Tag       @relation(fields: [tagName], references: [name], onDelete: Cascade, onUpdate: Cascade)
-    file FileEntry @relation(fields: [fileId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  tag     Tag       @relation(fields: [tagName], references: [name], onDelete: Cascade, onUpdate: Cascade)
+  file    FileEntry @relation(fields: [fileId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
-    @@id([tagName, fileId])
+  @@id([tagName, fileId])
 }
 
 model Tag {
-    name String @id
+  name    String      @id
 
-    onFiles TagOnFile[]
+  onFiles TagOnFile[]
 }
 
 model LatLng {
-    id        String @id @default(cuid())
-    latitude  Float
-    longitude Float
+  id        String         @id @default(cuid())
+  latitude  Float
+  longitude Float
 
-    metadata FileMetadata[]
-    villages Village[]
+  metadata  FileMetadata[]
+  villages  Village[]
 }
 
 ///////////////////////
@@ -193,52 +205,52 @@ model LatLng {
 ///////////////////////
 
 model Person {
-    id        String  @id @default(cuid())
-    name      String
-    avatarUrl String?
+  id        String            @id @default(cuid())
+  name      String
+  avatarUrl String?
 
-    birthdate DateTime?
-    education String?
-    notes     String?
+  birthdate DateTime?
+  education String?
+  notes     String?
 
-    parent   Person? @relation("ParentChild", fields: [parentId], references: [id])
-    parentId String?
-    /// The user account associated with this person, if they exist in the system.
-    user     User?   @relation(fields: [userId], references: [id])
-    userId   String?
+  parent    Person?           @relation("ParentChild", fields: [parentId], references: [id])
+  parentId  String?
+  /// The user account associated with this person, if they exist in the system.
+  user      User?             @relation(fields: [userId], references: [id])
+  userId    String?
 
-    gender    String?
-    genderRef Gender? @relation(fields: [gender], references: [name])
-    caste     String?
-    casteRef  Caste?  @relation(fields: [caste], references: [name])
+  gender    String?
+  genderRef Gender?           @relation(fields: [gender], references: [name])
+  caste     String?
+  casteRef  Caste?            @relation(fields: [caste], references: [name])
 
-    children Person[]          @relation("ParentChild")
-    villages PersonInVillage[]
-    files    FileEntry[]
+  children  Person[]          @relation("ParentChild")
+  villages  PersonInVillage[]
+  files     FileEntry[]
 }
 
 model Village {
-    id         String  @id @default(cuid())
-    name       String
-    temples    String?
-    divinities String?
-    rituals    String?
-    notes      String?
+  id         String            @id @default(cuid())
+  name       String
+  temples    String?
+  divinities String?
+  rituals    String?
+  notes      String?
 
-    location   LatLng @relation(fields: [locationId], references: [id])
-    locationId String
+  location   LatLng            @relation(fields: [locationId], references: [id])
+  locationId String
 
-    people PersonInVillage[]
+  people     PersonInVillage[]
 }
 
 model PersonInVillage {
-    /// The person's relation to the village
-    description String?
+  /// The person's relation to the village
+  description String?
 
-    person    Person  @relation(fields: [personId], references: [id])
-    personId  String
-    village   Village @relation(fields: [villageId], references: [id])
-    villageId String
+  person      Person  @relation(fields: [personId], references: [id])
+  personId    String
+  village     Village @relation(fields: [villageId], references: [id])
+  villageId   String
 
-    @@id([personId, villageId])
+  @@id([personId, villageId])
 }
