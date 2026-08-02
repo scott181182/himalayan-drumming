@@ -1,13 +1,17 @@
-import { createPrismaClient } from "himalayan-drumming-research-database";
+import { fatal } from "./util";
+import { db } from "@/lib/db";
+import { executeFullScan } from "@/lib/server/scan";
+import { storage } from "@/lib/server/storage";
 
-import { executeFullScan } from "@/lib/scan";
+async function main() {
+  await executeFullScan(db, storage);
+}
 
-
-
-(async function main() {
-    const prismaClient = createPrismaClient({
-        connectionString: process.env.DATABASE_URL
-    });
-
-    await executeFullScan(prismaClient);
-})();
+// oxlint-disable-next-line unicorn/prefer-top-level-await
+main()
+  .then(() => {
+    console.log("Done");
+  })
+  .catch((error) => {
+    fatal(error);
+  });
