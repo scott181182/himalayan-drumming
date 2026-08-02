@@ -1,8 +1,26 @@
-import { makeAuth } from "himalayan-drumming-research-auth";
-import { createPrismaClient } from "himalayan-drumming-research-database";
+import { zenstackAdapter } from "@zenstackhq/better-auth";
+import { betterAuth } from "better-auth";
 
-const prisma = createPrismaClient({
-    connectionString: process.env.DATABASE_URL
-});
+import type { DbClient } from "@/lib/db";
+import { db } from "@/lib/db";
 
-export const auth = makeAuth(prisma);
+function makeAuth() {
+  return betterAuth({
+    database: zenstackAdapter(db, {
+      provider: "postgresql",
+    }),
+    emailAndPassword: {
+      enabled: true,
+    },
+  });
+}
+
+export const auth = makeAuth();
+
+export function getAuthDbClient(userId: string): DbClient {
+  return db.$setAuth({ id: userId });
+}
+
+export type BetterAuthUser = NonNullable<
+  Awaited<ReturnType<(typeof auth)["api"]["getSession"]>>
+>["user"];
