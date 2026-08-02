@@ -1,4 +1,4 @@
 {
-    "schema": "backend/schema.graphql",
-    "documents": "frontend/src/lib/graphql/**/*.graphql"
+  "schema": "src/generated/schema.graphql",
+  "documents": "src/lib/graphql/**/*.graphql"
 }
