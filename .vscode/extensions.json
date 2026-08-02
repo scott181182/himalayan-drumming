@@ -1,16 +1,14 @@
 {
-    "recommendations": [
-        "vivaxy.vscode-conventional-commits",
-        "bradlc.vscode-tailwindcss",
-        "britesnow.vscode-toggle-quotes",
-        "streetsidesoftware.code-spell-checker",
-        "sleistner.vscode-fileutils",
-        "ms-azuretools.vscode-docker",
-        "ahmadalli.vscode-nginx-conf",
-        "graphql.vscode-graphql",
-        "prisma.prisma",
-        "dbaeumer.vscode-eslint",
-        "mhutchie.git-graph",
-        "ms-vscode-remote.remote-containers"
-    ]
+  "recommendations": [
+    "bradlc.vscode-tailwindcss",
+    "britesnow.vscode-toggle-quotes",
+    "graphql.vscode-graphql",
+    "mhutchie.git-graph",
+    "ms-azuretools.vscode-docker",
+    "ms-vscode-remote.remote-containers",
+    "oxc.oxc-vscode",
+    "sleistner.vscode-fileutils",
+    "vivaxy.vscode-conventional-commits",
+    "zenstack.zenstack-v3"
+  ]
 }

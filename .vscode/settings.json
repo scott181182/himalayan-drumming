@@ -1,41 +1,43 @@
 {
-    "editor.formatOnSave": true,
-    "editor.codeActionsOnSave": {
-        "source.fixAll.eslint": "explicit"
-    },
-    "eslint.workingDirectories": [
-        "packages/backend",
-        "packages/frontend"
-    ],
-    "conventionalCommits.scopes": [
-        "scripts",
-        "frontend",
-        "backend",
-        "cicd",
-        "vscode",
-        "build",
-    ],
-    "conventionalCommits.promptFooter": false,
-    "conventionalCommits.gitmoji": false,
-    "terminal.integrated.profiles.linux": {
-        "bash": {
-            "path": "bash",
-            "icon": "terminal-bash"
-        },
-        "zsh": {
-            "path": "zsh"
-        }
-    },
-    "terminal.integrated.defaultProfile.linux": "zsh",
-    "cSpell.words": [
-        "antd",
-        "Aurisano",
-        "birthdate",
-        "ethnomusicologists",
-        "Fiol",
-        "Garhwal",
-        "unnullify",
-        "wavesurfer",
-        "webp"
-    ]
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.oxc": "explicit",
+    "source.removeUnusedImports": "explicit"
+  },
+  "editor.defaultFormatter": "oxc.oxc-vscode",
+  "oxc.fmt.configPath": ".oxfmtrc.json",
+  "conventionalCommits.scopes": ["scripts", "frontend", "backend", "cicd", "vscode", "build"],
+  "conventionalCommits.promptFooter": false,
+  "conventionalCommits.gitmoji": false,
+  "editor.indentSize": 2,
+  "terminal.integrated.profiles.linux": {
+    "zsh": {
+      "path": "zsh"
+    }
+  },
+  "terminal.integrated.defaultProfile.linux": "zsh",
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "oxc.oxc-vscode"
+  },
+  "[json]": {
+    "editor.defaultFormatter": "oxc.oxc-vscode"
+  },
+  "[jsonc]": {
+    "editor.defaultFormatter": "oxc.oxc-vscode"
+  },
+  "[zmodel-v3]": {
+    "editor.defaultFormatter": "zenstack.zenstack-v3"
+  },
+  "cSpell.words": [
+    "antd",
+    "Aurisano",
+    "birthdate",
+    "ethnomusicologists",
+    "Fiol",
+    "Garhwal",
+    "unnullify",
+    "wavesurfer",
+    "webp"
+  ],
+  "js/ts.tsdk.path": "node_modules/typescript/lib"
 }

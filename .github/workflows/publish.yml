@@ -33,28 +33,28 @@ jobs:
 
       - name: Extract Frontend Metadata
         id: meta_frontend
-        uses: docker/metadata-action@v5
+        uses: docker/metadata-action@v6
         with:
           tags: |
             type=semver,pattern={{version}}
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/frontend
-          bake-target: frontend
-      - name: Extract Backend Metadata
-        id: meta_backend
-        uses: docker/metadata-action@v5
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          bake-target: docker-metadata-action-frontend
+      - name: Extract Migrate Metadata
+        id: meta_migrate
+        uses: docker/metadata-action@v6
         with:
           tags: |
             type=semver,pattern={{version}}
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/backend
-          bake-target: backend
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/db-migrate
+          bake-target: docker-metadata-action-migrate
 
       - name: Build and Push Docker Images
         id: publish
-        uses: docker/bake-action@v6
+        uses: docker/bake-action@v7
         with:
           files: |
             ./docker-bake.hcl
             cwd://${{ steps.meta_frontend.outputs.bake-file }}
-            cwd://${{ steps.meta_backend.outputs.bake-file }}
-          targets: frontend,backend
+            cwd://${{ steps.meta_migrate.outputs.bake-file }}
+          targets: frontend,migrate
           push: true
