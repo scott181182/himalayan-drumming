@@ -14,7 +14,8 @@ COPY ./zenstack /build/zenstack
 COPY ./tsconfig.json ./next.config.ts ./postcss.config.mjs ./graphql.config.json ./codegen.ts /build/
 
 FROM pnpm AS dependencies
-ENV NODE_ENV=production
+ENV NODE_ENV=production \
+    BLOB_ROOT=/fake/blob/root
 WORKDIR /build
 COPY ./package.json ./pnpm-lock.yaml ./pnpm-workspace.yaml ./
 # RUN echo "node-linker=hoisted" >> ./.npmrc
