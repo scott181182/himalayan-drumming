@@ -11,7 +11,7 @@ node_modules/
 dist/
 
 # Package-specific ignores.
-packages/backend/nexus-typegen.d.ts
-packages/database/src/generated
-packages/frontend/.next
-packages/frontend/src/generated
+.next
+src/generated
+
+Dockerfile
