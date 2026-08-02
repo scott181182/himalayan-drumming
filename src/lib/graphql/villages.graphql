@@ -1,39 +1,44 @@
 #import VillageInContext from "./context.graphql"
 
 fragment SimpleVillage on Village {
-    id
-    name
+  id
+  name
 
-    location {
-        id
-        latitude
-        longitude
-    }
+  location {
+    id
+    latitude
+    longitude
+  }
 }
 
 query GetVillage($villageId: ID!) {
-    village(id: $villageId) {
-        ...VillageInContext
-    }
+  village(where: { id: $villageId }) {
+    ...VillageInContext
+  }
 }
 query GetAllVillages {
-    villages {
-        ...SimpleVillage
-    }
+  villages {
+    ...SimpleVillage
+  }
 }
 
 mutation CreateVillage($data: VillageCreateInput!) {
-    createVillage(data: $data) {
-        ...SimpleVillage
-    }
+  createVillage(data: $data) {
+    ...SimpleVillage
+  }
 }
 
 mutation UpdateVillage($villageId: ID!, $data: VillageUpdateInput!) {
-    updateVillage(id: $villageId, data: $data) {
-        ...VillageInContext
-    }
+  updateVillage(where: { id: $villageId }, data: $data) {
+    ...VillageInContext
+  }
 }
 
 mutation RemovePersonFromVillage($villageId: ID!, $personId: ID!) {
-    removePersonFromVillage(villageId: $villageId, personId: $personId)
+  deletePersonInVillage(
+    where: { personId_villageId: { personId: $personId, villageId: $villageId } }
+  ) {
+    personId
+    villageId
+  }
 }

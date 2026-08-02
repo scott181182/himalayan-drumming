@@ -1,80 +1,89 @@
 #import FileEntryBasic, LocationComplete from "./files.graphql"
 
 fragment PersonInVillageInContext on PersonInVillage {
-    person { id name }
-    village { id name }
+  person {
+    id
+    name
+  }
+  village {
+    id
+    name
+  }
 
-    description
+  description
 }
 
 fragment PersonInContext on Person {
+  id
+  name
+  avatarUrl
+
+  birthdate
+  education
+  notes
+
+  gender
+  caste
+
+  files {
     id
     name
-    avatarUrl
-
-    birthdate
-    education
-    notes
-
-    gender
-    caste
-
-    files {
-        id name
-    }
-    parent {
-        id name
-    }
-    villages { ...PersonInVillageInContext }
+  }
+  parent {
+    id
+    name
+  }
+  villages {
+    ...PersonInVillageInContext
+  }
 }
 
 fragment VillageInContext on Village {
-    id
-    name
-    temples
-    divinities
-    rituals
-    notes
+  id
+  name
+  temples
+  divinities
+  rituals
+  notes
 
-    location { ...LocationComplete }
-    people { ...PersonInVillageInContext }
+  location {
+    ...LocationComplete
+  }
+  people {
+    ...PersonInVillageInContext
+  }
 }
-
 
 query GetFullContext {
-    fileEntries { ...FileEntryBasic }
-    people { ...PersonInContext }
-    villages { ...VillageInContext }
+  fileEntries {
+    ...FileEntryBasic
+  }
+  people {
+    ...PersonInContext
+  }
+  villages {
+    ...VillageInContext
+  }
 }
 
-query GetPartialContext(
-    $fileIds: [ID!]!,
-    $personIds: [ID!]!,
-    $villageIds: [ID!]!,
-) {
-    fileEntries(where: {
-        id: { in: $fileIds }
-    }) {
-        ...FileEntryBasic
-    }
-    people(where: {
-        id: { in: $personIds }
-    }) {
-        ...PersonInContext
-    }
-    villages(where: {
-        id: { in: $villageIds }
-    }) {
-        ...VillageInContext
-    }
+query GetPartialContext($fileIds: [String!]!, $personIds: [String!]!, $villageIds: [String!]!) {
+  fileEntries(where: { id: { in: $fileIds } }) {
+    ...FileEntryBasic
+  }
+  people(where: { id: { in: $personIds } }) {
+    ...PersonInContext
+  }
+  villages(where: { id: { in: $villageIds } }) {
+    ...VillageInContext
+  }
 }
 
 query GetAllTags {
-    tags
+  tags
 }
 
 query GetAllEnums {
-    tags
-    castes
-    genders
+  tags
+  castes
+  genders
 }

@@ -1,115 +1,102 @@
 fragment LocationComplete on LatLng {
-    id
-    latitude
-    longitude
+  id
+  latitude
+  longitude
 }
 
 fragment MetadataBasic on FileMetadata {
-    location {
-        ...LocationComplete
-    }
+  location {
+    ...LocationComplete
+  }
 }
 
 fragment FileEntryBasic on FileEntry {
+  id
+  name
+  url
+
+  type
+  parentId
+
+  metadata {
+    ...MetadataBasic
+  }
+
+  associatedFiles {
     id
     name
-    url
+  }
 
-    type
-    parentId
-
-    metadata {
-        ...MetadataBasic
-    }
-
-    associatedFiles {
-        id
-        name
-    }
-
-    tags
+  tags
 }
 fragment FileEntryWithChildren on FileEntry {
+  ...FileEntryBasic
+
+  children {
     ...FileEntryBasic
-
-    children {
-        ...FileEntryBasic
-    }
+  }
 }
-
-
 
 query GetRootFileEntry {
-    rootFileEntry {
-        ...FileEntryWithChildren
-    }
+  rootFileEntry {
+    ...FileEntryWithChildren
+  }
 }
 query GetFileEntry($id: ID!) {
-    fileEntry(id: $id) {
-        ...FileEntryWithChildren
-    }
+  fileEntry(where: { id: $id }) {
+    ...FileEntryWithChildren
+  }
 }
 
 query GetAllFileEntries {
-    fileEntries {
-        ...FileEntryBasic
-    }
+  fileEntries {
+    ...FileEntryBasic
+  }
 }
 query GetFileEntries($where: FileEntryWhereInput, $skip: Int, $take: Int) {
-    fileEntries(where: $where, skip: $skip, take: $take) {
-        ...FileEntryBasic
-    }
+  fileEntries(where: $where, skip: $skip, take: $take) {
+    ...FileEntryBasic
+  }
 }
-
-
 
 mutation CreateFolder($parentId: ID!, $name: String!) {
-    createDirectory(parentId: $parentId, name: $name) {
-        ...FileEntryBasic
-    }
+  createDirectory(parentId: $parentId, name: $name) {
+    ...FileEntryBasic
+  }
 }
 mutation CreateFileReference($parentId: ID!, $name: String!, $url: String!) {
-    createFileReference(data: {
-        parentId: $parentId,
-        name: $name,
-        url: $url
-    }) {
-        ...FileEntryBasic
-    }
+  createFileReference(data: { parentId: $parentId, name: $name, url: $url }) {
+    ...FileEntryBasic
+  }
 }
 mutation AssignFileMetadata($fileId: ID!, $data: FileMetadataUpdateInput!) {
-    updateMetadata(fileId: $fileId, data: $data) {
-        ...FileEntryBasic
-    }
+  updateMetadata(fileId: $fileId, data: $data) {
+    ...FileEntryBasic
+  }
 }
 mutation TagFile($fileId: ID!, $tag: String!) {
-    tagFile(fileId: $fileId, tag: $tag) {
-        ...FileEntryBasic
-    }
+  tagFile(fileId: $fileId, tag: $tag) {
+    ...FileEntryBasic
+  }
 }
 mutation UntagFile($fileId: ID!, $tag: String!) {
-    untagFile(fileId: $fileId, tag: $tag) {
-        ...FileEntryBasic
-    }
+  untagFile(fileId: $fileId, tag: $tag) {
+    ...FileEntryBasic
+  }
 }
 mutation AssociateFiles($file1Id: ID!, $file2Id: ID!) {
-    associateFiles(file1Id: $file1Id, file2Id: $file2Id) {
-        ...FileEntryBasic
-    }
+  associateFiles(file1Id: $file1Id, file2Id: $file2Id) {
+    ...FileEntryBasic
+  }
 }
 mutation DisassociateFiles($file1Id: ID!, $file2Id: ID!) {
-    disassociateFiles(file1Id: $file1Id, file2Id: $file2Id) {
-        ...FileEntryBasic
-    }
+  disassociateFiles(file1Id: $file1Id, file2Id: $file2Id) {
+    ...FileEntryBasic
+  }
 }
-
-
-
 
 mutation StartFullScan {
-    fullscan {
-        ...FileEntryWithChildren
-    }
+  fullscan {
+    ...FileEntryWithChildren
+  }
 }
-
-
