@@ -1,25 +1,25 @@
 {
-	"name": "Himalayan Drumming Organizer",
-	"dockerComposeFile": "docker-compose.yml",
-	"service": "workspace",
-	"workspaceFolder": "/workspace",
+  "name": "Himalayan Drumming Organizer",
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "workspace",
+  "workspaceFolder": "/workspace",
 
-	"remoteUser": "node",
-	"customizations": {
-		"vscode": {
-			"extensions": [
-				"vivaxy.vscode-conventional-commits",
-				"graphql.vscode-graphql",
-				"bradlc.vscode-tailwindcss",
-				"britesnow.vscode-toggle-quotes",
-				"streetsidesoftware.code-spell-checker",
-				"sleistner.vscode-fileutils",
-				"ms-azuretools.vscode-docker",
-				"ahmadalli.vscode-nginx-conf",
-				"prisma.prisma",
-				"dbaeumer.vscode-eslint",
-				"mhutchie.git-graph"
-			]
-		}
-	}
+  "remoteUser": "node",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "vivaxy.vscode-conventional-commits",
+        "graphql.vscode-graphql",
+        "bradlc.vscode-tailwindcss",
+        "britesnow.vscode-toggle-quotes",
+        "streetsidesoftware.code-spell-checker",
+        "sleistner.vscode-fileutils",
+        "ms-azuretools.vscode-docker",
+        "ahmadalli.vscode-nginx-conf",
+        "prisma.prisma",
+        "dbaeumer.vscode-eslint",
+        "mhutchie.git-graph"
+      ]
+    }
+  }
 }

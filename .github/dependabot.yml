@@ -12,7 +12,7 @@ updates:
     target-branch: "develop"
     ignore:
       - dependency-name: "@types/node"
-        update-types: [ "version-update:semver-major" ]
+        update-types: ["version-update:semver-major"]
   - package-ecosystem: "npm" # See documentation for possible values
     directory: "/backend" # Location of package manifests
     schedule:
@@ -20,4 +20,4 @@ updates:
     target-branch: "develop"
     ignore:
       - dependency-name: "@types/node"
-        update-types: [ "version-update:semver-major" ]
+        update-types: ["version-update:semver-major"]
