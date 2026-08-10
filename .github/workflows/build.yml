@@ -15,24 +15,20 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [20.x]
+        node-version: [24.x]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
-
+    env:
+      BLOB_ROOT: ${{ vars.BLOB_ROOT }}
     steps:
       - uses: actions/checkout@v4
-      - name: Install pnpm
-        uses: pnpm/action-setup@v4
+      - name: Install Node, PNPM, and Dependencies
+        uses: pnpm/setup@v2
         with:
-          version: 10.22.0
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ matrix.node-version }}
-          cache: "pnpm"
-      - name: Run install
-        run: pnpm install
+          runtime: node@${{ matrix.node-version }}
+          cache: true
+          install: true
       - name: Generate
-        run: pnpm generate
+        run: pnpm generate && pnpm next typegen
       - name: Lint
         run: pnpm lint
       - name: Type Check
