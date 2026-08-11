@@ -57,7 +57,8 @@ async function handleFileUpload(
 export async function GET(req: NextRequest, ctx: RouteContext<"/api/files/[[...path]]">) {
   const { path: pathParams } = await ctx.params;
 
-  const vPath = pathParams ? FILES_DIR + "/" + pathParams.join("/") : FILES_DIR;
+  const vPath =
+    pathParams && pathParams.length > 0 ? FILES_DIR + "/" + pathParams.join("/") : FILES_DIR;
   if (!vPath) {
     return NextResponse.json({ status: "error", reason: "Missing file path" }, { status: 400 });
   }
