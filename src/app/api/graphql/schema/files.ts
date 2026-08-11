@@ -86,7 +86,7 @@ export const filesPlugin: GenerateSchemaPlugin<SchemaType> = {
         });
 
         const vPath = path.join(parent.path, name);
-        await ctx.storage.createDirectory(path.join("files", vPath));
+        await ctx.storage.createDirectory(vPath);
 
         return ctx.db.fileEntry.create({
           ...query,
