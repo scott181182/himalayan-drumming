@@ -1,7 +1,7 @@
 "use client";
 
 import { ApolloProvider } from "@apollo/client/react";
-import { App, Layout } from "antd";
+import { App, ConfigProvider, Layout } from "antd";
 import type { PropsWithChildren } from "react";
 
 import { AppNavbar } from "./AppNavbar";
@@ -12,14 +12,24 @@ export function AppLayout({ children }: Readonly<PropsWithChildren>) {
 
   return (
     <ApolloProvider client={apolloClient}>
-      <App>
-        <Layout className="h-screen">
-          <Layout.Header>
-            <AppNavbar />
-          </Layout.Header>
-          <Layout.Content>{children}</Layout.Content>
-        </Layout>
-      </App>
+      <ConfigProvider
+        theme={{
+          components: {
+            Descriptions: {
+              titleMarginBottom: 4,
+            },
+          },
+        }}
+      >
+        <App>
+          <Layout className="h-screen">
+            <Layout.Header>
+              <AppNavbar />
+            </Layout.Header>
+            <Layout.Content>{children}</Layout.Content>
+          </Layout>
+        </App>
+      </ConfigProvider>
     </ApolloProvider>
   );
 }

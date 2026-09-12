@@ -41,6 +41,7 @@ const imageExts = new Set([
   "tiff",
   "webp",
 ]);
+const audioExts = new Set(["mp3", "wav", "ogg"]);
 const videoExts = new Set(["mov", "mp4"]);
 
 function getFilePreviewContent(file: FileEntryBasicFragment): JSX.Element | undefined {
@@ -49,8 +50,12 @@ function getFilePreviewContent(file: FileEntryBasicFragment): JSX.Element | unde
   if (imageExts.has(ext)) {
     return imageFilePreview(file.url);
   }
+
   if (videoExts.has(ext)) {
     return videoFilePreview(file.url);
+  }
+  if (audioExts.has(ext)) {
+    return audioFilePreview(file.url);
   }
 
   return undefined;
@@ -62,5 +67,9 @@ function imageFilePreview(url: string | null | undefined) {
 }
 
 function videoFilePreview(url: string | null | undefined) {
+  return <MediaPlayerRow src={url} mediaColProps={{ span: 24 }} waveformColProps={{ span: 24 }} />;
+}
+
+function audioFilePreview(url: string | null | undefined) {
   return <MediaPlayerRow src={url} mediaColProps={{ span: 24 }} waveformColProps={{ span: 24 }} />;
 }

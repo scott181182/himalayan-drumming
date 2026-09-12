@@ -61,13 +61,7 @@ export function SingleFileDetails({ file }: Readonly<SingleFileDetailsProps>) {
 
   return (
     <>
-      <Descriptions
-        title={file.name}
-        className="p-4 border-t-2 border-t-black wrap-title"
-        bordered
-        size="small"
-        column={24}
-      >
+      <Descriptions title={file.name} className="wrap-title" bordered size="small" column={24}>
         <Descriptions.Item label="Tags" span={24}>
           <TagSelector file={file} />
         </Descriptions.Item>
@@ -75,7 +69,7 @@ export function SingleFileDetails({ file }: Readonly<SingleFileDetailsProps>) {
           <FileSelector file={file} />
         </Descriptions.Item>
       </Descriptions>
-      <Space align="center" className="w-full px-4">
+      <Space align="center" className="w-full">
         <Button disabled={!selectedLocation} onClick={assignLocation}>
           Assign Location
         </Button>

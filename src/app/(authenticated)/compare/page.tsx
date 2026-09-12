@@ -30,17 +30,18 @@ const ComparePage: NextPage = () => {
   return (
     <EnumProvider>
       <Layout className="h-full">
-        <Layout.Content className="relative">
+        <Layout.Content className="relative flex flex-col gap-4 py-4">
           <AsyncData data={data?.fileEntries} loading={loading} error={error}>
             {(files) =>
               files.map((file) => (
                 <MediaPlayerRow
+                  title={file.name}
                   key={file.id}
                   src={file.url}
                   gutter={24}
                   mediaColProps={{
-                    xs: { span: 12, offset: 0 },
-                    md: { span: 10, offset: 2 },
+                    xs: { span: 12 },
+                    md: { span: 10 },
                   }}
                   waveformColProps={{
                     xs: { span: 12 },
