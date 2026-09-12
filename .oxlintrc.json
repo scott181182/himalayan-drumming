@@ -35,10 +35,7 @@
     "react/react-in-jsx-scope": "off",
     "typescript/consistent-type-imports": ["warn", { "prefer": "type-imports" }],
     "typescript/explicit-function-return-type": "off",
-    "typescript/prefer-readonly-parameter-types": [
-      "warn",
-      { "allow": ["Readonly"], "ignoreInferredTypes": true }
-    ],
+    "typescript/prefer-readonly-parameter-types": "off",
     "typescript/strict-boolean-expressions": "off",
     // Covered by TypeScript compiler flag.
     "typescript/consistent-return": "off"
@@ -55,6 +52,15 @@
       "files": ["src/**/*.tsx", "src/app/**/route.ts"],
       "rules": {
         "typescript/explicit-function-return-type": "off"
+      }
+    },
+    {
+      "files": ["src/**/*.tsx"],
+      "rules": {
+        "typescript/prefer-readonly-parameter-types": [
+          "warn",
+          { "allow": ["Readonly"], "ignoreInferredTypes": true }
+        ]
       }
     }
   ],
