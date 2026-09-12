@@ -1,10 +1,10 @@
-import path from "node:path";
-
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 
-import { auth, getAuthDbClient } from "@/lib/server/auth";
+import { auth } from "@/lib/server/auth";
 import type { DbClient } from "@/lib/server/db";
+import { ApiError } from "@/lib/server/errors";
+import { getFileUploadContext, prepareUpload } from "@/lib/server/files";
 import { fileTree2prismaCreateInput } from "@/lib/server/scan";
 import { FILES_DIR, storage } from "@/lib/server/storage";
 
@@ -14,44 +14,36 @@ async function handleFileUpload(
   parentId: string,
   vPath: string,
 ): Promise<NextResponse> {
-  try {
-    // oxlint-disable-next-line typescript/no-unsafe-type-assertion typescript/no-unnecessary-type-assertion
-    await storage.write(vPath, file.stream() as unknown as NodeJS.ReadableStream);
+  // oxlint-disable-next-line typescript/no-unsafe-type-assertion typescript/no-unnecessary-type-assertion
+  await storage.write(vPath, file.stream() as unknown as NodeJS.ReadableStream);
 
-    const fileCreateInput = await fileTree2prismaCreateInput(
-      {
-        id: vPath,
-        value: {
-          name: file.name,
-          path: vPath,
-          type: "file",
-        },
-        children: [],
+  const fileCreateInput = await fileTree2prismaCreateInput(
+    {
+      id: vPath,
+      value: {
+        name: file.name,
+        path: vPath,
+        type: "file",
       },
-      parentId,
-      storage,
-    );
+      children: [],
+    },
+    parentId,
+    storage,
+  );
 
-    // oxlint-disable-next-line typescript/return-await
-    return db.fileEntry
-      .create({ data: fileCreateInput })
-      .then(() => {
-        return NextResponse.json({ status: "success" }, { status: 200 });
-      })
-      .catch((gerr) => {
-        console.error(gerr);
-        return NextResponse.json(
-          { status: "error", reason: "There was an error updating the person record" },
-          { status: 500 },
-        );
-      });
-  } catch (error) {
-    console.error(error);
-    return NextResponse.json(
-      { status: "error", reason: "There was an error uploading the file" },
-      { status: 500 },
-    );
-  }
+  // oxlint-disable-next-line typescript/return-await
+  return db.fileEntry
+    .create({ data: fileCreateInput })
+    .then(() => {
+      return NextResponse.json({ status: "success" }, { status: 200 });
+    })
+    .catch((gerr) => {
+      console.error(gerr);
+      return NextResponse.json(
+        { status: "error", reason: "There was an error updating the person record" },
+        { status: 500 },
+      );
+    });
 }
 
 export async function GET(req: NextRequest, ctx: RouteContext<"/api/files/[[...path]]">) {
@@ -99,58 +91,47 @@ export async function GET(req: NextRequest, ctx: RouteContext<"/api/files/[[...p
  */
 // oxlint-disable-next-line max-lines-per-function
 export async function POST(req: NextRequest, ctx: RouteContext<"/api/files/[[...path]]">) {
-  const { path: pathParams } = await ctx.params;
-  if (!pathParams || pathParams.length !== 1 || pathParams[0] !== "upload") {
-    return NextResponse.json({ status: "error", reason: "Method not allowed" }, { status: 405 });
-  }
+  try {
+    const { path: pathParams } = await ctx.params;
+    if (!pathParams || pathParams.length !== 1 || pathParams[0] !== "upload") {
+      return NextResponse.json({ status: "error", reason: "Method not allowed" }, { status: 405 });
+    }
 
-  const session = await auth.api.getSession({ headers: req.headers });
-  if (!session) {
-    return NextResponse.json({ status: "error", reason: "Unauthorized" }, { status: 401 });
-  }
-  const db = getAuthDbClient(session.user.id);
+    const { db, formData } = await getFileUploadContext(req);
 
-  const formData = await req.formData();
-  const parentId = formData.get("parentId");
-  if (!parentId || typeof parentId !== "string") {
-    return NextResponse.json({ status: "error", reason: "Missing parentId" }, { status: 400 });
-  }
+    const parentId = formData.get("parentId");
+    if (!parentId || typeof parentId !== "string") {
+      return NextResponse.json({ status: "error", reason: "Missing parentId" }, { status: 400 });
+    }
 
-  const parent = await db.fileEntry.findUnique({
-    where: { id: parentId },
-  });
-  if (!parent) {
+    const parent = await db.fileEntry.findUnique({
+      where: { id: parentId },
+    });
+    if (!parent) {
+      return NextResponse.json(
+        { status: "error", reason: "Could not find parent directory" },
+        { status: 404 },
+      );
+    }
+    if (parent?.type !== "directory") {
+      return NextResponse.json(
+        { status: "error", reason: "Can only upload files underneath directories" },
+        { status: 400 },
+      );
+    }
+
+    const { vPath, file } = prepareUpload(formData, "file", parent.path, (f) => f.name);
+    // TODO: check if file already exists
+
+    return await handleFileUpload(db, file, parentId, vPath);
+  } catch (error) {
+    if (error instanceof ApiError) {
+      return error.toNextResponse();
+    }
+    console.error(error);
     return NextResponse.json(
-      { status: "error", reason: "Could not find parent directory" },
-      { status: 404 },
+      { status: "error", reason: "There was an error uploading the file" },
+      { status: 500 },
     );
   }
-  if (parent?.type !== "directory") {
-    return NextResponse.json(
-      { status: "error", reason: "Can only upload files underneath directories" },
-      { status: 400 },
-    );
-  }
-
-  const file = formData.get("file");
-  if (!file) {
-    return NextResponse.json({ status: "error", reason: "No file in request" }, { status: 400 });
-  }
-  if (Array.isArray(file)) {
-    return NextResponse.json(
-      { status: "error", reason: "Only one file allowed for upload" },
-      { status: 400 },
-    );
-  }
-  if (!(file instanceof File)) {
-    return NextResponse.json(
-      { status: "error", reason: "The uploaded file is not a valid file" },
-      { status: 400 },
-    );
-  }
-
-  const vPath = path.join(parent.path, file.name);
-  // TODO: check if file already exists
-
-  return handleFileUpload(db, file, parentId, vPath);
 }

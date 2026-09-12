@@ -1,44 +1,37 @@
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 
-import { auth, getAuthDbClient } from "@/lib/server/auth";
+import { auth } from "@/lib/server/auth";
 import type { DbClient } from "@/lib/server/db";
+import { ApiError } from "@/lib/server/errors";
+import { getFileUploadContext, prepareUpload } from "@/lib/server/files";
 import { storage, AVATAR_DIR } from "@/lib/server/storage";
 
 async function handleFileUpload(
   db: DbClient,
   image: File,
   personId: string,
-  avatarFilename: string,
+  vPath: string,
 ): Promise<NextResponse> {
-  try {
-    const avatarPath = `${AVATAR_DIR}/${avatarFilename}`;
-    // oxlint-disable-next-line typescript/no-unsafe-type-assertion typescript/no-unnecessary-type-assertion
-    await storage.write(avatarPath, image.stream() as unknown as NodeJS.ReadableStream);
+  // oxlint-disable-next-line typescript/no-unsafe-type-assertion typescript/no-unnecessary-type-assertion
+  await storage.write(vPath, image.stream() as unknown as NodeJS.ReadableStream);
 
-    // oxlint-disable-next-line typescript/return-await
-    return db.person
-      .update({
-        where: { id: personId },
-        data: { avatarUrl: await storage.publicUrl(avatarPath) },
-      })
-      .then(() => {
-        return NextResponse.json({ status: "success" }, { status: 200 });
-      })
-      .catch((gerr) => {
-        console.error(gerr);
-        return NextResponse.json(
-          { status: "error", reason: "There was an error updating the person record" },
-          { status: 500 },
-        );
-      });
-  } catch (error) {
-    console.error(error);
-    return NextResponse.json(
-      { status: "error", reason: "There was an error uploading the file" },
-      { status: 500 },
-    );
-  }
+  // oxlint-disable-next-line typescript/return-await
+  return db.person
+    .update({
+      where: { id: personId },
+      data: { avatarUrl: await storage.publicUrl(vPath) },
+    })
+    .then(() => {
+      return NextResponse.json({ status: "success" }, { status: 200 });
+    })
+    .catch((gerr) => {
+      console.error(gerr);
+      return NextResponse.json(
+        { status: "error", reason: "There was an error updating the person record" },
+        { status: 500 },
+      );
+    });
 }
 
 export async function GET(req: NextRequest, ctx: RouteContext<"/api/avatars/[id]">) {
@@ -84,30 +77,23 @@ export async function PUT(req: NextRequest, ctx: RouteContext<"/api/avatars/[id]
     return NextResponse.json({ status: "error", reason: "Missing personId" }, { status: 400 });
   }
 
-  const session = await auth.api.getSession({ headers: req.headers });
-  if (!session) {
-    return NextResponse.json({ status: "error", reason: "Unauthorized" }, { status: 401 });
-  }
-  const db = getAuthDbClient(session.user.id);
+  try {
+    const { db, formData } = await getFileUploadContext(req);
 
-  const formData = await req.formData();
-  const image = formData.get("image");
-  if (!image) {
-    return NextResponse.json({ status: "error", reason: "No image in request" }, { status: 400 });
-  }
-  if (Array.isArray(image)) {
+    const { file, vPath } = prepareUpload(formData, "image", AVATAR_DIR, (f) => {
+      const imageExt = f.name.slice(f.name.lastIndexOf(".") + 1);
+      return `${personId}.${imageExt}`;
+    });
+
+    return await handleFileUpload(db, file, personId, vPath);
+  } catch (error) {
+    if (error instanceof ApiError) {
+      return error.toNextResponse();
+    }
+    console.error(error);
     return NextResponse.json(
-      { status: "error", reason: "Only one image allowed for upload" },
-      { status: 400 },
+      { status: "error", reason: "There was an error processing the request" },
+      { status: 500 },
     );
   }
-  if (image instanceof File) {
-    const imageExt = image.name.slice(image.name.lastIndexOf(".") + 1);
-    const avatarFilename = `${personId}.${imageExt}`;
-    return handleFileUpload(db, image, personId, avatarFilename);
-  }
-  return NextResponse.json(
-    { status: "error", reason: "The uploaded image is not a valid file" },
-    { status: 400 },
-  );
 }
