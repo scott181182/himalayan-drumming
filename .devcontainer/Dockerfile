@@ -1,10 +1,12 @@
-FROM node:22
+FROM ghcr.io/pnpm/pnpm:11.18.0
 
 # Install basic development tools
 RUN apt update && apt install -y less man-db sudo git nginx tree zsh vim && apt-get clean
+RUN pnpm runtime set node 24 -g
 
 # Ensure default `node` user has access to `sudo`
 ARG USERNAME=node
+RUN useradd -ms /bin/zsh $USERNAME
 RUN echo "$USERNAME" ALL=\(root\) NOPASSWD:ALL > "/etc/sudoers.d/$USERNAME" \
     && chmod 0440 "/etc/sudoers.d/$USERNAME"
 
