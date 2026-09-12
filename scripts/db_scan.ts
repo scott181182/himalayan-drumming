@@ -1,5 +1,5 @@
 import { fatal } from "./util";
-import { db } from "@/lib/db";
+import { db } from "@/lib/server/db";
 import { executeFullScan } from "@/lib/server/scan";
 import { storage } from "@/lib/server/storage";
 

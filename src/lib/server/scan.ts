@@ -1,6 +1,6 @@
 import type { FileStorage } from "@flystorage/file-storage";
 
-import type { DbClient } from "../db";
+import type { DbClient } from "./db";
 import type { FileItem } from "./local";
 import { getFileTree } from "./local";
 import type { TreeNode } from "./tree";

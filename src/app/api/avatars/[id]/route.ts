@@ -1,8 +1,8 @@
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 
-import { auth, getAuthDbClient } from "@/lib/auth";
-import type { DbClient } from "@/lib/db";
+import { auth, getAuthDbClient } from "@/lib/server/auth";
+import type { DbClient } from "@/lib/server/db";
 import { storage, AVATAR_DIR } from "@/lib/server/storage";
 
 async function handleFileUpload(

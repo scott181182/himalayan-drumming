@@ -3,8 +3,8 @@ import path from "node:path";
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 
-import { auth, getAuthDbClient } from "@/lib/auth";
-import type { DbClient } from "@/lib/db";
+import { auth, getAuthDbClient } from "@/lib/server/auth";
+import type { DbClient } from "@/lib/server/db";
 import { fileTree2prismaCreateInput } from "@/lib/server/scan";
 import { FILES_DIR, storage } from "@/lib/server/storage";
 

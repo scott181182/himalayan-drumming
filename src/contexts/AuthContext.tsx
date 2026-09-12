@@ -3,7 +3,7 @@
 import type { PropsWithChildren } from "react";
 import { createContext, useContext } from "react";
 
-import type { BetterAuthUser } from "@/lib/auth";
+import type { BetterAuthUser } from "@/lib/server/auth";
 
 export interface GuardedAuthContextValue {
   user: BetterAuthUser;

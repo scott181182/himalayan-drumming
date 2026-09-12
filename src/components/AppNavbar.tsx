@@ -6,7 +6,7 @@ import { UserIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useCallback, useMemo } from "react";
 
-import { authClient } from "@/lib/auth-client";
+import { authClient } from "@/lib/client/auth";
 
 export function AppNavbar() {
   const { message } = App.useApp();
