@@ -4,7 +4,7 @@ import { App, Button, Card, Form, Input } from "antd";
 import { useRouter } from "next/navigation";
 import { useCallback } from "react";
 
-import { authClient } from "@/lib/auth-client";
+import { authClient } from "@/lib/client/auth";
 
 interface FormInputs {
   name: string;

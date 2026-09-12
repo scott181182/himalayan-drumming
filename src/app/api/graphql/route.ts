@@ -4,9 +4,9 @@ import { createYoga } from "graphql-yoga";
 
 import type { Context } from "./context";
 import { createSchema } from "./schema";
-import type { BetterAuthUser } from "@/lib/auth";
-import { auth, getAuthDbClient } from "@/lib/auth";
-import { db } from "@/lib/db";
+import type { BetterAuthUser } from "@/lib/server/auth";
+import { auth, getAuthDbClient } from "@/lib/server/auth";
+import { db } from "@/lib/server/db";
 import { storage } from "@/lib/server/storage";
 
 interface NextContext {

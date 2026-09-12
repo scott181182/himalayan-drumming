@@ -1,5 +1,5 @@
 import { fatal } from "./util";
-import { db } from "@/lib/db";
+import { db } from "@/lib/server/db";
 
 const FILE_TYPES = ["directory", "file", "reference"];
 

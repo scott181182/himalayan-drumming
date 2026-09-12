@@ -1,8 +1,9 @@
 import { zenstackAdapter } from "@zenstackhq/better-auth";
 import { betterAuth } from "better-auth";
 
-import type { DbClient } from "@/lib/db";
-import { db } from "@/lib/db";
+import { getEnvVarFlag } from "./env";
+import type { DbClient } from "@/lib/server/db";
+import { db } from "@/lib/server/db";
 
 function makeAuth() {
   return betterAuth({
@@ -11,6 +12,7 @@ function makeAuth() {
     }),
     emailAndPassword: {
       enabled: true,
+      disableSignUp: !getEnvVarFlag("ENABLE_SIGNUP", false),
     },
   });
 }
