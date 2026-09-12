@@ -1,10 +1,12 @@
 "use client";
 
-import { App, Avatar, Button, Dropdown, Space } from "antd";
+import { App, Avatar, Button, Dropdown, Space, Tag } from "antd";
 import type { ItemType } from "antd/es/menu/interface";
 import { UserIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useCallback, useMemo } from "react";
+
+import { version } from "@/../package.json";
 
 import { authClient } from "@/lib/client/auth";
 
@@ -43,6 +45,7 @@ export function AppNavbar() {
       <h1 className="text-2xl">Himalayan Drumming Research Dashboard</h1>
 
       <Space className="float-right">
+        <Tag>v{version}</Tag>
         {user?.name ? (
           <Dropdown arrow={false} menu={{ items: profileOptions }}>
             <div className="flex items-center gap-2">

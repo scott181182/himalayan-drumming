@@ -155,14 +155,14 @@ export function FileBrowser() {
           defaultExpandAllRows: true,
         }}
       />
-      <div className="border-solid border-l-0 border-r-0 border-b-0 border-t-2">
+      <div className="border-solid border-l-0 border-r-0 border-b-0 border-t-2 p-4 flex flex-col gap-2">
         <MultiCase
           value={selectedFiles}
           multiple={
             <>
               <Descriptions
                 title={`${selectedFiles.length} files selected`}
-                className="p-4 border-t-2 border-t-black wrap-title"
+                className="wrap-title"
               ></Descriptions>
               <Space>
                 <Link
@@ -177,7 +177,7 @@ export function FileBrowser() {
           // oxlint-disable-next-line react/no-unstable-nested-components
           single={(selectedFile) => <SingleFileDetails file={selectedFile} />}
         />
-        <Space className="p-2" align="center">
+        <Space align="center">
           <Button
             disabled={selectedFiles.length > 1}
             onClick={() => {

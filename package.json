@@ -1,6 +1,6 @@
 {
   "name": "dialects-of-dohl",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "private": true,
   "author": "Scott Fasone <scott.fasone@bixford.digital>",
   "scripts": {
@@ -40,6 +40,7 @@
     "graphql-yoga": "^5.21.2",
     "leaflet": "^1.9.4",
     "lucide-react": "^1.26.0",
+    "mime-types": "^3.0.2",
     "next": "16.2.11",
     "pg": "^8.22.0",
     "pluralize": "^8.0.0",
@@ -60,6 +61,7 @@
     "@prisma/generator-helper": "6.19.3",
     "@tailwindcss/postcss": "^4",
     "@types/leaflet": "^1.9.21",
+    "@types/mime-types": "^3.0.1",
     "@types/node": "^20",
     "@types/pg": "^8.20.0",
     "@types/pluralize": "^0.0.33",

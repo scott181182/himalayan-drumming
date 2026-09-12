@@ -1,33 +1,42 @@
+// oxlint-disable jsx-a11y/media-has-caption
 import type { ColProps } from "antd";
 import { Col, Row } from "antd";
-import { useEffect, useRef } from "react";
+import { lookup } from "mime-types";
+import { useEffect, useMemo, useRef } from "react";
 import WaveSurfer from "wavesurfer.js";
 
 export interface MediaPlayerRowProps {
+  title?: string;
   src: string | null | undefined;
 
   gutter?: number;
+  titleColProps?: ColProps;
   mediaColProps?: ColProps;
   waveformColProps?: ColProps;
 }
 
 // oxlint-disable-next-line max-lines-per-function
 export function MediaPlayerRow({
+  title,
   src,
   gutter,
   mediaColProps,
   waveformColProps,
 }: Readonly<MediaPlayerRowProps>) {
-  const videoRef = useRef<HTMLVideoElement | null>(null);
+  const mimeType = useMemo(() => (src ? lookup(src ?? "") || undefined : undefined), [src]);
+  const isAudio = useMemo(() => !!mimeType?.startsWith("audio/"), [mimeType]);
+
+  const controlRef = useRef<HTMLVideoElement | HTMLAudioElement | null>(null);
   const waveformRef = useRef<HTMLDivElement | null>(null);
 
   // oxlint-disable-next-line max-lines-per-function
   useEffect(() => {
+    // Mount the WaveSurfer audio waveform graphic.
     let wavesurfer: WaveSurfer;
 
     const currentWaveformRef = waveformRef.current;
-    const currentVideoRef = videoRef.current;
-    if (!currentVideoRef || !currentWaveformRef) {
+    const currentControlRef = controlRef.current;
+    if (!currentControlRef || !currentWaveformRef) {
       return;
     }
 
@@ -96,17 +105,17 @@ export function MediaPlayerRow({
       }
     };
 
-    currentVideoRef.addEventListener("loadstart", onLoadStart);
+    currentControlRef.addEventListener("loadstart", onLoadStart);
     currentWaveformRef.addEventListener("wheel", onWheel);
 
     return () => {
-      currentVideoRef.removeEventListener("loadstart", onLoadStart);
+      currentControlRef.removeEventListener("loadstart", onLoadStart);
       currentWaveformRef.removeEventListener("wheel", onWheel);
       if (wavesurfer) {
         wavesurfer.destroy();
       }
     };
-  });
+  }, [controlRef]);
 
   if (!src) {
     return <i>Could not load preview for this file</i>;
@@ -115,11 +124,22 @@ export function MediaPlayerRow({
   return (
     <Row justify="center" align="middle" gutter={gutter ?? 0}>
       <Col {...mediaColProps}>
-        {/* oxlint-disable-next-line jsx-a11y/media-has-caption */}
-        <video ref={videoRef} controls>
-          <source src={src} type="video/mp4" />
-          Your browser does not support this video
-        </video>
+        <div className="flex flex-col">
+          {title && <strong>{title}</strong>}
+          {isAudio ? (
+            /*  */
+            <audio ref={controlRef} controls>
+              <source src={src} type={mimeType} />
+              Your browser does not support this audio
+            </audio>
+          ) : (
+            /* @ts-expect-error: Complain about the type union on the `useRef`, but it's fine. */
+            <video ref={controlRef} controls>
+              <source src={src} type={mimeType} />
+              Your browser does not support this video
+            </video>
+          )}
+        </div>
       </Col>
       <Col {...waveformColProps}>
         <div
